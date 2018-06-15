@@ -1,18 +1,38 @@
 import React, { Component } from 'react';
 import ReactDom from 'react-dom';
 import { Provider } from 'react-redux';
-import store from './redux';
-import { BrowserRouter } from 'react-router-dom';
+import reducer from './redux';
+
+// - redux and react router stuff
+import { createBrowserHistory } from 'history';
+import { applyMiddleware, compose, createStore } from 'redux';
+import {
+  connectRouter, routerMiddleware, ConnectedRouter
+} from 'connected-react-router';
+import thunk from 'redux-thunk';
+
 import Navigation from 'src/frontend/components/navigation';
 import AppBody from 'src/frontend/containers/app_body_container';
+
+const history = createBrowserHistory();
+const store = createStore(
+  connectRouter(history)(reducer), // new root reducer with router state
+  {}, // initial state
+  compose(
+    applyMiddleware(
+      routerMiddleware(history), // for dispatching history actions
+      thunk,
+    ),
+  ),
+);
 
 export default class App extends Component {
   render() {
     return (
       <Provider store={store}>
-        <BrowserRouter>
+        <ConnectedRouter history={history}>
           <AppComponent />
-        </BrowserRouter>
+        </ConnectedRouter>
       </Provider>
     );
   }
@@ -20,7 +40,7 @@ export default class App extends Component {
 
 function AppComponent() {
   return (
-    <div className='app'>
+    <div className='app-layout'>
       <Navigation />
       <AppBody />
     </div>

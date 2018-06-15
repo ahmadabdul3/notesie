@@ -1,0 +1,45 @@
+.home-page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.home-page__header {
+  flex-grow: 0;
+  flex-shrink: 0;
+  padding: 30px 0;
+  background: white;
+  border-bottom: 1px solid #ddd;
+
+  .content {
+    @extend .page-width;
+    text-align: right;
+  }
+}
+
+.home-page__docs {
+  flex-grow: 1;
+  flex-shrink: 0;
+  overflow-y: auto;
+  text-align: center;
+}
+
+.note-doc {
+  text-align: left;
+  @extend .clickable-card;
+  width: 300px;
+  height: 150px;
+  margin: 20px;
+  overflow: hidden;
+}
+
+.note-doc__header {
+  font-weight: bold;
+  color: $red;
+}
+
+.note-doc__summary {
+  font-size: 14px;
+  line-height: 18px;
+  margin-top: 10px;
+}

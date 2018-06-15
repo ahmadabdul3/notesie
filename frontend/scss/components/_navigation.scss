@@ -1,0 +1,45 @@
+
+.navigation {
+  background: white;
+  border-bottom: 1px solid #ccc;
+  font-size: 14px;
+
+  .page-width {
+    display: flex;
+  }
+}
+
+.nav-left {
+  flex-shrink: 0;
+
+  .nav-item:first-child {
+    margin-left: 0;
+  }
+}
+
+.nav-right {
+  flex-grow: 1;
+  text-align: right;
+
+  .nav-item:last-child {
+    margin-right: 0;
+  }
+}
+
+.nav-item {
+  margin: 10px 15px;
+  display: inline-block;
+  transition: color 0.15s ease;
+  color: $text-color;
+
+  &.selected {
+    color: $red;
+    transition: color 0.15s ease;
+  }
+
+  &:hover {
+    color: darken($red, 20%);
+    cursor: pointer;
+    transition: color 0.15s ease;
+  }
+}

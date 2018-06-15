@@ -1,0 +1,77 @@
+
+.button {
+  padding: 10px 20px 11px;
+  border: 0;
+  border-radius: 5px;
+  background: white;
+  color: lighten(red, 5%);
+  font-weight: bold;
+  box-shadow: 0 3px 10px 0 rgba(0, 0, 0, 0.2);
+  font-size: 13px;
+  box-sizing: border-box;
+  outline: none;
+  transition:
+    color 0.15s ease,
+    box-shadow 0.15s ease,
+    background 0.15s ease;
+
+  &:hover {
+    color: darken(red, 10%);
+    cursor: pointer;
+    box-shadow: 0 9px 12px 0 rgba(0, 0, 0, 0.2);
+
+    transition: color 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  &:active {
+    box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.2);
+    color: darken(red, 10%);
+    transition: color 0.15s ease, box-shadow 0.15s ease;
+  }
+}
+
+.red-button {
+  @extend .button;
+  background: $red;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 3px 10px 0 lighten($red, 20%);
+
+  &:hover {
+    color: white;
+    background: darken($red, 5%);
+    box-shadow: 0 7px 10px 0 lighten($red, 20%);
+    transition: background 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  &:active {
+    color: white;
+    background: desaturate(darken($red, 10%), 10%);
+    box-shadow: 0 1px 5px 0 lighten($red, 10%);
+    transition: background 0.15s ease, box-shadow 0.15s ease;
+  }
+}
+
+.green-button {
+  @extend .button;
+  background: $green;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 3px 10px 0 lighten($green, 50%);
+
+  &:hover {
+    color: white;
+    background: darken($green, 5%);
+    box-shadow: 0 7px 10px 0 lighten($green, 50%);
+    transition: background 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  &:active {
+    color: white;
+    background: desaturate(darken($green, 10%), 10%);
+    box-shadow: 0 1px 5px 0 lighten($green, 30%);
+    transition: background 0.15s ease, box-shadow 0.15s ease;
+  }
+}

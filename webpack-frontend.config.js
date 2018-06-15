@@ -16,7 +16,7 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['env', 'react'],
+            presets: ['env', 'react', 'stage-2'],
           }
         }
       },
@@ -34,7 +34,7 @@ module.exports = {
 						loader: 'extract-loader'
 					},
 					{
-						loader: 'css-loader'
+						loader: 'css-loader', options: { minimize: true }
 					},
 					{
 						loader: 'postcss-loader'
