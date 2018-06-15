@@ -19,6 +19,7 @@
 bundle.js
 index.css
 .env
+server
 
 npm-debug.log*
 yarn-debug.log*
