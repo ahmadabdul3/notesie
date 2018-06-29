@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node ./dist/server",
     "watch": "webpack --watch",
-    "heroku-postbuild": "webpack",
+    "heroku-postbuild": "webpack"
   },
   "dependencies": {
     "connected-react-router": "^4.3.0",
