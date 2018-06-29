@@ -13,9 +13,9 @@
   @extend .form-input;
 
   .form-input__label {
-    font-size: 13px;
+    font-size: 11px;
     bottom: 30px;
-    color: $green;
+    color: $text-color;
     transition: bottom 0.15s ease, font-size 0.15s ease, color 0.15s ease;
   }
 
@@ -37,7 +37,7 @@
   letter-spacing: 1px;
   position: absolute;
   bottom: 4px;
-  left: 3px;
+  left: 1px;
   transition: bottom 0.15s ease, font-size 0.15s ease;
   color: gray;
 
@@ -48,7 +48,7 @@
 
 .form-input__input {
   width: 100%;
-  padding: 5px 5px 6px;
+  padding: 5px 5px 6px 2px;
   font-size: 16px;
   box-sizing: border-box;
   outline: none;
@@ -81,7 +81,7 @@
 
 .form-input__message {
   margin-top: 5px;
-  margin-left: 3px;
+  margin-left: 1px;
   font-size: 12px;
   line-height: 13px;
   color: $red;

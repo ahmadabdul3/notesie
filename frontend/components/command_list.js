@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import validCommands from 'src/frontend/constants/valid_commands';
+import validCommands from 'src/constants/valid_commands';
 import { getNotesTypeExample } from 'src/frontend/components/notes_type_example';
 
 export default class CommandList extends Component {
@@ -21,7 +21,7 @@ export default class CommandList extends Component {
     return this.nameText;
   }
 
-  get filteredCommands() {
+  filterCommands() {
     const { commandText } = this.props;
     return Object.keys(validCommands).filter((command) => {
       return command.indexOf(commandText) > -1;
@@ -44,38 +44,45 @@ export default class CommandList extends Component {
       commandText
     } = this.props;
 
+    const filteredCommands = this.filterCommands();
+
     return (
-      <div className='command-list'>
-        <header className='command-list__header'>
-          <div className='command-list-header__label'>
-            AVAILABLE FORMATS - PRESS <span className='note-worthy-text'>'ENTER'</span> WHEN
-            FINISHED <span className='emphasized-text'>OR</span> <span className='note-worthy-text'>'ESC'</span> TO CANCEL
+      <div className='command-list-container'>
+        <div className='command-list__background-overlay' />
+        <div className='command-list'>
+          <header className='command-list__header'>
+            <div className='command-list-header__label'>
+              AVAILABLE FORMATS - PRESS <span className='note-worthy-text'>'ENTER'</span> WHEN
+              FINISHED <span className='emphasized-text'>OR</span> <span className='note-worthy-text'>'ESC'</span> TO CANCEL
+            </div>
+            <form className='command-list-header__form' onSubmit={this.onSubmitCommand}>
+              <input
+                type='text'
+                className='command-list-header__command-input'
+                placeholder="Enter a format, like '-2'"
+                onChange={this.onChangeCommand}
+                value={commandText}
+                name={`command-text ${this.randomNameText}`}
+                ref={(input) => { this.commandInput = input; }}  />
+            </form>
+          </header>
+          <div className='command-list__items'>
+            {
+              filteredCommands.length > 0 ? filteredCommands.map((command, i) => {
+                let classname = 'command-list__item';
+                if (command === commandText) classname = 'command-list__item__highlighted';
+                return (
+                  <div key={i} className={classname}>
+                    <div className='command-list__item__command-text'>
+                      { command }
+                    </div>
+                    { getNotesTypeExample(command) }
+                  </div>
+                )
+              }) : <div className='command-list__item'>No format found</div>
+            }
           </div>
-          <form className='command-list-header__form' onSubmit={this.onSubmitCommand}>
-            <input
-              type='text'
-              className='command-list-header__command-input'
-              placeholder="Enter a format, like '-2'"
-              onChange={this.onChangeCommand}
-              value={commandText}
-              name={`command-text ${this.randomNameText}`}
-              ref={(input) => { this.commandInput = input; }}  />
-          </form>
-        </header>
-        {
-          this.filteredCommands.map((command, i) => {
-            let classname = 'command-list__item';
-            if (command === commandText) classname = 'command-list__item__highlighted';
-            return (
-              <div key={i} className={classname}>
-                <div className='command-list__item__command-text'>
-                  { command }
-                </div>
-                { getNotesTypeExample(command) }
-              </div>
-            )
-          })
-        }
+        </div>
       </div>
     );
   }

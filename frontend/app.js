@@ -12,7 +12,8 @@ import {
 import thunk from 'redux-thunk';
 
 import Navigation from 'src/frontend/components/navigation';
-import AppBody from 'src/frontend/containers/app_body_container';
+import AppBodyContainer from 'src/frontend/containers/app_body_container';
+import { Route } from 'react-router-dom';
 
 const history = createBrowserHistory();
 const store = createStore(
@@ -42,7 +43,7 @@ function AppComponent() {
   return (
     <div className='app-layout'>
       <Navigation />
-      <AppBody />
+      <Route component={AppBodyContainer} />
     </div>
   );
 }

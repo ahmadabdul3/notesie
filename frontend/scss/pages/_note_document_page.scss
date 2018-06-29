@@ -1,10 +1,35 @@
 .note-document-page {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
 
+.note-document-page__nav {
+  flex-grow: 0;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  height: 70px;
+  background: white;
+  border-bottom: 1px solid #ddd;
 }
 
 .note-document {
+  flex-grow: 1;
+  flex-shrink: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+.note-document__notes {
   @extend .page-width;
   position: relative;
+  flex-grow: 1;
+  flex-shrink: 1;
   display: flex;
   align-items: flex-start;
   align-content: flex-start;
@@ -16,6 +41,21 @@
   margin: 40px auto;
   border-radius: 3px;
   padding: 40px 0;
+  overflow-y: auto;
+}
+
+.note-document__interactions {
+  flex-grow: 0;
+  flex-shrink: 0;
+  padding: 30px 0;
+  box-sizing: border-box;
+  background: white;
+  height: 200px;
+  border-top: 1px solid #ccc;
+}
+
+.note-document-interactions {
+  @extend .page-width;
 }
 
 .instructions {
@@ -24,6 +64,11 @@
   color: #aaa;
   width: 100%;
   letter-spacing: 1px;
+}
+
+.interactions-formatting {
+  @extend .instructions;
+  margin-bottom: 10px;
 }
 
 .document-instructions {
@@ -60,6 +105,15 @@
   border-radius: 3px;
   box-sizing: border-box;
   padding: 10px;
-  margin: 20px;
+  margin: 0 auto;
   font-size: 16px;
+
+  &:hover {
+    border-color: $green;
+  }
+
+  &:focus {
+    border-color: $green;
+    box-shadow: 0 2px 8px 0 rgba($green, 0.4);
+  }
 }
