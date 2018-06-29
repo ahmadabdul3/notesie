@@ -130,18 +130,20 @@ export default class NoteDocument extends Component {
     return (
       <div className='note-document'>
         <div className='note-document__notes'>
-          {
-            notesList && notesList.map((notesItem, key) => {
-              const { notesType, notesText } = notesItem;
-              return getNotesTypeComponent({
-                type: notesType, text: notesText,
-                key: key, documentId: this.documentId,
-              });
-            })
-          }
-          {
-            this.renderNewNotesItem()
-          }
+          <div className='document'>
+            {
+              notesList && notesList.map((notesItem, key) => {
+                const { notesType, notesText } = notesItem;
+                return getNotesTypeComponent({
+                  type: notesType, text: notesText,
+                  key: key, documentId: this.documentId,
+                });
+              })
+            }
+            {
+              this.renderNewNotesItem()
+            }
+          </div>
         </div>
         <div className='note-document__interactions'>
           <div className='note-document-interactions'>

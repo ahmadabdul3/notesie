@@ -26,22 +26,25 @@
 }
 
 .note-document__notes {
-  @extend .page-width;
   position: relative;
   flex-grow: 1;
   flex-shrink: 1;
-  display: flex;
-  align-items: flex-start;
-  align-content: flex-start;
-  flex-direction: row;
-  flex-wrap: wrap;
-  box-shadow: 0 3px 8px 0 rgba(0, 0, 0, 0.15);
-  background: white;
-  min-height: 500px;
-  margin: 40px auto;
-  border-radius: 3px;
-  padding: 40px 0;
   overflow-y: auto;
+
+  .document {
+    @extend .page-width;
+    display: flex;
+    align-items: flex-start;
+    align-content: flex-start;
+    flex-direction: row;
+    flex-wrap: wrap;
+    box-shadow: 0 3px 8px 0 rgba(0, 0, 0, 0.15);
+    background: white;
+    min-height: 500px;
+    margin: 40px auto;
+    border-radius: 3px;
+    padding: 40px 0;
+  }
 }
 
 .note-document__interactions {
