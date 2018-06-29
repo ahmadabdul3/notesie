@@ -1,10 +1,10 @@
 import React from 'react';
 import NotesItemContainer from 'src/frontend/containers/notes_item_container';
 
-export default function getNotesTypeComponent(type, text, key) {
+export default function getNotesTypeComponent({ type, text, key, documentId }) {
   if (type === 'regular') {
     return (
-      <NotesItemContainer key={key} index={key}>
+      <NotesItemContainer key={key} index={key} documentId={documentId}>
         <div className='notes-item__regular'>
           { text }
         </div>
@@ -13,7 +13,7 @@ export default function getNotesTypeComponent(type, text, key) {
   }
   if (type === '-') {
     return (
-      <NotesItemContainer key={key} index={key}>
+      <NotesItemContainer key={key} index={key} documentId={documentId}>
         <div className='notes-item__bullet-1'>
           { text }
         </div>
@@ -22,7 +22,7 @@ export default function getNotesTypeComponent(type, text, key) {
   }
   if (type === '-2') {
     return (
-      <NotesItemContainer key={key} index={key}>
+      <NotesItemContainer key={key} index={key} documentId={documentId}>
         <div className='notes-item__bullet-2'>
           { text }
         </div>
@@ -31,7 +31,7 @@ export default function getNotesTypeComponent(type, text, key) {
   }
   if (type === '-3') {
     return (
-      <NotesItemContainer key={key} index={key}>
+      <NotesItemContainer key={key} index={key} documentId={documentId}>
         <div className='notes-item__bullet-3'>
           { text }
         </div>
@@ -40,7 +40,7 @@ export default function getNotesTypeComponent(type, text, key) {
   }
   if (type === '"') {
     return (
-      <NotesItemContainer key={key} index={key}>
+      <NotesItemContainer key={key} index={key} documentId={documentId}>
         <div className='notes-item__quote'>
           { text }
         </div>

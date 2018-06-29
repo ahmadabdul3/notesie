@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import appRoutes from 'src/constants/routes';
 import { NavLink } from 'react-router-dom';
 import FormInput from 'src/frontend/components/form_input';
+import NoteDocumentSummaryContainer from 'src/frontend/containers/note_document_summary_container';
+import NoteDocumentSummary from 'src/frontend/components/note_document_summary';
 
 export default class HomePage extends Component {
   state = {
@@ -30,9 +32,7 @@ export default class HomePage extends Component {
   goToDocPage = (id) => {
     // - will need to fetch the document data using the id
     //   but no need for now
-    console.log(' click button ');
-    console.log(this.props);
-    this.props.history.push(appRoutes.noteDoc);
+    this.props.history.push(appRoutes.noteDoc(id));
   }
 
   render() {
@@ -59,7 +59,7 @@ export default class HomePage extends Component {
             notesDocuments.length > 0 ? (
               notesDocuments.map(
                 (noteDoc, key) =>
-                  <NoteDoc
+                  <NoteDocumentSummaryContainer
                     key={key}
                     data={noteDoc}
                     click={ () => { this.goToDocPage(noteDoc.id); } } />
@@ -72,30 +72,20 @@ export default class HomePage extends Component {
   }
 }
 
-function NoteDoc({ data, click }) {
-  const { name, summary } = data;
-  const noNotesYet = "This document doesn't have any notes yet";
-  return (
-    <div className='note-doc' onClick={click}>
-      <header className='note-doc__header'>
-        { name }
-      </header>
-      <article className='note-doc__summary'>
-        { summary || noNotesYet }
-      </article>
-    </div>
-  );
-}
-
 function NoNoteDocs() {
   const data = {
     id: 0,
     name: "No Docs",
-    summary: "You don't have any documents. Create one by clicking the add button"
   };
+  const notesList = [
+    {
+      notesText: "You don't have any documents."
+        + " Create one by clicking the add button"
+    },
+  ];
 
   return (
-    <NoteDoc data={data} />
+    <NoteDocumentSummary data={data} notesList={notesList} />
   );
 }
 

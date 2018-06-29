@@ -9,7 +9,7 @@ export default class AppBody extends Component {
     return (
       <div className='app-body'>
         <Route exact path={appRoutes.home} component={HomePageContainer} />
-        <Route path={appRoutes.noteDoc} component={NoteDocumentPage} />
+        <Route path={appRoutes.noteDocWithId} component={NoteDocumentPage} />
       </div>
     );
   }

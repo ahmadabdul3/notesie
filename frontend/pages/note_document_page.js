@@ -26,7 +26,7 @@ export default class NoteDocumentPage extends Component {
             </button>
           </div>
         </nav>
-        <NoteDocumentContainer />
+        <NoteDocumentContainer routerProps={this.props} />
       </div>
     );
   }

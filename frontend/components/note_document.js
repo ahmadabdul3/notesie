@@ -3,18 +3,19 @@ import CommandList from 'src/frontend/components/command_list';
 import validCommands from 'src/constants/valid_commands';
 import getNotesTypeComponent from 'src/frontend/services/notes_items_component_resolver';
 
-export class NoteDocument extends Component {
+export default class NoteDocument extends Component {
   state = {
     commandStarted: false,
     commandText: '',
     notesText: '',
-    newNotesItemType: '-',
+    newNotesItemType: 'regular',
     newNoteItemStarted: false,
     // notesList: [],
   };
 
   constructor(props) {
     super(props);
+    this.documentId = props.routerProps.match.params.id;
   }
 
   componentDidMount() {
@@ -77,6 +78,7 @@ export class NoteDocument extends Component {
     const newNotes = {
       notesType: this.state.newNotesItemType,
       notesText: this.state.notesText,
+      documentId: this.documentId,
     };
 
     setTimeout(() => {
@@ -94,7 +96,7 @@ export class NoteDocument extends Component {
   renderNewNotesItem() {
     if (!this.state.newNoteItemStarted) return;
     const { newNotesItemType, notesText } = this.state;
-    return getNotesTypeComponent(newNotesItemType, notesText);
+    return getNotesTypeComponent({ type: newNotesItemType, text: notesText });
   }
 
   resolveCommand(command) {
@@ -129,9 +131,12 @@ export class NoteDocument extends Component {
       <div className='note-document'>
         <div className='note-document__notes'>
           {
-            notesList.map((notesItem, key) => {
+            notesList && notesList.map((notesItem, key) => {
               const { notesType, notesText } = notesItem;
-              return getNotesTypeComponent(notesType, notesText, key);
+              return getNotesTypeComponent({
+                type: notesType, text: notesText,
+                key: key, documentId: this.documentId,
+              });
             })
           }
           {

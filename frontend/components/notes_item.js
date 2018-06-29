@@ -6,8 +6,8 @@ export default class NotesItem extends Component {
   }
 
   deleteItem = () => {
-    const { index, deleteNotesItem } = this.props;
-    deleteNotesItem({ index });
+    const { index, deleteNotesItem, documentId } = this.props;
+    deleteNotesItem({ index, documentId });
   }
 
   render() {

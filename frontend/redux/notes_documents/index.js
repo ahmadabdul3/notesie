@@ -18,15 +18,21 @@ actions.deleteNotesDocument = function(data) {
 export { actions };
 
 const initialState = {
+  id: 1,
   items: [],
 };
 
 export default function notesDocuments(state = initialState, action) {
   switch (action.type) {
     case 'ADD_NOTES_DOCUMENT':
+      const newDocument = action.data;
+      newDocument.id = state.id;
+      const id = state.id + 1;
+
       return {
         ...state,
-        items: [...state.items, action.data],
+        id,
+        items: [...state.items, newDocument],
       };
 
     case 'DELETE_NOTES_DOCUMENT':

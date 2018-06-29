@@ -1,10 +1,13 @@
 import { connect } from 'react-redux';
-import { NoteDocument } from 'src/frontend/components/note_document';
+import NoteDocument from 'src/frontend/components/note_document';
 import { actions as notesActions } from 'src/frontend/redux/notes';
 
-export function mapStateToProps({ notes }) {
+export function mapStateToProps({ notes }, { routerProps }) {
+  const documentId = routerProps.match.params.id;
+
   return {
-    notesList: notes.items,
+    notesList: notes.documents[documentId],
+    router: routerProps,
   };
 }
 

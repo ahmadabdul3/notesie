@@ -18,24 +18,41 @@ actions.deleteNotesItem = function(data) {
 export { actions };
 
 const initialState = {
-  items: [],
+  documents: {},
 };
 
 export default function notes(state = initialState, action) {
+  let documentId;
   switch (action.type) {
     case 'ADD_NOTES_ITEM':
+      const documents = { ...state.documents };
+      documentId = action.data.documentId;
+      if (documents[documentId]) {
+        documents[documentId] = [...documents[documentId], action.data];
+      } else {
+        documents[documentId] = [action.data];
+      }
       return {
         ...state,
-        items: [...state.items, action.data],
+        documents,
       };
 
     case 'DELETE_NOTES_ITEM':
       // - this does a mutation, will change it to
       //   something like slice instead
-      state.items.splice(action.data.index, 1);
+      documentId = action.data.documentId;
+      const newNotes = [];
+      state.documents[documentId].forEach((item, index) => {
+        if (action.data.index !== index) newNotes.push(item);
+      });
+
+
       return {
         ...state,
-        items: [...state.items],
+        documents: {
+          ...state.documents,
+          [documentId]: newNotes,
+        }
       };
 
     default: return state;
