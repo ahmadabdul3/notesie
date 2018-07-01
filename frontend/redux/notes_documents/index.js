@@ -32,7 +32,10 @@ export default function notesDocuments(state = initialState, action) {
       return {
         ...state,
         id,
-        items: [...state.items, newDocument],
+        items: {
+          ...state.items,
+          [newDocument.id]: newDocument,
+        },
       };
 
     case 'DELETE_NOTES_DOCUMENT':

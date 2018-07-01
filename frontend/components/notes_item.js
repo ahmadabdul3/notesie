@@ -23,7 +23,7 @@ export default class NotesItem extends Component {
             // </div>
           }
           <div className='notes-action__delete' onClick={this.deleteItem}>
-            <i className='fa fa-times' />
+            <i className='fas fa-times' />
           </div>
         </div>
         { children }

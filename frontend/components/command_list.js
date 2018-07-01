@@ -41,7 +41,8 @@ export default class CommandList extends Component {
 
   render() {
     const {
-      commandText
+      commandText,
+      hideCommandList,
     } = this.props;
 
     const filteredCommands = this.filterCommands();
@@ -50,6 +51,9 @@ export default class CommandList extends Component {
       <div className='command-list-container'>
         <div className='command-list__background-overlay' />
         <div className='command-list'>
+          <div className='close-button' onClick={hideCommandList}>
+            <i className='fas fa-times' />
+          </div>
           <header className='command-list__header'>
             <div className='command-list-header__label'>
               AVAILABLE FORMATS - PRESS <span className='note-worthy-text'>'ENTER'</span> WHEN

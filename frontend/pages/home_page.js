@@ -38,6 +38,7 @@ export default class HomePage extends Component {
   render() {
     const { loading, newNoteDocumentModalVisible } = this.state;
     const { notesDocuments } = this.props;
+    const notesDocumentsKeys = Object.keys(notesDocuments);
 
     return (
       <div className='home-page'>
@@ -50,19 +51,23 @@ export default class HomePage extends Component {
         <header className='home-page__header'>
           <div className='content'>
             <button className='green-button' onClick={this.showNewNoteDocumentModal}>
-              + New Note Doc
+              <i className='fas fa-plus' /> New Note Doc
             </button>
           </div>
         </header>
         <section className='home-page__docs'>
           {
-            notesDocuments.length > 0 ? (
-              notesDocuments.map(
-                (noteDoc, key) =>
-                  <NoteDocumentSummaryContainer
-                    key={key}
-                    data={noteDoc}
-                    click={ () => { this.goToDocPage(noteDoc.id); } } />
+            notesDocumentsKeys.length > 0 ? (
+              notesDocumentsKeys.map(
+                (noteDocKey, key) => {
+                  const noteDoc = notesDocuments[noteDocKey];
+                  return (
+                    <NoteDocumentSummaryContainer
+                      key={key}
+                      data={noteDoc}
+                      click={ () => { this.goToDocPage(noteDoc.id); } } />
+                  )
+                }
               )
             ) : <NoNoteDocs />
           }
@@ -89,6 +94,8 @@ function NoNoteDocs() {
   );
 }
 
+// - this is ok for now, might need to be connected to
+//   redux later
 class NewNoteDocumentModal extends Component {
   state = {
     docName: '',

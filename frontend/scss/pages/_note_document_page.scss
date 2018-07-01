@@ -44,7 +44,20 @@
     margin: 40px auto;
     border-radius: 3px;
     padding: 40px 0;
+    position: relative;
   }
+}
+
+.document__name {
+  @extend .instructions;
+  position: absolute;
+  top: 10px;
+  left: 20px;
+}
+
+.new-note-line-placeholder {
+  opacity: 0.5;
+  font-style: italic;
 }
 
 .note-document__interactions {
@@ -72,6 +85,45 @@
 .interactions-formatting {
   @extend .instructions;
   margin-bottom: 10px;
+}
+
+.interactions-formatting-text {
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 10px;
+}
+
+.interactions-formatting-label {
+  display: inline-block;
+  vertical-align: middle;
+  border-radius: 3px;
+  padding: 0 6px 1px;
+  margin-top: -2px;
+  background: white;
+  color: $green;
+  box-shadow: 0 1px 4px 0 rgba(black, 0.3);
+  transition: background 0.1s ease, color 0.1s ease;
+
+  &:hover {
+    cursor: pointer;
+    background: $green;
+    color: white;
+    transition: background 0.1s ease, color 0.1s ease;
+  }
+
+  span, i {
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  span {
+    border-right: 1px solid #eee;
+    padding-right: 6px;
+  }
+
+  i {
+    padding-left: 6px;
+  }
 }
 
 .document-instructions {

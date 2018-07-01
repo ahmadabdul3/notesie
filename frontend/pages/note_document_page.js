@@ -22,7 +22,7 @@ export default class NoteDocumentPage extends Component {
         <nav className='note-document-page__nav'>
           <div className='page-width'>
             <button className='red-button' onClick={this.goBack}>
-              {`< back`}
+              <i className='fas fa-arrow-alt-circle-left' /> back
             </button>
           </div>
         </nav>
