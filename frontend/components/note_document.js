@@ -2,13 +2,16 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import CommandList from 'src/frontend/components/command_list';
 import validCommands from 'src/constants/valid_commands';
-import getNotesTypeComponent from 'src/frontend/services/notes_items_component_resolver';
+import {
+  getPermanentNotesTypeComponent,
+  getTransientNotesTypeComponent,
+} from 'src/frontend/services/notes_items_component_resolver';
 
 
 // * docs
 //
-// -- the reason for the timeouts in most places is the following:
-// - the notes input is a textarea and when we click enter the input
+// - the reason for the timeouts in most places is because
+//   the notes input is a textarea and when we click enter the input
 //   cursor goes down to a new line - so this is what happens
 //   - i type notes
 //   - i click enter
@@ -98,7 +101,7 @@ export default class NoteDocument extends Component {
   handleKeyDown = (e) => {
     const { key } = e;
     const { showCommandList, commandText, newNoteItemStarted } = this.state;
-    // console.log('key ', key);
+    console.log('key ', key);
 
     if (showCommandList) {
       if (key === 'Enter') {
@@ -107,17 +110,48 @@ export default class NoteDocument extends Component {
         this.hideCommandList();
       }
     } else {
-      if (key === 'Enter') {
-        if (!newNoteItemStarted) {
-          this.handleEnterKey(e);
-        } else {
-          this.addNewNotesItem(e);
-        }
-      } else if (key === 'Escape') {
-        this.setState({ newNotesItemType: 'regular' });
-      } else if (key === 'Tab') {
-        this.handleTabKey(e);
+      switch (key) {
+        case 'Enter':
+          if (!newNoteItemStarted) {
+            this.handleEnterKey(e);
+          } else {
+            this.addNewNotesItem(e);
+          }
+          return;
+        case 'Escape':
+          this.setState({ newNotesItemType: 'regular' });
+          return;
+        case 'Tab':
+          this.handleTabKey(e);
+          return;
+        case '"':
+          this.handleQuoteKey(e);
+          return;
+        case '-':
+          this.handleDashKey(e);
+          return;
+        case 'Backspace':
+          if (!newNoteItemStarted) this.handleEnterKey(e);
+          return;
       }
+    }
+  }
+
+  handleDashKey = (e) => {
+    const { newNoteItemStarted } = this.state;
+
+    if (!newNoteItemStarted) {
+      e.preventDefault();
+      this.setState({ newNotesItemType: '-' });
+    }
+  }
+
+  handleQuoteKey = (e) => {
+    const { newNoteItemStarted } = this.state;
+
+    if (!newNoteItemStarted) {
+      e.preventDefault();
+      this.setState({ newNotesItemType: '"' });
     }
   }
 
@@ -128,6 +162,7 @@ export default class NoteDocument extends Component {
 
     if (newNotesItemType === '-2') itemType = '-';
     else if (newNotesItemType === '-3') itemType = '-2';
+    else itemType = 'regular';
 
     this.setState({ newNotesItemType: itemType });
   }
@@ -138,8 +173,10 @@ export default class NoteDocument extends Component {
     const { newNotesItemType } = this.state;
     let itemType = newNotesItemType;
 
-    if (newNotesItemType === '-') itemType = '-2';
+    if (newNotesItemType === 'regular') itemType = '-';
+    else if (newNotesItemType === '-') itemType = '-2';
     else if (newNotesItemType === '-2') itemType = '-3';
+    else if (newNotesItemType === '-3') itemType = '-';
 
     this.setState({ newNotesItemType: itemType });
   }
@@ -174,9 +211,11 @@ export default class NoteDocument extends Component {
   }
 
   renderNewNotesItem() {
+    // - this method shows the placeholder notes current being typed
+    //   before they're added
     // if (!this.state.newNoteItemStarted) return;
     const { newNotesItemType, notesText } = this.state;
-    return getNotesTypeComponent({
+    return getTransientNotesTypeComponent({
       type: newNotesItemType,
       text: notesText || <NewNoteLinePlaceholder />
     });
@@ -222,7 +261,7 @@ export default class NoteDocument extends Component {
             {
               notesList && notesList.map((notesItem, key) => {
                 const { notesType, notesText } = notesItem;
-                return getNotesTypeComponent({
+                return getPermanentNotesTypeComponent({
                   type: notesType, text: notesText,
                   key: key, documentId: this.documentId,
                 });

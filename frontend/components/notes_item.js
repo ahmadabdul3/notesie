@@ -11,7 +11,7 @@ export default class NotesItem extends Component {
   }
 
   render() {
-    const { children } = this.props;
+    const { notesItem } = this.props;
 
     return (
       <div className='notes-item' onClick={this.markAsSelected}>
@@ -26,8 +26,17 @@ export default class NotesItem extends Component {
             <i className='fas fa-times' />
           </div>
         </div>
-        { children }
+        { notesItem }
       </div>
     );
   }
+}
+
+export function TransientNotesItem({ notesItem}) {
+  return (
+    <div className='notes-item'>
+      <div className='notes-item__left-indicator' />
+      { notesItem }
+    </div>
+  );
 }
