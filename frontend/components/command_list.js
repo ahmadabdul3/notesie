@@ -6,6 +6,10 @@ export default class CommandList extends Component {
   commandInput = null;
   nameText = null;
 
+  state = {
+    commandText: '',
+  };
+
   constructor(props) {
     super(props);
   }
@@ -14,6 +18,8 @@ export default class CommandList extends Component {
     this.commandInput.focus();
   }
 
+  // - this allows the input to not autofill, because it randomizes
+  //   the 'name' attribute of the input
   get randomNameText() {
     if (this.nameText) return this.nameText;
     const date = new Date();
@@ -22,28 +28,43 @@ export default class CommandList extends Component {
   }
 
   filterCommands() {
-    const { commandText } = this.props;
+    const { commandText } = this.state;
     return Object.keys(validCommands).filter((command) => {
       return command.indexOf(commandText) > -1;
     });
   }
 
-  // - this is here because the parent function shouldn't need to know
-  //   about 'preventDefault', it should just handle logic
   onSubmitCommand = (e) => {
     e.preventDefault();
-    this.props.onSubmitCommand();
+    const command = this.state.commandText.trim();
+
+    if (!validCommands[command]) {
+      // - this should render an error message in the future
+      //   like 'invalid command'
+      this.props.hideCommandList();
+      return;
+    }
+
+    this.sendCommandToParent(command);
+  }
+
+  selectCommandItem = (command) => {
+    this.sendCommandToParent(command);
+  }
+
+  sendCommandToParent(command) {
+    this.props.onSubmitCommand(command);
+    this.setState({ commandText: '' });
   }
 
   onChangeCommand = (e) => {
-    this.props.onChangeCommand(e.target.value);
+    const { value } = e.target;
+    this.setState({ commandText: value });
   }
 
   render() {
-    const {
-      commandText,
-      hideCommandList,
-    } = this.props;
+    const { hideCommandList } = this.props;
+    const { commandText } = this.state;
 
     const filteredCommands = this.filterCommands();
 
@@ -76,7 +97,10 @@ export default class CommandList extends Component {
                 let classname = 'command-list__item';
                 if (command === commandText) classname = 'command-list__item__highlighted';
                 return (
-                  <div key={i} className={classname}>
+                  <div
+                    key={i}
+                    className={classname}
+                    onClick={() => this.selectCommandItem(command)}>
                     <div className='command-list__item__command-text'>
                       { command }
                     </div>

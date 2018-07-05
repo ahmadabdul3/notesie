@@ -26,8 +26,7 @@ export default class NoteDocument extends Component {
   endOfDocument = null;
 
   state = {
-    showCommandList: false,
-    commandText: '',
+    commandListVisible: false,
     notesText: '',
     newNotesItemType: 'regular',
     newNoteItemStarted: false,
@@ -58,19 +57,7 @@ export default class NoteDocument extends Component {
   }
 
   showCommandList = () => {
-    this.setState({ showCommandList: true });
-  }
-
-  onSubmitCommand = () => {
-    console.log('resolving command submit');
-    const { commandText } = this.state;
-    this.resolveCommand(commandText);
-    setTimeout(() => { this.noteInputRef.focus(); }, 50);
-    this.setState({ commandText: '', showCommandList: false });
-  }
-
-  onChangeCommand = (value) => {
-    this.setState({ commandText: value });
+    this.setState({ commandListVisible: true });
   }
 
   onChangeNotesInput = (value) => {
@@ -78,7 +65,7 @@ export default class NoteDocument extends Component {
     const newState = { notesText: value };
 
     if (!newNoteItemStarted) {
-      // - this is assuming letters are bing typed in,
+      // - this is assuming characters are bing typed in/added,
       //   meaning there's a value - if letters are being removed
       //   then there's another condition below
       newState.newNoteItemStarted = true;
@@ -95,18 +82,25 @@ export default class NoteDocument extends Component {
   }
 
   hideCommandList = () => {
-    this.setState({ commandText: '', showCommandList: false });
+    this.setState({ commandListVisible: false });
+    setTimeout(() => { this.noteInputRef.focus(); }, 50);
+  }
+
+  updateCommand = (command) => {
+    this.setState({
+      newNotesItemType: command,
+      commandListVisible: false,
+    });
+    setTimeout(() => { this.noteInputRef.focus(); }, 50);
   }
 
   handleKeyDown = (e) => {
     const { key } = e;
-    const { showCommandList, commandText, newNoteItemStarted } = this.state;
-    console.log('key ', key);
+    const { commandListVisible, newNoteItemStarted } = this.state;
+    // console.log('key ', key);
 
-    if (showCommandList) {
-      if (key === 'Enter') {
-        this.onSubmitCommand();
-      } else if (key === 'Escape') {
+    if (commandListVisible) {
+      if (key === 'Escape') {
         this.hideCommandList();
       }
     } else {
@@ -213,7 +207,6 @@ export default class NoteDocument extends Component {
   renderNewNotesItem() {
     // - this method shows the placeholder notes current being typed
     //   before they're added
-    // if (!this.state.newNoteItemStarted) return;
     const { newNotesItemType, notesText } = this.state;
     return getTransientNotesTypeComponent({
       type: newNotesItemType,
@@ -221,28 +214,9 @@ export default class NoteDocument extends Component {
     });
   }
 
-  resolveCommand(command) {
-    // - this should become a pure function, shouldn't mutate the state
-    //   just return whether the command was valid or not
-    const trimmedCommand = command.trim();
-    if (validCommands[trimmedCommand]) {
-      console.log('valid command: ', trimmedCommand);
-      setTimeout(() => {
-        this.setState({ newNotesItemType: trimmedCommand });
-      }, 50);
-    } else if (trimmedCommand === '') {
-      setTimeout(() => {
-        this.setState({ newNotesItemType: 'regular' });
-      }, 50);
-    } else {
-      console.log('invalid command: ', trimmedCommand);
-    }
-  }
-
   render() {
     const {
-      showCommandList,
-      commandText,
+      commandListVisible,
       notesText,
       newNotesItemType,
     } = this.state;
@@ -276,11 +250,9 @@ export default class NoteDocument extends Component {
         <div className='note-document__interactions'>
           <div className='note-document-interactions'>
             {
-              showCommandList ? (
+              commandListVisible ? (
                 <CommandList
-                  commandText={commandText}
-                  onSubmitCommand={this.onSubmitCommand}
-                  onChangeCommand={this.onChangeCommand}
+                  onSubmitCommand={this.updateCommand}
                   hideCommandList={this.hideCommandList} />
               ) : null
             }
@@ -340,10 +312,12 @@ function FormattingDescription({ newNotesItemType, showCommandList }) {
         CURRENT FORMATTING
       </div>
       <div className='interactions-formatting-label' onClick={showCommandList}>
-        <span>
+        <span className='interactions-formatting-label__name'>
           { newNotesItemType }
         </span>
-        <i className='fas fa-pencil-alt' />
+        <span className='interactions-formatting-label__icon'>
+          Edit <i className='fas fa-pencil-alt' />
+        </span>
       </div>
     </div>
   );

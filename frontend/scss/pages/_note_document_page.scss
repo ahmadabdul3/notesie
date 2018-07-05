@@ -85,19 +85,18 @@
 .interactions-formatting {
   @extend .instructions;
   margin-bottom: 10px;
+  display: flex;
+  align-items: center;
 }
 
 .interactions-formatting-text {
-  display: inline-block;
-  vertical-align: middle;
   margin-right: 10px;
 }
 
 .interactions-formatting-label {
-  display: inline-block;
-  vertical-align: middle;
+  display: flex;
+  align-items: center;
   border-radius: 3px;
-  padding: 0 6px 1px;
   margin-top: -2px;
   background: white;
   color: $green;
@@ -109,20 +108,25 @@
     background: $green;
     color: white;
     transition: background 0.1s ease, color 0.1s ease;
+
+    .interactions-formatting-label__name {
+      border-color: white;
+      transition: border-color 0.1s ease;
+    }
   }
 
-  span, i {
-    display: inline-block;
-    vertical-align: middle;
+  .interactions-formatting-label__name {
+    border-right: 1px solid #ddd;
+    padding: 0 12px;
+    transition: border-color 0.1s ease;
   }
 
-  span {
-    border-right: 1px solid #eee;
-    padding-right: 6px;
-  }
+  .interactions-formatting-label__icon {
+    padding: 0 8px;
 
-  i {
-    padding-left: 6px;
+    i {
+      margin-left: 3px;
+    }
   }
 }
 
