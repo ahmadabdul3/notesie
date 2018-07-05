@@ -13,12 +13,16 @@ export function mapStateToProps({ notes, notesDocuments }, { routerProps }) {
     notesList: notes.documents[documentId],
     router: routerProps,
     noteDocument,
+    notesItemBeingEdited: notes.notesItemBeingEdited,
+    notesItemBeingEditedId: notes.notesItemBeingEditedId,
+    notesItemBeingEditedDocumentId: notes.notesItemBeingEditedDocumentId,
   };
 }
 
 export function mapDispatchToProps(dispatch) {
   return {
     addNotesItem: (item) => dispatch(notesActions.addNotesItem(item)),
+    updateEditingNotesItem: (item) => dispatch(notesActions.finishEditNotesItem(item)),
   };
 }
 

@@ -45,6 +45,24 @@ export default class NoteDocument extends Component {
     document.removeEventListener('keydown', this.handleKeyDown);
   }
 
+  componentDidUpdate(prevProps) {
+    const { notesItemBeingEdited, notesItemBeingEditedId } = this.props;
+    if (
+      notesItemBeingEdited &&
+      notesItemBeingEditedId !== prevProps.notesItemBeingEditedId
+    ) {
+      const { notesList } = this.props;
+      this.setState({ notesText: notesList[notesItemBeingEditedId].notesText });
+      // - no need for a timout on the focus here because it's happening on
+      //   mouse button click, not enter key click, so no side effects
+      //   with the textarea
+      this.noteInputRef.focus();
+    } else if (!notesItemBeingEdited && prevProps.notesItemBeingEdited) {
+      this.setState({ notesText: '' });
+      this.noteInputRef.focus();
+    }
+  }
+
   scrollToBottom = () => {
     const node = ReactDOM.findDOMNode(this.endOfDocument);
     if (node) {
@@ -94,9 +112,25 @@ export default class NoteDocument extends Component {
     setTimeout(() => { this.noteInputRef.focus(); }, 50);
   }
 
+  updateEditingNotesItem = (e) => {
+    // - for some reason when being edit starts going, I can
+    //   only add text, not delete any text, need to investigate that
+    const { documentId } = this;
+    const index = this.props.notesItemBeingEditedId;
+    const { notesText } = this.state;
+
+    setTimeout(() => {
+      this.props.updateEditingNotesItem({
+        documentId, index, notesText
+      });
+      this.resetNewNotes();
+    }, 50);
+  }
+
   handleKeyDown = (e) => {
     const { key } = e;
     const { commandListVisible, newNoteItemStarted } = this.state;
+    const { notesItemBeingEdited } = this.props;
     // console.log('key ', key);
 
     if (commandListVisible) {
@@ -108,6 +142,8 @@ export default class NoteDocument extends Component {
         case 'Enter':
           if (!newNoteItemStarted) {
             this.handleEnterKey(e);
+          } else if (notesItemBeingEdited) {
+            this.updateEditingNotesItem();
           } else {
             this.addNewNotesItem(e);
           }
@@ -210,6 +246,8 @@ export default class NoteDocument extends Component {
   renderNewNotesItem() {
     // - this method shows the placeholder notes current being typed
     //   before they're added
+    if (this.props.notesItemBeingEdited) return;
+
     const { newNotesItemType, notesText } = this.state;
     return getTransientNotesTypeComponent({
       type: newNotesItemType,
@@ -237,9 +275,14 @@ export default class NoteDocument extends Component {
             </div>
             {
               notesList && notesList.map((notesItem, key) => {
-                const { notesType, notesText } = notesItem;
+                const { notesItemBeingEdited, notesItemBeingEditedId } = this.props;
+                const { notesType } = notesItem;
+                let notesTextToUse = notesItem.notesText;
+                if (notesItemBeingEdited && notesItemBeingEditedId === key) {
+                  notesTextToUse = notesText;
+                }
                 return getPermanentNotesTypeComponent({
-                  type: notesType, text: notesText,
+                  type: notesType, text: notesTextToUse,
                   key: key, documentId: this.documentId,
                 });
               })

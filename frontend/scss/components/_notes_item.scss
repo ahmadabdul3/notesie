@@ -1,28 +1,41 @@
 
-
-.notes-item {
+%notes-item {
   width: 100%;
   flex-grow: 1;
   position: relative;
   background: transparent;
   transition: background 0.15s ease;
   min-height: 36px;
+}
+
+%notes-item-hovered {
+  @extend %notes-item;
+  cursor: pointer;
+  background: lighten(#eee, 3%);
+  transition: background 0.15s ease;
+
+  .notes-item__actions {
+    opacity: 1;
+    transition: opacity 0.15s ease;
+  }
+
+  .notes-item__left-indicator {
+    width: 3px;
+    transition: width 0.15s ease;
+  }
+}
+
+.notes-item {
+  @extend %notes-item;
 
   &:hover {
-    cursor: pointer;
-    background: lighten(#eee, 3%);
-    transition: background 0.15s ease;
-
-    .notes-item__actions {
-      opacity: 1;
-      transition: opacity 0.15s ease;
-    }
-
-    .notes-item__left-indicator {
-      width: 3px;
-      transition: width 0.15s ease;
-    }
+    @extend %notes-item-hovered;
   }
+}
+
+.notes-item__being-edited {
+  @extend %notes-item-hovered;
+  background: $yellowHighlight;
 }
 
 .notes-item__left-indicator {
@@ -40,17 +53,19 @@
   right: 10px;
   top: -13px;
   opacity: 0;
+  z-index: 10;
   display: flex;
   justify-content: flex-end;
   transition: opacity 0.15s ease;
 }
 
-.notes-action {
+%notes-action {
   margin-left: 5px;
-  width: 26px;
+  width: auto;
   height: 26px;
-  font-size: 12px;
-  border-radius: 100%;
+  padding: 0 8px;
+  border-radius: 5px;
+  font-size: 11px;
   background: white;
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.3),
               0 -1px 1px 0 rgba(0, 0, 0, 0.05);
@@ -63,29 +78,49 @@
   &:hover {
     cursor: pointer;
     // background: blue;
-    color: blue;
+    color: $blue;
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.3),
                 0 -1px 1px 0 rgba(0, 0, 0, 0.05);
     transition: box-shadow 0.15s ease,
                 color 0.15s ease;
   }
+
+  i {
+    margin-right: 5px;
+  }
 }
 
 .notes-action__delete {
-  @extend .notes-action;
-  // transform: rotate(45deg);
+  @extend %notes-action;
 
   &:hover {
     color: $red;
   }
 }
 
-.notes-action__clone {
-  @extend .notes-action;
-  // transform: rotate(45deg);
+.notes-action__edit {
+  @extend %notes-action;
 
   &:hover {
-    color: $green;
+    color: $blue;
+  }
+}
+
+.notes-action__edit__highlighted {
+  @extend %notes-action;
+  color: white;
+  background: $blue;
+
+  &:hover {
+    color: white;
+  }
+}
+
+.notes-action__cancel-edit {
+  @extend %notes-action;
+
+  &:hover {
+    color: $red;
   }
 }
 
