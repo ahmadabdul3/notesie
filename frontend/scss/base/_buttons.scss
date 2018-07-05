@@ -36,19 +36,19 @@
   color: white;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  box-shadow: 0 3px 10px 0 lighten($red, 20%);
+  box-shadow: 0 3px 10px 0 rgba($red, 0.4);
 
   &:hover {
     color: white;
-    background: darken($red, 5%);
-    box-shadow: 0 7px 10px 0 lighten($red, 20%);
+    background: desaturate(darken($red, 15%), 10%);
+    box-shadow: 0 7px 10px 0 rgba($red, 0.3);
     transition: background 0.15s ease, box-shadow 0.15s ease;
   }
 
   &:active {
     color: white;
-    background: desaturate(darken($red, 10%), 10%);
-    box-shadow: 0 1px 5px 0 lighten($red, 10%);
+    background: desaturate(darken($red, 25%), 10%);
+    box-shadow: 0 1px 5px 0 rgba($red, 0.4);
     transition: background 0.15s ease, box-shadow 0.15s ease;
   }
 }
@@ -59,19 +59,19 @@
   color: white;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  box-shadow: 0 3px 10px 0 lighten($green, 50%);
+  box-shadow: 0 3px 10px 0 rgba($green, 0.3);
 
   &:hover {
     color: white;
     background: darken($green, 5%);
-    box-shadow: 0 7px 10px 0 lighten($green, 50%);
+    box-shadow: 0 7px 10px 0 rgba($green, 0.3);
     transition: background 0.15s ease, box-shadow 0.15s ease;
   }
 
   &:active {
     color: white;
     background: desaturate(darken($green, 10%), 10%);
-    box-shadow: 0 1px 5px 0 lighten($green, 30%);
+    box-shadow: 0 1px 5px 0 rgba($green, 0.3);
     transition: background 0.15s ease, box-shadow 0.15s ease;
   }
 }

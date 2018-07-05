@@ -125,6 +125,9 @@ export default class NoteDocument extends Component {
           this.handleDashKey(e);
           return;
         case 'Backspace':
+          // - this might be annoying when erasing notes, and reach the end
+          //   of the input, and it starts shifting the bullets backwards
+          // - need to user test it
           if (!newNoteItemStarted) this.handleEnterKey(e);
           return;
       }

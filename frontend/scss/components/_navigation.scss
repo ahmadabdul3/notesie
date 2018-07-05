@@ -43,3 +43,10 @@
     transition: color 0.15s ease;
   }
 }
+
+.nav-item__logo {
+  @extend .nav-item;
+  font-family: 'Pacifico', cursive;
+  color: $red;
+  font-size: 20px;
+}
