@@ -15,7 +15,22 @@ export default class NotesItem extends Component {
     return notesItemBeingEdited && notesItemBeingEditedId === index;
   }
 
+  get anotherNotesItemBeingEdited() {
+    const {
+      notesItemBeingEdited,
+      notesItemBeingEditedId,
+      index,
+    } = this.props;
+
+    return notesItemBeingEdited && notesItemBeingEditedId !== index;
+  }
+
   deleteItem = () => {
+    if (this.anotherNotesItemBeingEdited) {
+      alert('Please finish editing your notes before deleting other ones');
+      return;
+    }
+
     const { index, deleteNotesItem, documentId } = this.props;
     deleteNotesItem({ index, documentId });
   }
@@ -24,6 +39,10 @@ export default class NotesItem extends Component {
     // - if we're already editing this notes item, no need to fire
     //   another redux action
     if (this.notesItemBeingEdited) return;
+    if (this.anotherNotesItemBeingEdited) {
+      alert('Please finish editing your notes before editing other ones');
+      return;
+    }
 
     const {
       index,
@@ -62,8 +81,21 @@ export default class NotesItem extends Component {
     );
   }
 
+  renderActions() {
+    return (
+      <div className='notes-item__actions'>
+        { this.renderCancelEditAction() }
+        { this.renderEditAction() }
+        <div className='notes-action__delete' onClick={this.deleteItem}>
+          <i className='fas fa-times' /> Delete
+        </div>
+      </div>
+    );
+  }
+
   render() {
     const { notesItem, index } = this.props;
+    console.log('rendering note item', notesItem);
 
     let classname = 'notes-item';
     if (this.notesItemBeingEdited) {
@@ -73,13 +105,7 @@ export default class NotesItem extends Component {
     return (
       <div className={classname} onClick={this.markAsSelected}>
         <div className='notes-item__left-indicator' />
-        <div className='notes-item__actions'>
-          { this.renderCancelEditAction() }
-          { this.renderEditAction() }
-          <div className='notes-action__delete' onClick={this.deleteItem}>
-            <i className='fas fa-times' /> Delete
-          </div>
-        </div>
+        { this.renderActions() }
         { notesItem }
       </div>
     );

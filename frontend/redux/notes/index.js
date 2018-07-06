@@ -111,6 +111,7 @@ export default function notes(state = initialState, action) {
       const newNotesItem = {
         ...state.documents[documentId][notesItemIndex],
         notesText: action.data.notesText,
+        notesType: action.data.notesType,
       };
 
       newNotes = [];

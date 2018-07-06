@@ -24,12 +24,13 @@ import {
 export default class NoteDocument extends Component {
   noteInputRef = null;
   endOfDocument = null;
+  notesTypeBeforeEditStart = '';
 
   state = {
     commandListVisible: false,
     notesText: '',
     newNotesItemType: 'regular',
-    newNoteItemStarted: false,
+    noteInputTypingStarted: false,
   };
 
   constructor(props) {
@@ -52,13 +53,30 @@ export default class NoteDocument extends Component {
       notesItemBeingEditedId !== prevProps.notesItemBeingEditedId
     ) {
       const { notesList } = this.props;
-      this.setState({ notesText: notesList[notesItemBeingEditedId].notesText });
+      // - need to set noteInputTypingStarted to true here, otherwise
+      //   when we set the noteText value to the value of the corresponding
+      //   note item, we can't backspace because this component will try to
+      //   enter a formatting command, see key event hanlders to understand more
+      this.notesTypeBeforeEditStart = this.state.newNotesItemType;
+      this.setState({
+        notesText: notesList[notesItemBeingEditedId].notesText,
+        newNotesItemType: notesList[notesItemBeingEditedId].notesType,
+        noteInputTypingStarted: true,
+      });
       // - no need for a timout on the focus here because it's happening on
       //   mouse button click, not enter key click, so no side effects
       //   with the textarea
       this.noteInputRef.focus();
     } else if (!notesItemBeingEdited && prevProps.notesItemBeingEdited) {
-      this.setState({ notesText: '' });
+      // - this happens when a user clicks 'cancel edit' when they
+      //   were editing a note item, we need to set 'noteInputTypingStarted'
+      //   back to false, so that tab/enter etc... commands work instead
+      //   of going into typing right away
+      this.setState({
+        notesText: '',
+        newNotesItemType: this.notesTypeBeforeEditStart,
+        noteInputTypingStarted: false,
+      });
       this.noteInputRef.focus();
     }
   }
@@ -79,21 +97,21 @@ export default class NoteDocument extends Component {
   }
 
   onChangeNotesInput = (value) => {
-    const { newNoteItemStarted } = this.state;
+    const { noteInputTypingStarted } = this.state;
     const newState = { notesText: value };
 
-    if (!newNoteItemStarted) {
+    if (!noteInputTypingStarted) {
       // - this is assuming characters are bing typed in/added,
       //   meaning there's a value - if letters are being removed
       //   then there's another condition below
-      newState.newNoteItemStarted = true;
+      newState.noteInputTypingStarted = true;
     }
 
     if (value === '') {
       // - continuing from above, if the value is empty, then
-      //   we set the newNoteItemStarted value to false, so that
+      //   we set the noteInputTypingStarted value to false, so that
       //   tab/enter work for bullet point positioning
-      newState.newNoteItemStarted = false;
+      newState.noteInputTypingStarted = false;
     }
 
     this.setState(newState);
@@ -117,19 +135,19 @@ export default class NoteDocument extends Component {
     //   only add text, not delete any text, need to investigate that
     const { documentId } = this;
     const index = this.props.notesItemBeingEditedId;
-    const { notesText } = this.state;
+    const { notesText, newNotesItemType } = this.state;
 
     setTimeout(() => {
       this.props.updateEditingNotesItem({
-        documentId, index, notesText
+        documentId, index, notesText, notesType: newNotesItemType
       });
-      this.resetNewNotes();
+      this.resetNewNotes(this.notesTypeBeforeEditStart);
     }, 50);
   }
 
   handleKeyDown = (e) => {
     const { key } = e;
-    const { commandListVisible, newNoteItemStarted } = this.state;
+    const { commandListVisible, noteInputTypingStarted } = this.state;
     const { notesItemBeingEdited } = this.props;
     // console.log('key ', key);
 
@@ -140,7 +158,7 @@ export default class NoteDocument extends Component {
     } else {
       switch (key) {
         case 'Enter':
-          if (!newNoteItemStarted) {
+          if (!noteInputTypingStarted) {
             this.handleEnterKey(e);
           } else if (notesItemBeingEdited) {
             this.updateEditingNotesItem();
@@ -164,25 +182,25 @@ export default class NoteDocument extends Component {
           // - this might be annoying when erasing notes, and reach the end
           //   of the input, and it starts shifting the bullets backwards
           // - need to user test it
-          if (!newNoteItemStarted) this.handleEnterKey(e);
+          if (!noteInputTypingStarted) this.handleEnterKey(e);
           return;
       }
     }
   }
 
   handleDashKey = (e) => {
-    const { newNoteItemStarted } = this.state;
+    const { noteInputTypingStarted } = this.state;
 
-    if (!newNoteItemStarted) {
+    if (!noteInputTypingStarted) {
       e.preventDefault();
       this.setState({ newNotesItemType: '-' });
     }
   }
 
   handleQuoteKey = (e) => {
-    const { newNoteItemStarted } = this.state;
+    const { noteInputTypingStarted } = this.state;
 
-    if (!newNoteItemStarted) {
+    if (!noteInputTypingStarted) {
       e.preventDefault();
       this.setState({ newNotesItemType: '"' });
     }
@@ -202,7 +220,7 @@ export default class NoteDocument extends Component {
 
   handleTabKey = (e) => {
     e.preventDefault();
-    if (this.state.newNoteItemStarted) return;
+    if (this.state.noteInputTypingStarted) return;
     const { newNotesItemType } = this.state;
     let itemType = newNotesItemType;
 
@@ -237,9 +255,9 @@ export default class NoteDocument extends Component {
     }, 50);
   }
 
-  resetNewNotes(resetNotesItemType) {
-    const newState = { notesText: '', newNoteItemStarted: false };
-    if (resetNotesItemType) newState.newNotesItemType = 'regular';
+  resetNewNotes(notesType) {
+    const newState = { notesText: '', noteInputTypingStarted: false };
+    if (notesType) newState.newNotesItemType = notesType;
     this.setState(newState);
   }
 
@@ -276,13 +294,14 @@ export default class NoteDocument extends Component {
             {
               notesList && notesList.map((notesItem, key) => {
                 const { notesItemBeingEdited, notesItemBeingEditedId } = this.props;
-                const { notesType } = notesItem;
                 let notesTextToUse = notesItem.notesText;
+                let notesTypeToUse = notesItem.notesType;
                 if (notesItemBeingEdited && notesItemBeingEditedId === key) {
                   notesTextToUse = notesText;
+                  notesTypeToUse = newNotesItemType;
                 }
                 return getPermanentNotesTypeComponent({
-                  type: notesType, text: notesTextToUse,
+                  type: notesTypeToUse, text: notesTextToUse,
                   key: key, documentId: this.documentId,
                 });
               })
@@ -362,7 +381,7 @@ function FormattingDescription({ newNotesItemType, showCommandList }) {
           { newNotesItemType }
         </span>
         <span className='interactions-formatting-label__icon'>
-          Edit <i className='fas fa-pencil-alt' />
+          <i className='fas fa-pencil-alt' /> Edit
         </span>
       </div>
     </div>
