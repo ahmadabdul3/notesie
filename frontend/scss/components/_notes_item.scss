@@ -62,7 +62,7 @@
 %notes-action {
   margin-left: 5px;
   width: auto;
-  height: 26px;
+  height: 24px;
   padding: 0 8px;
   border-radius: 5px;
   font-size: 11px;
@@ -70,7 +70,6 @@
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.3),
               0 -1px 1px 0 rgba(0, 0, 0, 0.05);
   display: flex;
-  justify-content: center;
   align-items: center;
   color: #aaa;
   transition: box-shadow 0.15s ease, color 0.15s ease;
@@ -87,6 +86,7 @@
 
   i {
     margin-right: 5px;
+    margin-top: -2px;
   }
 }
 
@@ -110,9 +110,12 @@
   @extend %notes-action;
   color: white;
   background: $blue;
+  transition: background 0.15s ease;
 
   &:hover {
     color: white;
+    background: lighten($blue, 5%);
+    transition: background 0.15s ease;
   }
 }
 

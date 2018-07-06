@@ -26,11 +26,6 @@ export default class NotesItem extends Component {
   }
 
   deleteItem = () => {
-    if (this.anotherNotesItemBeingEdited) {
-      alert('Please finish editing your notes before deleting other ones');
-      return;
-    }
-
     const { index, deleteNotesItem, documentId } = this.props;
     deleteNotesItem({ index, documentId });
   }
@@ -39,10 +34,6 @@ export default class NotesItem extends Component {
     // - if we're already editing this notes item, no need to fire
     //   another redux action
     if (this.notesItemBeingEdited) return;
-    if (this.anotherNotesItemBeingEdited) {
-      alert('Please finish editing your notes before editing other ones');
-      return;
-    }
 
     const {
       index,
@@ -60,34 +51,51 @@ export default class NotesItem extends Component {
 
     return (
       <div className='notes-action__cancel-edit' onClick={cancelEditNotesItem}>
-        <i className='fas fa-ban' /> Cancel Edit
+        <i className='fas fa-ban' />
+        <span>
+          Cancel Edits
+        </span>
       </div>
     );
   }
 
   renderEditAction() {
+    // - this will need to be broken down into a separate component
+    //   instead of continuing to do this variable reassignment
     let text = 'Edit';
     let classname = 'notes-action__edit';
+    let icon = 'fas fa-pencil-alt';
+    let clickAction = this.startEditItem;
 
     if (this.notesItemBeingEdited) {
-      text = 'Editing';
+      text = 'Save Edits';
       classname = 'notes-action__edit__highlighted';
+      icon = 'fas fa-save';
+      clickAction = this.props.saveEdits;
     }
 
     return (
-      <div className={classname} onClick={this.startEditItem}>
-        <i className='fas fa-pencil-alt' /> { text }
+      <div className={classname} onClick={clickAction}>
+        <i className={`${icon}`} />
+        <span>
+          { text }
+        </span>
       </div>
     );
   }
 
   renderActions() {
+    if (this.anotherNotesItemBeingEdited) return;
+
     return (
       <div className='notes-item__actions'>
         { this.renderCancelEditAction() }
         { this.renderEditAction() }
         <div className='notes-action__delete' onClick={this.deleteItem}>
-          <i className='fas fa-times' /> Delete
+          <i className='fas fa-times' />
+          <span>
+            Delete
+          </span>
         </div>
       </div>
     );
@@ -95,7 +103,6 @@ export default class NotesItem extends Component {
 
   render() {
     const { notesItem, index } = this.props;
-    console.log('rendering note item', notesItem);
 
     let classname = 'notes-item';
     if (this.notesItemBeingEdited) {

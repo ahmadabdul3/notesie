@@ -76,13 +76,22 @@ export default function notes(state = initialState, action) {
         if (notesItemIndex !== index) newNotes.push(item);
       });
 
+      let editState = {};
+      // - currently, we don't allow deletion of notes items during edit mode
+      //   except if it's the editing notes item - so we can assume this case
+      //   will only run for the notes being edited, so we don't need to
+      //   check for matching index/id - just check if we're in edit mode
+      if (state.notesItemBeingEdited) {
+        editState = getCancelEditNotesItemState();
+      }
 
       return {
         ...state,
         documents: {
           ...state.documents,
           [documentId]: newNotes,
-        }
+        },
+        ...editState,
       };
 
     case 'START_EDIT_NOTES_ITEM':
@@ -99,9 +108,7 @@ export default function notes(state = initialState, action) {
     case 'CANCEL_EDIT_NOTES_ITEM':
       return {
         ...state,
-        notesItemBeingEdited: false,
-        notesItemBeingEditedId: null,
-        notesItemBeingEditedDocumentId: null,
+        ...getCancelEditNotesItemState(),
       };
 
     case 'FINISH_EDIT_NOTES_ITEM':
@@ -134,4 +141,12 @@ export default function notes(state = initialState, action) {
 
     default: return state;
   }
+}
+
+function getCancelEditNotesItemState() {
+  return {
+    notesItemBeingEdited: false,
+    notesItemBeingEditedId: null,
+    notesItemBeingEditedDocumentId: null,
+  };
 }

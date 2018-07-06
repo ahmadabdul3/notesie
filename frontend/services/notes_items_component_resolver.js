@@ -3,10 +3,10 @@ import NotesItemContainer from 'src/frontend/containers/notes_item_container';
 import { TransientNotesItem } from 'src/frontend/components/notes_item';
 
 export function getPermanentNotesTypeComponent({
-  type, text, key, documentId
+  type, text, key, documentId, saveEdits
 }) {
   return getNotesTypeComponent({
-    type, text, key, documentId, NotesItemWrapper: NotesItemContainer
+    type, text, key, documentId, saveEdits, NotesItemWrapper: NotesItemContainer
   });
 }
 
@@ -14,15 +14,15 @@ export function getPermanentNotesTypeComponent({
 //   of what the user is typing, this version doesn't have a delete/edit
 //   and other interaction features/buttons
 export function getTransientNotesTypeComponent({
-  type, text, key, documentId
+  type, text, key, documentId, saveEdits
 }) {
   return getNotesTypeComponent({
-    type, text, key, documentId, NotesItemWrapper: TransientNotesItem
+    type, text, key, documentId, saveEdits, NotesItemWrapper: TransientNotesItem
   });
 }
 
 function getNotesTypeComponent({
-  type, text, key, documentId, NotesItemWrapper
+  type, text, key, documentId, saveEdits, NotesItemWrapper
 }) {
   switch (type) {
     case 'regular':
@@ -31,6 +31,7 @@ function getNotesTypeComponent({
           key={key}
           index={key}
           documentId={documentId}
+          saveEdits={saveEdits}
           notesItem={(
             <div className='notes-item__regular'>
               { text }
@@ -43,6 +44,7 @@ function getNotesTypeComponent({
           key={key}
           index={key}
           documentId={documentId}
+          saveEdits={saveEdits}
           notesItem={(
             <div className='notes-item__bullet-1'>
               { text }
@@ -55,6 +57,7 @@ function getNotesTypeComponent({
           key={key}
           index={key}
           documentId={documentId}
+          saveEdits={saveEdits}
           notesItem={(
             <div className='notes-item__bullet-2'>
               { text }
@@ -67,6 +70,7 @@ function getNotesTypeComponent({
           key={key}
           index={key}
           documentId={documentId}
+          saveEdits={saveEdits}
           notesItem={(
             <div className='notes-item__bullet-3'>
               { text }
@@ -79,6 +83,7 @@ function getNotesTypeComponent({
           key={key}
           index={key}
           documentId={documentId}
+          saveEdits={saveEdits}
           notesItem={(
             <div className='notes-item__quote'>
               { text }

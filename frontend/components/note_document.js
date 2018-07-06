@@ -301,8 +301,11 @@ export default class NoteDocument extends Component {
                   notesTypeToUse = newNotesItemType;
                 }
                 return getPermanentNotesTypeComponent({
-                  type: notesTypeToUse, text: notesTextToUse,
-                  key: key, documentId: this.documentId,
+                  type: notesTypeToUse,
+                  text: notesTextToUse,
+                  key: key,
+                  documentId: this.documentId,
+                  saveEdits: this.updateEditingNotesItem,
                 });
               })
             }
