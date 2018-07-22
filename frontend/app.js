@@ -53,3 +53,17 @@ if (typeof window !== 'undefined') {
     <App />, document.getElementById('entry-point')
   );
 }
+
+
+// features
+// - unit tests
+// - authentication
+// - more formatting - title, subtitle, columns
+// - note comments
+// - batch update
+// - backend
+// - cloning documents
+// - cloning notes
+// - add before / after
+// - clone notes from 1 doc to another
+// -

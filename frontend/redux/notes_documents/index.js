@@ -39,13 +39,14 @@ export default function notesDocuments(state = initialState, action) {
       };
 
     case 'DELETE_NOTES_DOCUMENT':
+      // THIS DOESNT ACTUALLY WORK YET
       // - this does a mutation, will change it to
       //   something like slice instead
-      state.items.splice(action.data.index, 1);
-      return {
-        ...state,
-        items: [...state.items],
-      };
+      // state.items.splice(action.data.index, 1);
+      // return {
+      //   ...state,
+      //   items: [...state.items],
+      // };
 
     default: return state;
   }

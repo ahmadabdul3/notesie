@@ -1,28 +1,9 @@
-var path = require('path');
 
 var frontendConfig = require('./webpack-frontend.config.js');
 var backendConfig = require('./webpack-backend.config.js');
-
-var sharedConfig = getSharedConfig();
+var sharedConfig = require('./webpack-shared.config.js');
 
 module.exports = [
-  combineObjects(sharedConfig, frontendConfig),
-  combineObjects(sharedConfig, backendConfig),
+  Object.assign({}, sharedConfig, frontendConfig),
+  Object.assign({}, sharedConfig, backendConfig),
 ];
-
-function combineObjects(objectOne, objectTwo) {
-  return Object.assign({}, objectOne, objectTwo);
-}
-
-function getSharedConfig() {
-  return {
-    mode: 'development',
-    // devtool: 'inline-source-map',
-    devtool: '#eval-source-map',
-    resolve: {
-      alias: {
-        src: path.resolve(__dirname),
-      },
-    }
-  };
-}

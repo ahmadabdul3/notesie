@@ -71,9 +71,8 @@ export default function notes(state = initialState, action) {
     case 'DELETE_NOTES_ITEM':
       documentId = action.data.documentId;
       notesItemIndex = action.data.index;
-      newNotes = [];
-      state.documents[documentId].forEach((item, index) => {
-        if (notesItemIndex !== index) newNotes.push(item);
+      newNotes = state.documents[documentId].filter((item, index) => {
+        if (notesItemIndex !== index) return item;
       });
 
       let editState = {};
@@ -121,10 +120,9 @@ export default function notes(state = initialState, action) {
         notesType: action.data.notesType,
       };
 
-      newNotes = [];
-      state.documents[documentId].forEach((item, index) => {
-        if (notesItemIndex === index) newNotes.push(newNotesItem);
-        else newNotes.push(item);
+      newNotes = state.documents[documentId].map((item, index) => {
+        if (notesItemIndex === index) return newNotesItem;
+        return item;
       });
 
       return {
@@ -133,9 +131,7 @@ export default function notes(state = initialState, action) {
           ...state.documents,
           [documentId]: newNotes,
         },
-        notesItemBeingEdited: false,
-        notesItemBeingEditedId: null,
-        notesItemBeingEditedDocumentId: null,
+        ...getCancelEditNotesItemState(),
       };
 
 
