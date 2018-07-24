@@ -32,6 +32,8 @@ function getNotesTypeComponent({
           index={key}
           documentId={documentId}
           saveEdits={saveEdits}
+          text={text}
+          type={type}
           notesItem={(
             <div className='notes-item__regular'>
               { text }
@@ -45,6 +47,8 @@ function getNotesTypeComponent({
           index={key}
           documentId={documentId}
           saveEdits={saveEdits}
+          text={text}
+          type={type}
           notesItem={(
             <div className='notes-item__bullet-1'>
               { text }
@@ -58,6 +62,8 @@ function getNotesTypeComponent({
           index={key}
           documentId={documentId}
           saveEdits={saveEdits}
+          text={text}
+          type={type}
           notesItem={(
             <div className='notes-item__bullet-2'>
               { text }
@@ -71,6 +77,8 @@ function getNotesTypeComponent({
           index={key}
           documentId={documentId}
           saveEdits={saveEdits}
+          text={text}
+          type={type}
           notesItem={(
             <div className='notes-item__bullet-3'>
               { text }
@@ -84,6 +92,8 @@ function getNotesTypeComponent({
           index={key}
           documentId={documentId}
           saveEdits={saveEdits}
+          text={text}
+          type={type}
           notesItem={(
             <div className='notes-item__quote'>
               { text }

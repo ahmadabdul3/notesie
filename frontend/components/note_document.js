@@ -25,11 +25,14 @@ export default class NoteDocument extends Component {
   noteInputRef = null;
   endOfDocument = null;
   notesTypeBeforeEditStart = '';
+  notesTextBeforeEditStart = '';
 
   state = {
     commandListVisible: false,
     notesText: '',
     newNotesItemType: 'regular',
+    // - not sure if there was a reason I put this in state, seems to make
+    //   more sense if placed on 'this' instead
     noteInputTypingStarted: false,
   };
 
@@ -57,6 +60,7 @@ export default class NoteDocument extends Component {
       //   when we set the noteText value to the value of the corresponding
       //   note item, we can't backspace because this component will try to
       //   enter a formatting command, see key event hanlders to understand more
+      this.notesTextBeforeEditStart = this.state.notesText;
       this.notesTypeBeforeEditStart = this.state.newNotesItemType;
       this.setState({
         notesText: notesList[notesItemBeingEditedId].notesText,
@@ -72,10 +76,12 @@ export default class NoteDocument extends Component {
       //   were editing a note item, we need to set 'noteInputTypingStarted'
       //   back to false, so that tab/enter etc... commands work instead
       //   of going into typing right away
+      let typingStarted = false;
+      if (this.notesTextBeforeEditStart) typingStarted = true;
       this.setState({
-        notesText: '',
+        notesText: this.notesTextBeforeEditStart,
         newNotesItemType: this.notesTypeBeforeEditStart,
-        noteInputTypingStarted: false,
+        noteInputTypingStarted: typingStarted,
       });
       this.noteInputRef.focus();
     }
@@ -131,8 +137,6 @@ export default class NoteDocument extends Component {
   }
 
   updateEditingNotesItem = (e) => {
-    // - for some reason when being edit starts going, I can
-    //   only add text, not delete any text, need to investigate that
     const { documentId } = this;
     const index = this.props.notesItemBeingEditedId;
     const { notesText, newNotesItemType } = this.state;
@@ -141,7 +145,10 @@ export default class NoteDocument extends Component {
       this.props.updateEditingNotesItem({
         documentId, index, notesText, notesType: newNotesItemType
       });
-      this.resetNewNotes(this.notesTypeBeforeEditStart);
+      this.resetNewNotes(
+        this.notesTypeBeforeEditStart,
+        this.notesTextBeforeEditStart
+      );
     }, 50);
   }
 
@@ -255,9 +262,13 @@ export default class NoteDocument extends Component {
     }, 50);
   }
 
-  resetNewNotes(notesType) {
+  resetNewNotes(notesType, notesText) {
     const newState = { notesText: '', noteInputTypingStarted: false };
     if (notesType) newState.newNotesItemType = notesType;
+    if (notesText) {
+      newState.notesText = notesText;
+      newState.noteInputTypingStarted = true;
+    }
     this.setState(newState);
   }
 
