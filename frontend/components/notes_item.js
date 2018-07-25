@@ -24,7 +24,7 @@ export default class NotesItem extends Component {
 
       // - this conditional applies to the case when we're not editing this
       //   note item, but 'edit' was clicked on it and it will be edited
-      (!this.notesItemBeingEdited && this.notesItemWillBeEdited(nextProps))
+      this.notesItemWillBeEdited(nextProps)
     );
   }
 
