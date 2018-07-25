@@ -16,6 +16,7 @@ export default class NotesItem extends Component {
     return (
       this.props.text !== nextProps.text ||
       this.props.type !== nextProps.type ||
+
       // - this conditional applies to the case when we were editing this
       //   note item component and then we stop editing (either save or cancel)
       //   both cases require a re-render so the action buttons update

@@ -137,9 +137,16 @@ export default class NoteDocument extends Component {
   }
 
   updateEditingNotesItem = (e) => {
+    const { notesText, newNotesItemType } = this.state;
+
+    if (!notesText) {
+      alert(`Note blocks can't be empty. If you no longer want this block of\
+        notes you can delete it`);
+      return;
+    }
+
     const { documentId } = this;
     const index = this.props.notesItemBeingEditedId;
-    const { notesText, newNotesItemType } = this.state;
 
     setTimeout(() => {
       this.props.updateEditingNotesItem({
@@ -189,7 +196,7 @@ export default class NoteDocument extends Component {
           // - this might be annoying when erasing notes, and reach the end
           //   of the input, and it starts shifting the bullets backwards
           // - need to user test it
-          if (!noteInputTypingStarted) this.handleEnterKey(e);
+          // if (!noteInputTypingStarted) this.handleEnterKey(e);
           return;
       }
     }
