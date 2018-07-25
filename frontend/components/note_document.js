@@ -260,6 +260,7 @@ export default class NoteDocument extends Component {
       notesType: this.state.newNotesItemType,
       notesText: this.state.notesText,
       documentId: this.documentId,
+      selected: false,
     };
 
     setTimeout(() => {
@@ -321,6 +322,7 @@ export default class NoteDocument extends Component {
                 return getPermanentNotesTypeComponent({
                   type: notesTypeToUse,
                   text: notesTextToUse,
+                  selected: notesItem.selected,
                   key: key,
                   documentId: this.documentId,
                   saveEdits: this.updateEditingNotesItem,

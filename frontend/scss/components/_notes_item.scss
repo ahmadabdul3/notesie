@@ -6,6 +6,8 @@
   background: transparent;
   transition: background 0.15s ease;
   min-height: 36px;
+  border-top: 1px solid transparent;
+  border-bottom: 1px solid transparent;
 }
 
 %notes-item-hovered {
@@ -36,6 +38,31 @@
 .notes-item__being-edited {
   @extend %notes-item-hovered;
   background: $yellowHighlight;
+
+  &:hover {
+    background: $yellowHighlight;
+  }
+}
+
+.notes-item__selected {
+  @extend %notes-item-hovered;
+  background: $yellowHighlight;
+
+  +.notes-item__selected {
+    border-top: 1px solid white;
+  }
+
+  &:hover {
+    background: $yellowHighlight;
+
+    .notes-item__actions {
+      opacity: 0;
+    }
+  }
+
+  .notes-item__actions {
+    opacity: 0;
+  }
 }
 
 .notes-item__left-indicator {

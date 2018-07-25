@@ -13,14 +13,14 @@ actions.deleteNotesItem = function(data) {
     type: 'DELETE_NOTES_ITEM',
     data,
   };
-}
+};
 
 actions.startEditNotesItem = function(data) {
   return {
     type: 'START_EDIT_NOTES_ITEM',
     data,
   };
-}
+};
 
 actions.cancelEditNotesItem = function(data) {
   // - data here is probably empty
@@ -28,14 +28,21 @@ actions.cancelEditNotesItem = function(data) {
     type: 'CANCEL_EDIT_NOTES_ITEM',
     data,
   };
-}
+};
 
 actions.finishEditNotesItem = function(data) {
   return {
     type: 'FINISH_EDIT_NOTES_ITEM',
     data,
   };
-}
+};
+
+actions.toggleNotesItem = function(data) {
+  return {
+    type: 'TOGGLE_NOTES_ITEM',
+    data,
+  };
+};
 
 export { actions };
 
@@ -47,12 +54,15 @@ const initialState = {
   notesItemBeingEditedText: '',
   notesItemBeingEditedId: null,
   notesItemBeingEditedDocumentId: null,
+  selectedNotesItems: [],
+  notesItemInitialSelection: false,
 };
 
 export default function notes(state = initialState, action) {
   let documentId;
   let notesItemIndex;
   let newNotes;
+  let newNotesItem;
 
   switch (action.type) {
     case 'ADD_NOTES_ITEM':
@@ -114,7 +124,7 @@ export default function notes(state = initialState, action) {
       documentId = action.data.documentId;
       notesItemIndex = action.data.index;
 
-      const newNotesItem = {
+      newNotesItem = {
         ...state.documents[documentId][notesItemIndex],
         notesText: action.data.notesText,
         notesType: action.data.notesType,
@@ -132,6 +142,46 @@ export default function notes(state = initialState, action) {
           [documentId]: newNotes,
         },
         ...getCancelEditNotesItemState(),
+      };
+
+    case 'TOGGLE_NOTES_ITEM':
+      documentId = action.data.documentId;
+      notesItemIndex = action.data.index;
+      const notesItemSelected = action.data.selected;
+      newNotesItem = {
+        ...state.documents[documentId][notesItemIndex],
+        selected: !notesItemSelected,
+      };
+
+      newNotes = state.documents[documentId].map((item, index) => {
+        if (notesItemIndex === index) return newNotesItem;
+        return item;
+      });
+
+      const newState = {
+        ...state,
+        documents: {
+          ...state.documents,
+          [documentId]: newNotes,
+        },
+      };
+
+      if (state.selectedNotesItems.length === 0) {
+        return {
+          ...newState,
+          selectedNotesItems: [notesItemIndex]
+        };
+      }
+
+      const newSelectedNotesItems = state.selectedNotesItems.filter((item) => {
+        return item !== notesItemIndex;
+      });
+
+      if (!notesItemSelected) newSelectedNotesItems.push(notesItemIndex);
+
+      return {
+        ...newState,
+        selectedNotesItems: newSelectedNotesItems,
       };
 
 

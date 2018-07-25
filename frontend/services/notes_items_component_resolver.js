@@ -3,10 +3,11 @@ import NotesItemContainer from 'src/frontend/containers/notes_item_container';
 import { TransientNotesItem } from 'src/frontend/components/notes_item';
 
 export function getPermanentNotesTypeComponent({
-  type, text, key, documentId, saveEdits
+  type, text, key, documentId, saveEdits, selected
 }) {
   return getNotesTypeComponent({
-    type, text, key, documentId, saveEdits, NotesItemWrapper: NotesItemContainer
+    type, text, key, documentId, saveEdits, selected,
+    NotesItemWrapper: NotesItemContainer
   });
 }
 
@@ -22,13 +23,14 @@ export function getTransientNotesTypeComponent({
 }
 
 function getNotesTypeComponent({
-  type, text, key, documentId, saveEdits, NotesItemWrapper
+  type, text, key, documentId, saveEdits, NotesItemWrapper, selected
 }) {
   switch (type) {
     case 'regular':
       return (
         <NotesItemWrapper
           key={key}
+          selected={selected}
           index={key}
           documentId={documentId}
           saveEdits={saveEdits}
@@ -44,6 +46,7 @@ function getNotesTypeComponent({
       return (
         <NotesItemWrapper
           key={key}
+          selected={selected}
           index={key}
           documentId={documentId}
           saveEdits={saveEdits}
@@ -59,6 +62,7 @@ function getNotesTypeComponent({
       return (
         <NotesItemWrapper
           key={key}
+          selected={selected}
           index={key}
           documentId={documentId}
           saveEdits={saveEdits}
@@ -74,6 +78,7 @@ function getNotesTypeComponent({
       return (
         <NotesItemWrapper
           key={key}
+          selected={selected}
           index={key}
           documentId={documentId}
           saveEdits={saveEdits}
@@ -89,6 +94,7 @@ function getNotesTypeComponent({
       return (
         <NotesItemWrapper
           key={key}
+          selected={selected}
           index={key}
           documentId={documentId}
           saveEdits={saveEdits}

@@ -16,6 +16,7 @@ export default class NotesItem extends Component {
     return (
       this.props.text !== nextProps.text ||
       this.props.type !== nextProps.type ||
+      this.props.selected !== nextProps.selected ||
 
       // - this conditional applies to the case when we were editing this
       //   note item component and then we stop editing (either save or cancel)
@@ -66,6 +67,8 @@ export default class NotesItem extends Component {
     //   click on the wrapper
     // console.log('marking as selected');
     // actual implementation coming...
+    const { documentId, index, selected } = this.props;
+    this.props.toggleNotesItem({ documentId, index, selected });
   }
 
   deleteItem = () => {
@@ -143,18 +146,24 @@ export default class NotesItem extends Component {
   }
 
   render() {
-    const { notesItem, index } = this.props;
+    const { notesItem, index, selected } = this.props;
+    console.log('notes item: ', index);
+
 
     let classname = 'notes-item';
     if (this.notesItemBeingEdited) {
-      classname = 'notes-item__being-edited';
+      classname = 'notes-item notes-item__being-edited';
     }
 
+    if (selected) classname = 'notes-item notes-item__selected';
+
     return (
-      <div className={classname} onClick={this.markAsSelected}>
+      <div className={classname}>
         <div className='notes-item__left-indicator' />
         { this.renderActions() }
-        { notesItem }
+        <div className='notes-item-inner-wrapper' onClick={this.markAsSelected}>
+          { notesItem }
+        </div>
       </div>
     );
   }

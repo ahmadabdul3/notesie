@@ -14,6 +14,7 @@ export function mapDispatchToProps(dispatch) {
     deleteNotesItem: (item) => dispatch(notesActions.deleteNotesItem(item)),
     startEditNotesItem: (item) => dispatch(notesActions.startEditNotesItem(item)),
     cancelEditNotesItem: () => dispatch(notesActions.cancelEditNotesItem()),
+    toggleNotesItem: (data) => dispatch(notesActions.toggleNotesItem(data)),
   };
 }
 
