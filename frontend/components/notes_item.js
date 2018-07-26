@@ -60,13 +60,13 @@ export default class NotesItem extends Component {
   }
 
   markAsSelected = () => {
-    // - currently this is on the top level element in the render function
-    //   so it runs even when the action buttons are clicked like 'edit'
-    // - We should create a wrapper around the notes item child and put the
-    //   click event on that, so that this function only executes when we
-    //   click on the wrapper
-    // console.log('marking as selected');
-    // actual implementation coming...
+    // - if there is a notes item being edited we don't want selection
+    //   to work
+    if (this.props.notesItemBeingEdited) {
+      alert('Please finish editing the notes block before making selections');
+      return;
+    }
+
     const { documentId, index, selected } = this.props;
     this.props.toggleNotesItem({ documentId, index, selected });
   }
@@ -74,6 +74,11 @@ export default class NotesItem extends Component {
   deleteItem = () => {
     if (this.anotherNotesItemBeingEdited) {
       alert('You can only modify one block of notes at a time');
+      return;
+    }
+
+    if (this.props.selectedNotesItemsExist) {
+      alert('Deleting a single note block is not allowed while selections exist');
       return;
     }
 
@@ -85,6 +90,10 @@ export default class NotesItem extends Component {
     // - if we're already editing this notes item, no need to fire
     //   another redux action
     if (this.notesItemBeingEdited) return;
+    if (this.props.selectedNotesItemsExist) {
+      alert('Editing a single note block is not allowed while selections exist');
+      return;
+    }
 
     if (this.anotherNotesItemBeingEdited) {
       alert('You can only modify one block of notes at a time');
@@ -171,7 +180,7 @@ export default class NotesItem extends Component {
 
 export function TransientNotesItem({ notesItem }) {
   return (
-    <div className='notes-item'>
+    <div className='notes-item__transient'>
       <div className='notes-item__left-indicator' />
       { notesItem }
     </div>

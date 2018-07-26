@@ -35,12 +35,23 @@
   }
 }
 
+.notes-item__transient {
+  @extend %notes-item;
+  background: darken(white, 2%);
+  color: lighten($text-color, 30%);
+
+  .notes-item__left-indicator {
+    width: 2px;
+    background: $blue;
+  }
+}
+
 .notes-item__being-edited {
   @extend %notes-item-hovered;
   background: $yellowHighlight;
 
   &:hover {
-    background: $yellowHighlight;
+    background: darken($yellowHighlight, 2%);
   }
 }
 
@@ -53,7 +64,7 @@
   }
 
   &:hover {
-    background: $yellowHighlight;
+    background: darken($yellowHighlight, 2%);
 
     .notes-item__actions {
       opacity: 0;
@@ -170,11 +181,21 @@
   width: 100%;
 
   &::before {
-    content: '-1';
+    content: '-';
     position: absolute;
     top: 6px;
     left: 75px;
+    color: gray;
+  }
+
+  &::after {
+    content: '1';
+    position: absolute;
+    top: 3px;
+    left: 82px;
     color: #aaa;
+    font-size: 10px;
+    font-weight: bold;
   }
 }
 
@@ -184,11 +205,21 @@
   width: 100%;
 
   &::before {
-    content: '-2';
+    content: '-';
     position: absolute;
     top: 6px;
     left: 115px;
+    color: gray;
+  }
+
+  &::after {
+    content: '2';
+    position: absolute;
+    top: 3px;
+    left: 122px;
     color: #aaa;
+    font-size: 10px;
+    font-weight: bold;
   }
 }
 
@@ -198,11 +229,21 @@
   width: 100%;
 
   &::before {
-    content: '-3';
+    content: '-';
     position: absolute;
     top: 6px;
     left: 155px;
+    color: gray;
+  }
+
+  &::after {
+    content: '3';
+    position: absolute;
+    top: 3px;
+    left: 162px;
     color: #aaa;
+    font-size: 10px;
+    font-weight: bold;
   }
 }
 

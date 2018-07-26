@@ -283,13 +283,19 @@ export default class NoteDocument extends Component {
   renderNewNotesItem() {
     // - this method shows the placeholder notes current being typed
     //   before they're added
-    if (this.props.notesItemBeingEdited) return;
-
     const { newNotesItemType, notesText } = this.state;
-    return getTransientNotesTypeComponent({
+
+    const textAndType = {
+      text: notesText || <NewNoteLinePlaceholder />,
       type: newNotesItemType,
-      text: notesText || <NewNoteLinePlaceholder />
-    });
+    }
+
+    if (this.props.notesItemBeingEdited) {
+      textAndType.text = this.notesTextBeforeEditStart || <NewNoteLinePlaceholder />;
+      textAndType.type = this.notesTypeBeforeEditStart;
+    }
+
+    return getTransientNotesTypeComponent(textAndType);
   }
 
   render() {

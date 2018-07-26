@@ -6,6 +6,7 @@ export function mapStateToProps({ notes }) {
   return {
     notesItemBeingEdited: notes.notesItemBeingEdited,
     notesItemBeingEditedId: notes.notesItemBeingEditedId,
+    selectedNotesItemsExist: notes.selectedNotesItems.length > 0,
   };
 }
 
