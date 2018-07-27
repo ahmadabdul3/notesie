@@ -44,6 +44,18 @@ actions.toggleNotesItem = function(data) {
   };
 };
 
+actions.setShiftKeyUp = function() {
+  return {
+    type: 'SET_SHIFT_KEY_UP',
+  };
+};
+
+actions.setShiftKeyDown = function() {
+  return {
+    type: 'SET_SHIFT_KEY_DOWN',
+  };
+};
+
 export { actions };
 
 const initialState = {
@@ -56,6 +68,8 @@ const initialState = {
   notesItemBeingEditedDocumentId: null,
   selectedNotesItems: [],
   notesItemInitialSelection: false,
+  shiftKeyPressed: false,
+  lastClickedNotesItem: null,
 };
 
 export default function notes(state = initialState, action) {
@@ -63,16 +77,36 @@ export default function notes(state = initialState, action) {
   let notesItemIndex;
   let newNotes;
   let newNotesItem;
+  let currentNotes;
+  let nowClickedNotesItem;
 
   switch (action.type) {
+    case 'SET_SHIFT_KEY_UP':
+      return {
+        ...state,
+        shiftKeyPressed: false,
+      };
+
+    case 'SET_SHIFT_KEY_DOWN':
+      return {
+        ...state,
+        shiftKeyPressed: true,
+      };
+
     case 'ADD_NOTES_ITEM':
       const documents = { ...state.documents };
       documentId = action.data.documentId;
-      if (documents[documentId]) {
-        documents[documentId] = [...documents[documentId], action.data];
+      currentNotes = documents[documentId];
+      newNotes = { ...action.data };
+
+      if (currentNotes) {
+        newNotes.index = currentNotes.length;
+        documents[documentId] = [...currentNotes, newNotes];
       } else {
-        documents[documentId] = [action.data];
+        newNotes.index = 0;
+        documents[documentId] = [newNotes];
       }
+
       return {
         ...state,
         documents,
@@ -81,8 +115,12 @@ export default function notes(state = initialState, action) {
     case 'DELETE_NOTES_ITEM':
       documentId = action.data.documentId;
       notesItemIndex = action.data.index;
-      newNotes = state.documents[documentId].filter((item, index) => {
+
+      // newNotes = [];
+      // let newIndex = -1;
+      newNotes = state.documents[documentId].map((item, index) => {
         if (notesItemIndex !== index) return item;
+        return { ...item, deleted: true };
       });
 
       let editState = {};
@@ -146,47 +184,107 @@ export default function notes(state = initialState, action) {
 
     case 'TOGGLE_NOTES_ITEM':
       documentId = action.data.documentId;
+      const actionNotesItem = action.data.notesItem;
+      // - dont need this anymore since each notes item has it's index
+      //   as part of its attributes
       notesItemIndex = action.data.index;
-      const notesItemSelected = action.data.selected;
-      newNotesItem = {
-        ...state.documents[documentId][notesItemIndex],
-        selected: !notesItemSelected,
-      };
+      nowClickedNotesItem = state.documents[documentId][actionNotesItem.index];
+      let multSelHighEnd = null;
+      let multSelLowEnd = null;
 
-      newNotes = state.documents[documentId].map((item, index) => {
-        if (notesItemIndex === index) return newNotesItem;
-        return item;
+      if (state.shiftKeyPressed) {
+        const highLowEnds = getHighLowEnds(
+          state.lastClickedNotesItem.index, nowClickedNotesItem.index
+        );
+        multSelHighEnd = highLowEnds.high;
+        multSelLowEnd = highLowEnds.low;
+      }
+
+      currentNotes = state.documents[documentId];
+      newNotes = getToggledNewNotes(
+        nowClickedNotesItem, state.lastClickedNotesItem, currentNotes, multSelHighEnd, multSelLowEnd
+      );
+
+      // - this logic has to change too, do we use it for anything?
+      // - might be useful for doing an 'unselect all' button or doing bulk updates
+      //   so we have a list of all the indexes so we don't loop through every
+      //   notes item - just the ones in this list
+      // - basically - the logic has to change to something that will add
+      //   all the indexes of a multi-select selection. Right now it assumes
+      //   only 1 selection is happening at a time
+      const newSelectedNotesItems = state.selectedNotesItems.filter((item) => {
+        return item !== notesItemIndex;
       });
 
-      const newState = {
+      if (!actionNotesItem.selected) newSelectedNotesItems.push(notesItemIndex);
+
+      return {
         ...state,
         documents: {
           ...state.documents,
           [documentId]: newNotes,
         },
-      };
-
-      if (state.selectedNotesItems.length === 0) {
-        return {
-          ...newState,
-          selectedNotesItems: [notesItemIndex]
-        };
-      }
-
-      const newSelectedNotesItems = state.selectedNotesItems.filter((item) => {
-        return item !== notesItemIndex;
-      });
-
-      if (!notesItemSelected) newSelectedNotesItems.push(notesItemIndex);
-
-      return {
-        ...newState,
         selectedNotesItems: newSelectedNotesItems,
+        lastClickedNotesItem: { ...nowClickedNotesItem },
       };
 
 
     default: return state;
   }
+}
+
+// - this just returns an object with keys for each index in the range of
+//   the multiselect boundaries
+// - so if a user clicks item 1 then shift clicks item 4, we get the following:
+//   { '1': 1, '2': 2, '3': 3, '4': 4 }
+// *** MAY NOT NEED THIS *** COULD JUST CHECK IF INDEX IS > OR < HIGH/LOW ENDS
+// function createMultiSelectIndexes(lastClickedNotesItem, nowClickedNotesItem) {
+//   const { highEnd, lowEnd } = getHighLowEnds(lastClickedNotesItem, nowClickedNotesItem);
+//   const multiSelectIndexes = {};
+//
+//   for (let i = lowEnd; i <= highEnd; i++) {
+//     multiSelectIndexes[i] = i;
+//   }
+//
+//   return multiSelectIndexes;
+// }
+
+function getHighLowEnds(number1, number2) {
+  let ends = { high: number1, low: number2 };
+  if (number1 < number2) ends = { high: number2, low: number1 };
+  return ends;
+}
+
+function getToggledNewNotes(
+  notesItem, lastClickedNotesItem, notes, multSelHighEnd, multSelLowEnd
+) {
+  if (!multSelHighEnd) return singleItemToggle(notesItem, notes);
+  // - we check if the currently clicked notes item and the last clicked
+  //   notes item had different selected state - if so, we can't multi-select
+  // - shift + click has to happen on the same selected state
+  if (notesItem.selected !== lastClickedNotesItem.selected) return singleItemToggle(notesItem, notes);
+
+  // - finally - this is where the multiselect happens
+  // - the notes item in the param here is the original without toggling yet,
+  //   so we still want to update it's selected state, but we also want to
+  //   update the selected state of everything else between the high/low index
+  //   notes items to the same selected state that we're changing the clicked
+  //   one to, so they all match
+  const desiredSelectedState = !notesItem.selected;
+  return notes.map((note, index) => {
+    if (index >= multSelLowEnd && index <= multSelHighEnd && !note.deleted) {
+      return { ...note, selected: desiredSelectedState};
+    }
+
+    return note;
+  });
+}
+
+function singleItemToggle(notesItem, notes) {
+  return notes.map((note, index) => {
+    if (index === notesItem.index) return { ...notesItem, selected: !notesItem.selected};
+    return note;
+  });
 }
 
 function getCancelEditNotesItemState() {

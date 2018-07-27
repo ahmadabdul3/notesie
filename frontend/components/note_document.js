@@ -43,10 +43,12 @@ export default class NoteDocument extends Component {
 
   componentDidMount() {
     document.addEventListener('keydown', this.handleKeyDown);
+    document.addEventListener('keyup', this.handleKeyUp);
   }
 
   componentWillUnmount() {
     document.removeEventListener('keydown', this.handleKeyDown);
+    document.removeEventListener('keyup', this.handleKeyUp);
   }
 
   componentDidUpdate(prevProps) {
@@ -159,6 +161,11 @@ export default class NoteDocument extends Component {
     }, 50);
   }
 
+  handleKeyUp = (e) => {
+    const { key } = e;
+    if (key === 'Shift') this.props.setShiftKeyUp();
+  }
+
   handleKeyDown = (e) => {
     const { key } = e;
     const { commandListVisible, noteInputTypingStarted } = this.state;
@@ -198,8 +205,16 @@ export default class NoteDocument extends Component {
           // - need to user test it
           // if (!noteInputTypingStarted) this.handleEnterKey(e);
           return;
+        case 'Shift':
+          this.handleShiftKey(e);
+
+        default: return;
       }
     }
+  }
+
+  handleShiftKey = (e) => {
+    this.props.setShiftKeyDown();
   }
 
   handleDashKey = (e) => {
@@ -261,6 +276,7 @@ export default class NoteDocument extends Component {
       notesText: this.state.notesText,
       documentId: this.documentId,
       selected: false,
+      deleted: false,
     };
 
     setTimeout(() => {
@@ -329,6 +345,7 @@ export default class NoteDocument extends Component {
                   type: notesTypeToUse,
                   text: notesTextToUse,
                   selected: notesItem.selected,
+                  deleted: notesItem.deleted,
                   key: key,
                   documentId: this.documentId,
                   saveEdits: this.updateEditingNotesItem,

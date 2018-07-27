@@ -6,7 +6,8 @@
   background: transparent;
   transition: background 0.15s ease;
   min-height: 36px;
-  border-top: 1px solid transparent;
+  border-top: 1px solid white;
+  user-select: none;
 }
 
 %notes-item-hovered {
@@ -21,7 +22,7 @@
   }
 
   .notes-item__left-indicator {
-    width: 3px;
+    width: 2px;
     transition: width 0.15s ease;
   }
 }
@@ -58,10 +59,6 @@
   @extend %notes-item-hovered;
   background: $yellowHighlight;
 
-  +.notes-item__selected {
-    border-top: 1px solid white;
-  }
-
   &:hover {
     background: darken($yellowHighlight, 2%);
 
@@ -75,13 +72,34 @@
   }
 }
 
+.notes-item__deleted {
+  background: lighten($red, 35%);
+  color: $red;
+  text-decoration: line-through;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background: lighten($red, 34%);
+  }
+
+  .notes-item__actions {
+    display: none;
+  }
+
+  .notes-item__left-indicator {
+    width: 2px;
+    background: $red;
+    transition: width 0.15s ease;
+  }
+}
+
 .notes-item__left-indicator {
   position: absolute;
   top: 0;
   left: 0;
   width: 0;
   height: 100%;
-  background: $red;
+  background: $green;
   transition: width 0.15s ease;
 }
 

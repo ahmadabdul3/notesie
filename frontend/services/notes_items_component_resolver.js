@@ -3,10 +3,10 @@ import NotesItemContainer from 'src/frontend/containers/notes_item_container';
 import { TransientNotesItem } from 'src/frontend/components/notes_item';
 
 export function getPermanentNotesTypeComponent({
-  type, text, key, documentId, saveEdits, selected
+  type, text, key, documentId, saveEdits, selected, deleted,
 }) {
   return getNotesTypeComponent({
-    type, text, key, documentId, saveEdits, selected,
+    type, text, key, documentId, saveEdits, selected, deleted,
     NotesItemWrapper: NotesItemContainer
   });
 }
@@ -23,88 +23,49 @@ export function getTransientNotesTypeComponent({
 }
 
 function getNotesTypeComponent({
-  type, text, key, documentId, saveEdits, NotesItemWrapper, selected
+  type, text, key, documentId, saveEdits, NotesItemWrapper, selected, deleted,
 }) {
+  const allProps = {
+    type, text, key, documentId, saveEdits, selected, deleted, index: key,
+  };
+
   switch (type) {
     case 'regular':
-      return (
-        <NotesItemWrapper
-          key={key}
-          selected={selected}
-          index={key}
-          documentId={documentId}
-          saveEdits={saveEdits}
-          text={text}
-          type={type}
-          notesItem={(
-            <div className='notes-item__regular'>
-              { text }
-            </div>
-          )} />
+      allProps.notesItem = (
+        <div className='notes-item__regular'>
+          { text }
+        </div>
       );
+      break;
     case '-':
-      return (
-        <NotesItemWrapper
-          key={key}
-          selected={selected}
-          index={key}
-          documentId={documentId}
-          saveEdits={saveEdits}
-          text={text}
-          type={type}
-          notesItem={(
-            <div className='notes-item__bullet-1'>
-              { text }
-            </div>
-          )} />
+      allProps.notesItem = (
+        <div className='notes-item__bullet-1'>
+          { text }
+        </div>
       );
+      break;
     case '-2':
-      return (
-        <NotesItemWrapper
-          key={key}
-          selected={selected}
-          index={key}
-          documentId={documentId}
-          saveEdits={saveEdits}
-          text={text}
-          type={type}
-          notesItem={(
-            <div className='notes-item__bullet-2'>
-              { text }
-            </div>
-          )} />
+      allProps.notesItem = (
+        <div className='notes-item__bullet-2'>
+          { text }
+        </div>
       );
+      break;
     case '-3':
-      return (
-        <NotesItemWrapper
-          key={key}
-          selected={selected}
-          index={key}
-          documentId={documentId}
-          saveEdits={saveEdits}
-          text={text}
-          type={type}
-          notesItem={(
-            <div className='notes-item__bullet-3'>
-              { text }
-            </div>
-          )} />
+      allProps.notesItem = (
+        <div className='notes-item__bullet-3'>
+          { text }
+        </div>
       );
+      break;
     case '"':
-      return (
-        <NotesItemWrapper
-          key={key}
-          selected={selected}
-          index={key}
-          documentId={documentId}
-          saveEdits={saveEdits}
-          text={text}
-          type={type}
-          notesItem={(
-            <div className='notes-item__quote'>
-              { text }
-            </div>
-          )} />
+      allProps.notesItem = (
+        <div className='notes-item__quote'>
+          { text }
+        </div>
       );
+      break;
   }
+
+  return <NotesItemWrapper { ...allProps } />;
 }
