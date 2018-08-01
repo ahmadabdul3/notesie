@@ -56,6 +56,18 @@ actions.setShiftKeyDown = function() {
   };
 };
 
+actions.setControlKeyUp = function() {
+  return {
+    type: 'SET_CTRL_KEY_UP',
+  };
+};
+
+actions.setControlKeyDown = function() {
+  return {
+    type: 'SET_CTRL_KEY_DOWN',
+  };
+};
+
 export { actions };
 
 const initialState = {
@@ -69,6 +81,7 @@ const initialState = {
   selectedNotesItems: [],
   notesItemInitialSelection: false,
   shiftKeyPressed: false,
+  ctrlKeyPressed: false,
   lastClickedNotesItem: null,
 };
 
@@ -81,6 +94,18 @@ export default function notes(state = initialState, action) {
   let nowClickedNotesItem;
 
   switch (action.type) {
+    case 'SET_CTRL_KEY_UP':
+      return {
+        ...state,
+        controlKeyPressed: false,
+      };
+
+    case 'SET_CTRL_KEY_DOWN':
+      return {
+        ...state,
+        controlKeyPressed: true,
+      };
+
     case 'SET_SHIFT_KEY_UP':
       return {
         ...state,
@@ -202,7 +227,7 @@ export default function notes(state = initialState, action) {
 
       currentNotes = state.documents[documentId];
       newNotes = getToggledNewNotes(
-        nowClickedNotesItem, state.lastClickedNotesItem, currentNotes, multSelHighEnd, multSelLowEnd
+        nowClickedNotesItem, state.lastClickedNotesItem, currentNotes, multSelHighEnd, multSelLowEnd, state.controlKeyPressed
       );
 
       // - this logic has to change too, do we use it for anything?
@@ -256,14 +281,16 @@ function getHighLowEnds(number1, number2) {
 }
 
 function getToggledNewNotes(
-  notesItem, lastClickedNotesItem, notes, multSelHighEnd, multSelLowEnd
+  notesItem, lastClickedNotesItem, notes, multSelHighEnd, multSelLowEnd, controlKeyPressed,
 ) {
-  if (!multSelHighEnd) return singleItemToggle(notesItem, notes);
+  if (!multSelHighEnd && !controlKeyPressed) return singleItemToggle(notesItem, notes);
   // - we check if the currently clicked notes item and the last clicked
   //   notes item had different selected state - if so, we can't multi-select
   // - shift + click has to happen on the same selected state
-  if (notesItem.selected !== lastClickedNotesItem.selected) return singleItemToggle(notesItem, notes);
 
+  if (!multSelHighEnd && controlKeyPressed) return controlKeySelection(notesItem, notes);
+
+  if (notesItem.selected !== lastClickedNotesItem.selected) return singleItemToggle(notesItem, notes);
   // - finally - this is where the multiselect happens
   // - the notes item in the param here is the original without toggling yet,
   //   so we still want to update it's selected state, but we also want to
@@ -282,7 +309,14 @@ function getToggledNewNotes(
 
 function singleItemToggle(notesItem, notes) {
   return notes.map((note, index) => {
-    if (index === notesItem.index) return { ...notesItem, selected: !notesItem.selected};
+    if (index === notesItem.index) return { ...notesItem, selected: true };
+    return { ...note, selected: false};
+  });
+}
+
+function controlKeySelection(notesItem, notes) {
+  return notes.map((note, index) => {
+    if (index === notesItem.index) return { ...notesItem, selected: true };
     return note;
   });
 }

@@ -164,13 +164,14 @@ export default class NoteDocument extends Component {
   handleKeyUp = (e) => {
     const { key } = e;
     if (key === 'Shift') this.props.setShiftKeyUp();
+    else if (key === 'Alt') this.props.setControlKeyUp();
   }
 
   handleKeyDown = (e) => {
     const { key } = e;
     const { commandListVisible, noteInputTypingStarted } = this.state;
     const { notesItemBeingEdited } = this.props;
-    // console.log('key ', key);
+     console.log('key ', key);
 
     if (commandListVisible) {
       if (key === 'Escape') {
@@ -208,12 +209,21 @@ export default class NoteDocument extends Component {
         case 'Shift':
           this.handleShiftKey(e);
 
+        case 'Alt':
+          this.handleControlKey(e);
+
         default: return;
       }
     }
   }
 
+  handleControlKey = (e) => {
+    e.preventDefault();
+    this.props.setControlKeyDown();
+  }
+
   handleShiftKey = (e) => {
+    e.preventDefault();
     this.props.setShiftKeyDown();
   }
 
