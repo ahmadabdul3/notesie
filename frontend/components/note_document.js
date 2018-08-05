@@ -164,7 +164,7 @@ export default class NoteDocument extends Component {
   handleKeyUp = (e) => {
     const { key } = e;
     if (key === 'Shift') this.props.setShiftKeyUp();
-    else if (key === 'Alt') this.props.setControlKeyUp();
+    else if (key === 'Meta') this.props.setMetaKeyUp();
   }
 
   handleKeyDown = (e) => {
@@ -208,18 +208,18 @@ export default class NoteDocument extends Component {
           return;
         case 'Shift':
           this.handleShiftKey(e);
-
-        case 'Alt':
-          this.handleControlKey(e);
+          return;
+        case 'Meta':
+          this.handleMetaKey(e);
+          return;
 
         default: return;
       }
     }
   }
 
-  handleControlKey = (e) => {
-    e.preventDefault();
-    this.props.setControlKeyDown();
+  handleMetaKey = (e) => {
+    this.props.setMetaKeyDown();
   }
 
   handleShiftKey = (e) => {
