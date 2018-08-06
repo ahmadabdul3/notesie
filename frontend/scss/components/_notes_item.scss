@@ -22,8 +22,8 @@
   }
 
   .notes-item__left-indicator {
-    width: 2px;
-    transition: width 0.15s ease;
+    background: $green;
+    transition: background 0.15s ease;
   }
 }
 
@@ -52,6 +52,14 @@
 
   &:hover {
     background: darken($yellowHighlight, 2%);
+
+    .notes-item__left-indicator {
+      background: darken($yellowHighlight, 30%);
+    }
+  }
+
+  .notes-item__left-indicator {
+    background: darken($yellowHighlight, 30%);
   }
 }
 
@@ -60,15 +68,23 @@
   background: $yellowHighlight;
 
   &:hover {
-    background: darken($yellowHighlight, 2%);
+    background: darken($yellowHighlight, 3%);
 
     .notes-item__actions {
       opacity: 0;
+    }
+
+    .notes-item__left-indicator {
+      background: darken($yellowHighlight, 30%);
     }
   }
 
   .notes-item__actions {
     opacity: 0;
+  }
+
+  .notes-item__left-indicator {
+    background: darken($yellowHighlight, 30%);
   }
 }
 
@@ -97,9 +113,9 @@
   position: absolute;
   top: 0;
   left: 0;
-  width: 0;
+  width: 2px;
   height: 100%;
-  background: $green;
+  background: transparent;
   transition: width 0.15s ease;
 }
 

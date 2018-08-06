@@ -25,6 +25,8 @@ export function mapDispatchToProps(dispatch) {
     updateEditingNotesItem: (item) => dispatch(notesActions.finishEditNotesItem(item)),
     setShiftKeyUp: () => dispatch(notesActions.setShiftKeyUp()),
     setShiftKeyDown: () => dispatch(notesActions.setShiftKeyDown()),
+    setMetaKeyUp: () => dispatch(notesActions.setMetaKeyUp()),
+    setMetaKeyDown: () => dispatch(notesActions.setMetaKeyDown()),
   };
 }
 
