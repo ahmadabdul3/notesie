@@ -79,6 +79,7 @@ const initialState = {
   notesItemBeingEditedId: null,
   notesItemBeingEditedDocumentId: null,
   selectedNotesItems: [],
+  beforeEditSelectedNotesItems: [],
   notesItemInitialSelection: false,
   shiftKeyPressed: false,
   metaKeyPressed: false,
@@ -138,80 +139,138 @@ export default function notes(state = initialState, action) {
       };
 
     case 'DELETE_NOTES_ITEM':
-      documentId = action.data.documentId;
-      notesItemIndex = action.data.index;
-
-      // newNotes = [];
-      // let newIndex = -1;
-      newNotes = state.documents[documentId].map((item, index) => {
-        if (notesItemIndex !== index) return item;
-        return { ...item, deleted: true };
-      });
-
-      let editState = {};
-      // - currently, we don't allow deletion of notes items during edit mode
-      //   except if it's the editing notes item - so we can assume this case
-      //   will only run for the notes being edited, so we don't need to
-      //   check for matching index/id - just check if we're in edit mode
-      if (state.notesItemBeingEdited) {
-        editState = getCancelEditNotesItemState();
-      }
-
-      return {
-        ...state,
-        documents: {
-          ...state.documents,
-          [documentId]: newNotes,
-        },
-        ...editState,
-      };
+      return handleDeleteNotesItem({ state, action });
 
     case 'START_EDIT_NOTES_ITEM':
-      documentId = action.data.documentId;
-      notesItemIndex = action.data.index;
-
-      return {
-        ...state,
-        notesItemBeingEdited: true,
-        notesItemBeingEditedId: notesItemIndex,
-        notesItemBeingEditedDocumentId: documentId,
-      };
+      return handleStartEditNotesItem({ state, action });
 
     case 'CANCEL_EDIT_NOTES_ITEM':
-      return {
-        ...state,
-        ...getCancelEditNotesItemState(),
-      };
+      return handleCancelEditNotesItem({ state, action });
 
     case 'FINISH_EDIT_NOTES_ITEM':
-      documentId = action.data.documentId;
-      notesItemIndex = action.data.index;
-
-      newNotesItem = {
-        ...state.documents[documentId][notesItemIndex],
-        notesText: action.data.notesText,
-        notesType: action.data.notesType,
-      };
-
-      newNotes = state.documents[documentId].map((item, index) => {
-        if (notesItemIndex === index) return newNotesItem;
-        return item;
-      });
-
-      return {
-        ...state,
-        documents: {
-          ...state.documents,
-          [documentId]: newNotes,
-        },
-        ...getCancelEditNotesItemState(),
-      };
+      return handleFinishEditNotesItem({ state, action });
 
     case 'TOGGLE_NOTES_ITEM':
       return handleToggleNotesItem({ action, state });
 
     default: return state;
   }
+}
+
+function handleDeleteNotesItem({ state, action }) {
+  const documentId = action.data.documentId;
+  const notesItemIndex = action.data.index;
+  let noteBlockWasSelected = false;
+  const newNotes = state.documents[documentId].map((item, index) => {
+    if (notesItemIndex !== index) return item;
+    if (item.selected) noteBlockWasSelected = true;
+    return { ...item, deleted: true, selected: false };
+  });
+
+  let editState = {};
+  // - currently, we don't allow deletion of notes items during edit mode
+  //   except if it's the editing notes item - so we can assume this case
+  //   will only run for the notes being edited, so we don't need to
+  //   check for matching index/id - just check if we're in edit mode
+  if (state.notesItemBeingEdited) {
+    editState = getCancelEditNotesItemState();
+  }
+
+  const newState = {
+    ...state,
+    documents: {
+      ...state.documents,
+      [documentId]: newNotes,
+    },
+    ...editState,
+  };
+
+  // - it might be worth making selectedNotesItems an object, this way
+  //   we don't have to filter here, just make a new object without that
+  //   key... or maybe that doesn't make sense because other places
+  //   will be more complex - will have to think about it
+  if (noteBlockWasSelected) {
+    // - if the deleted note item was selected, we need to update the
+    //   selected notes items list, otherwise, we're good
+    const newSelectedNotesItems = state.selectedNotesItems.filter((noteIndex) => {
+      return noteIndex !== notesItemIndex;
+    });
+    newState.selectedNotesItems = newSelectedNotesItems;
+  }
+
+  return newState;
+}
+
+function handleStartEditNotesItem({ state, action }) {
+  const documentId = action.data.documentId;
+  const notesItemIndex = action.data.index;
+  const newNotes = [...state.documents[documentId]];
+  state.selectedNotesItems.forEach((noteIndex) => {
+    newNotes[noteIndex].selected = false;
+  });
+
+  return {
+    ...state,
+    notesItemBeingEdited: true,
+    notesItemBeingEditedId: notesItemIndex,
+    notesItemBeingEditedDocumentId: documentId,
+    // - temporarily save selected notes items so we can restore
+    //   the selected notes after edits are done
+    beforeEditSelectedNotesItems: [...state.selectedNotesItems],
+    selectedNotesItems: [],
+    documents: {
+      ...state.documents,
+      [documentId]: newNotes,
+    },
+  };
+}
+
+function handleFinishEditNotesItem({ state, action }) {
+  const documentId = action.data.documentId;
+  const notesItemIndex = action.data.index;
+
+  const newNotesItem = {
+    ...state.documents[documentId][notesItemIndex],
+    notesText: action.data.notesText,
+    notesType: action.data.notesType,
+  };
+
+  const newNotes = [...state.documents[documentId]];
+  newNotes[notesItemIndex] = newNotesItem;
+  state.beforeEditSelectedNotesItems.forEach((noteIndex) => {
+    newNotes[noteIndex].selected = true;
+  });
+
+  return {
+    ...state,
+    documents: {
+      ...state.documents,
+      [documentId]: newNotes,
+    },
+    ...getCancelEditNotesItemState(),
+    selectedNotesItems: [...state.beforeEditSelectedNotesItems],
+    beforeEditSelectedNotesItems: [],
+  };
+}
+
+function handleCancelEditNotesItem({ state, action }) {
+  const documentId = state.notesItemBeingEditedDocumentId;
+  const notesItemIndex = state.notesItemBeingEditedId;
+  const newNotes = [...state.documents[documentId]];
+  state.beforeEditSelectedNotesItems.forEach((noteIndex) => {
+    newNotes[noteIndex].selected = true;
+  });
+
+  return {
+    ...state,
+    ...getCancelEditNotesItemState(),
+    selectedNotesItems: [...state.beforeEditSelectedNotesItems],
+    beforeEditSelectedNotesItems: [],
+    documents: {
+      ...state.documents,
+      [documentId]: newNotes,
+    },
+  };
 }
 
 function handleToggleNotesItem({ action, state }) {
@@ -241,6 +300,7 @@ function handleToggleNotesItem({ action, state }) {
     metaKeyPressed: state.metaKeyPressed,
     multSelHighEnd,
     multSelLowEnd,
+    selectedNotesItems: state.selectedNotesItems,
   });
 
   return {
@@ -261,7 +321,7 @@ function getHighLowEnds(number1, number2) {
 }
 
 // - the reason we're saving the 'lastClickedNotesItem' in the updated state is
-//   because we're not doing an 'unselect' anymore, consider the following:
+//   because of the following scenario:
 // - I previously did a multiselect and have 10 notes selected
 // - I click on one of the selected notes items, which unselects everything -
 //   except the item i just clicked on
@@ -279,9 +339,12 @@ function getToggledNewNotes({
   notes,
   multSelHighEnd,
   multSelLowEnd,
-  metaKeyPressed
+  metaKeyPressed,
+  selectedNotesItems,
 }) {
-  if (!multSelHighEnd && !metaKeyPressed) return singleItemToggle(notesItem, notes);
+  if (!multSelHighEnd && !metaKeyPressed) {
+    return singleItemToggle(notesItem, notes, selectedNotesItems);
+  }
   if (!multSelHighEnd) return metaKeySelection(notesItem, notes);
 
   // - We're saving the last clicked notes item's UPDATED state (it means
@@ -292,7 +355,9 @@ function getToggledNewNotes({
   //   in the same selection state - so we can't multi select - it doesnt make sense
   // - shift + click has to happen on the same selected state, meaning they
   //   both should have been in the unselected state before they got clicked on
-  if (notesItem.selected === lastClickedNotesItem.selected) return singleItemToggle(notesItem, notes);
+  if (notesItem.selected === lastClickedNotesItem.selected) {
+    return singleItemToggle(notesItem, notes, selectedNotesItems);
+  }
 
   // - finally - this is where the multiselect happens
   // - the notes item in the param here is the original without toggling yet,
@@ -304,14 +369,26 @@ function getToggledNewNotes({
 }
 
 // - these can become services soon
-function singleItemToggle(notesItem, notes) {
+function singleItemToggle(notesItem, notes, currentSelectedNotesItems) {
   let nowClickedNotesItemUpdated = null;
   const selectedNotesItems = [];
 
   const newNotes = notes.map((note, index) => {
     if (index === notesItem.index) {
-      nowClickedNotesItemUpdated = { ...notesItem, selected: true };
-      selectedNotesItems.push(notesItem.index);
+      let newSelectedValue = true;
+      // - when there are multiple selected notes items this function doen't
+      //   actually do a 'toggle', it just unselects everything except the
+      //   notes item we just clicked on, and makes it selected (even if it was
+      //   already selected)
+      // - BUT - if the currently selected note item is the only selected one
+      //   and we click on it,
+      //   it will get toggled off - which is what this is checking for
+      if (
+        currentSelectedNotesItems.length === 1 &&
+        currentSelectedNotesItems[0] === index
+      ) newSelectedValue = !notesItem.selected;
+      nowClickedNotesItemUpdated = { ...notesItem, selected: newSelectedValue };
+      if (nowClickedNotesItemUpdated.selected) selectedNotesItems.push(notesItem.index);
       return nowClickedNotesItemUpdated;
     }
     return { ...note, selected: false};
@@ -320,6 +397,8 @@ function singleItemToggle(notesItem, notes) {
   return { newNotes, nowClickedNotesItemUpdated, selectedNotesItems };
 }
 
+// - this is actually a toggle now, notice how we change the selected state
+//   for the 'nowClickedNotesItem' to a toggle, not hard coded 'true'
 function metaKeySelection(notesItem, notes) {
   let nowClickedNotesItemUpdated = null;
   const selectedNotesItems = [];
@@ -333,8 +412,8 @@ function metaKeySelection(notesItem, notes) {
   // - this way is simpler for now
   const newNotes = notes.map((note, index) => {
     if (index === notesItem.index) {
-      nowClickedNotesItemUpdated = { ...notesItem, selected: true };
-      selectedNotesItems.push[notesItem.index];
+      nowClickedNotesItemUpdated = { ...notesItem, selected: !notesItem.selected };
+      if (nowClickedNotesItemUpdated.selected) selectedNotesItems.push(notesItem.index);
       return nowClickedNotesItemUpdated;
     }
 
@@ -354,10 +433,16 @@ function multiSelect(notesItem, notes, lowEnd, highEnd) {
     if (index >= lowEnd && index <= highEnd && !note.deleted) {
       const updatedNote = { ...note, selected: desiredSelectedState};
       if (index === notesItem.index) nowClickedNotesItemUpdated = updatedNote;
-      selectedNotesItems.push(note.index);
+      if (updatedNote.selected) selectedNotesItems.push(note.index);
       return updatedNote;
     }
 
+    // - we need to add to the selectednotesitems here too, the if
+    //   condition above applies only to new multiselect blocks, but
+    //   we could have a previous multiselect block, and if we're
+    //   building the selectedNotesItems array from scratch here, we need
+    //   to add other, already selected notes here too
+    if (note.selected) selectedNotesItems.push(note.index);
     return note;
   });
 

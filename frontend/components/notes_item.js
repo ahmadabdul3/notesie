@@ -66,7 +66,11 @@ export default class NotesItem extends Component {
     //   to work
     if (this.props.deleted) return;
     if (this.props.notesItemBeingEdited) {
-      alert('Please finish editing the notes block before making selections');
+      alert(`
+        There is a block of notes being edited,
+        please save or cancel that one before making
+        other selections
+      `);
       return;
     }
 
@@ -82,14 +86,17 @@ export default class NotesItem extends Component {
 
   deleteItem = () => {
     if (this.anotherNotesItemBeingEdited) {
-      alert('You can only modify one block of notes at a time');
+      alert(`
+        There is a block of notes being edited,
+        please save or cancel that one before deleting notes
+      `);
       return;
     }
 
-    if (this.props.selectedNotesItemsExist) {
-      alert('Deleting a single note block is not allowed while selections exist');
-      return;
-    }
+    // if (this.props.selectedNotesItemsExist) {
+    //   alert('Unselect all notes before deleting any');
+    //   return;
+    // }
 
     const { index, deleteNotesItem, documentId } = this.props;
     deleteNotesItem({ index, documentId });
@@ -99,13 +106,12 @@ export default class NotesItem extends Component {
     // - if we're already editing this notes item, no need to fire
     //   another redux action
     if (this.notesItemBeingEdited) return;
-    if (this.props.selectedNotesItemsExist) {
-      alert('Editing a single note block is not allowed while selections exist');
-      return;
-    }
-
     if (this.anotherNotesItemBeingEdited) {
-      alert('You can only modify one block of notes at a time');
+      alert(`
+        There is already a block of notes being edited,
+        please save or cancel that one before editing
+        other notes
+      `);
       return;
     }
 

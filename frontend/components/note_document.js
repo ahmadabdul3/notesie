@@ -23,6 +23,7 @@ import {
 // *
 export default class NoteDocument extends Component {
   noteInputRef = null;
+  noteInputFocused = false;
   endOfDocument = null;
   notesTypeBeforeEditStart = '';
   notesTextBeforeEditStart = '';
@@ -100,6 +101,14 @@ export default class NoteDocument extends Component {
     this.noteInputRef = ref;
   }
 
+  onNotesInputFocus = () => {
+    this.noteInputFocused = true;
+  }
+
+  onNotesInputBlur = () => {
+    this.noteInputFocused = false;
+  }
+
   showCommandList = () => {
     this.setState({ commandListVisible: true });
   }
@@ -171,7 +180,7 @@ export default class NoteDocument extends Component {
     const { key } = e;
     const { commandListVisible, noteInputTypingStarted } = this.state;
     const { notesItemBeingEdited } = this.props;
-     console.log('key ', key);
+    // console.log('key ', key);
 
     if (commandListVisible) {
       if (key === 'Escape') {
@@ -247,6 +256,10 @@ export default class NoteDocument extends Component {
 
   handleEnterKey = (e) => {
     e.preventDefault();
+    if (!this.noteInputFocused) {
+      this.noteInputRef.focus();
+      return;
+    }
     const { newNotesItemType } = this.state;
     let itemType = newNotesItemType;
 
@@ -383,7 +396,9 @@ export default class NoteDocument extends Component {
             <NoteInput
               value={notesText}
               registerNoteInputRef={this.registerNoteInputRef}
-              onChange={this.onChangeNotesInput} />
+              onChange={this.onChangeNotesInput}
+              onFocus={this.onNotesInputFocus}
+              onBlur={this.onNotesInputBlur} />
           </div>
         </div>
       </div>
@@ -413,13 +428,15 @@ class NoteInput extends Component {
   }
 
   render() {
-    const { value } = this.props;
+    const { value, onFocus, onBlur } = this.props;
 
     return (
       <textarea
         className='notes-input'
         placeholder='Type your notes here'
         onChange={this.onChange}
+        onFocus={onFocus}
+        onBlur={onBlur}
         value={value}
         ref={(textarea) => { this.textarea = textarea; } } />
     );
