@@ -10,10 +10,12 @@
   user-select: none;
 }
 
+$hoveredBackgroundColor: lighten(#eee, 3%);
+
 %notes-item-hovered {
   @extend %notes-item;
   cursor: pointer;
-  background: lighten(#eee, 3%);
+  background: $hoveredBackgroundColor;
   transition: background 0.15s ease;
 
   .notes-item__actions {
@@ -48,17 +50,13 @@
 
 .notes-item__selected {
   @extend %notes-item-hovered;
-  background: $yellowHighlight;
+  background: $hoveredBackgroundColor;
 
   &:hover {
-    background: darken($yellowHighlight, 3%);
-
-    // .notes-item__actions {
-    //   opacity: 0;
-    // }
+    background: darken($hoveredBackgroundColor, 3%);
 
     .notes-item__left-indicator {
-      background: darken($yellowHighlight, 30%);
+      background: $green;
     }
   }
 
@@ -67,7 +65,7 @@
   }
 
   .notes-item__left-indicator {
-    background: darken($yellowHighlight, 30%);
+    background: none;
   }
 }
 

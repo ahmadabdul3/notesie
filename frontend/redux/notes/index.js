@@ -176,6 +176,10 @@ function handleDeleteNotesItem({ state, action }) {
     editState = getCancelEditNotesItemState();
   }
 
+  state.beforeEditSelectedNotesItems.forEach((noteIndex) => {
+    newNotes[noteIndex].selected = true;
+  });
+
   const newState = {
     ...state,
     documents: {
