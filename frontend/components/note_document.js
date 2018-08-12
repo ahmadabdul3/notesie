@@ -337,6 +337,10 @@ export default class NoteDocument extends Component {
     return getTransientNotesTypeComponent(textAndType);
   }
 
+  goBack = () => {
+    this.props.routerProps.history.goBack();
+  }
+
   render() {
     const {
       commandListVisible,
@@ -348,40 +352,50 @@ export default class NoteDocument extends Component {
 
     return (
       <div className='note-document'>
-        <div className='note-document__notes'>
-          <div className='document'>
-            <div className='document__name'>
-              Document name: <span className='note-worthy-text'>
-                { noteDocument.name }
-              </span>
+        <div className='note-document__middle'>
+          <nav className='note-document-page__left-action-bar'>
+            <button className='red-button' onClick={this.goBack}>
+              <i className='fas fa-arrow-alt-circle-left' /> back
+            </button>
+          </nav>
+          <div className='note-document__notes'>
+            <div className='document'>
+              <div className='document__name'>
+                Document name: <span className='note-worthy-text'>
+                  { noteDocument.name }
+                </span>
+              </div>
+              {
+                notesList && notesList.map((notesItem, key) => {
+                  const { notesItemBeingEdited, notesItemBeingEditedId } = this.props;
+                  let notesTextToUse = notesItem.notesText;
+                  let notesTypeToUse = notesItem.notesType;
+                  if (notesItemBeingEdited && notesItemBeingEditedId === key) {
+                    notesTextToUse = notesText;
+                    notesTypeToUse = newNotesItemType;
+                  }
+                  return getPermanentNotesTypeComponent({
+                    type: notesTypeToUse,
+                    text: notesTextToUse,
+                    selected: notesItem.selected,
+                    deleted: notesItem.deleted,
+                    key: key,
+                    documentId: this.documentId,
+                    saveEdits: this.updateEditingNotesItem,
+                  });
+                })
+              }
+              {
+                this.renderNewNotesItem()
+              }
+              <div ref={(el) => { this.endOfDocument = el; } } />
             </div>
-            {
-              notesList && notesList.map((notesItem, key) => {
-                const { notesItemBeingEdited, notesItemBeingEditedId } = this.props;
-                let notesTextToUse = notesItem.notesText;
-                let notesTypeToUse = notesItem.notesType;
-                if (notesItemBeingEdited && notesItemBeingEditedId === key) {
-                  notesTextToUse = notesText;
-                  notesTypeToUse = newNotesItemType;
-                }
-                return getPermanentNotesTypeComponent({
-                  type: notesTypeToUse,
-                  text: notesTextToUse,
-                  selected: notesItem.selected,
-                  deleted: notesItem.deleted,
-                  key: key,
-                  documentId: this.documentId,
-                  saveEdits: this.updateEditingNotesItem,
-                });
-              })
-            }
-            {
-              this.renderNewNotesItem()
-            }
-            <div ref={(el) => { this.endOfDocument = el; } } />
           </div>
         </div>
         <div className='note-document__interactions'>
+          <div className='note-document__input-left-actions'>
+          
+          </div>
           <div className='note-document-interactions'>
             {
               commandListVisible ? (

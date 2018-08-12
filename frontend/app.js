@@ -66,5 +66,5 @@ if (typeof window !== 'undefined') {
 // - cloning notes
 // - add before / after
 // - clone notes from 1 doc to another
-// - select note items
-// - multi-select note items by clicking 'shift'
+// - * select note items *** done
+// - * multi-select note items by clicking 'shift' *** done

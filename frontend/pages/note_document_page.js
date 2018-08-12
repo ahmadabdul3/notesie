@@ -12,20 +12,9 @@ export default class NoteDocumentPage extends Component {
     super(props);
   }
 
-  goBack = () => {
-    this.props.history.goBack();
-  }
-
   render() {
     return (
       <div className='note-document-page'>
-        <nav className='note-document-page__nav'>
-          <div className='page-width'>
-            <button className='red-button' onClick={this.goBack}>
-              <i className='fas fa-arrow-alt-circle-left' /> back
-            </button>
-          </div>
-        </nav>
         <NoteDocumentContainer routerProps={this.props} />
       </div>
     );

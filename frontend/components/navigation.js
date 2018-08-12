@@ -17,20 +17,18 @@ export default class Navigation extends Component {
   render() {
     return (
       <nav className='navigation'>
-        <div className='page-width'>
-          <div className='nav-left'>
-            <NavLink to={appRoutes.home} activeClassName='' className='nav-item__logo'>
-              notesie
-            </NavLink>
-          </div>
-          <div className='nav-right'>
-            <NavItem url={appRoutes.home} text='Home' />
-            {
-              // <div className='nav-item' onClick={this.logout}>
-              //   Logout
-              // </div>
-            }
-          </div>
+        <div className='nav-left'>
+          <NavLink to={appRoutes.home} activeClassName='' className='nav-item__logo'>
+            notesie
+          </NavLink>
+        </div>
+        <div className='nav-right'>
+          <NavItem url={appRoutes.home} text='Home' />
+          {
+            // <div className='nav-item' onClick={this.logout}>
+            //   Logout
+            // </div>
+          }
         </div>
       </nav>
     );
