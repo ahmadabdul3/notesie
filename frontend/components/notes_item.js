@@ -93,11 +93,6 @@ export default class NotesItem extends Component {
       return;
     }
 
-    // if (this.props.selectedNotesItemsExist) {
-    //   alert('Unselect all notes before deleting any');
-    //   return;
-    // }
-
     const { index, deleteNotesItem, documentId } = this.props;
     deleteNotesItem({ index, documentId });
   }

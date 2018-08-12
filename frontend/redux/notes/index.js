@@ -370,6 +370,7 @@ function singleItemToggle(notesItem, notes, currentSelectedNotesItems) {
         currentSelectedNotesItems[0] === index
       ) newSelectedValue = !notesItem.selected;
       nowClickedNotesItemUpdated = { ...notesItem, selected: newSelectedValue };
+
       if (nowClickedNotesItemUpdated.selected) selectedNotesItems.push(notesItem.index);
       return nowClickedNotesItemUpdated;
     }
