@@ -48,7 +48,7 @@ $hoveredBackgroundColor: lighten(#eee, 3%);
   }
 }
 
-.notes-item__selected {
+.notes-item.selected {
   @extend %notes-item-hovered;
   background: $hoveredBackgroundColor;
 
@@ -57,6 +57,10 @@ $hoveredBackgroundColor: lighten(#eee, 3%);
 
     .notes-item__left-indicator {
       background: $green;
+    }
+
+    .notes-item__actions {
+      opacity: 1;
     }
   }
 
@@ -87,7 +91,7 @@ $hoveredBackgroundColor: lighten(#eee, 3%);
   }
 }
 
-.notes-item__deleted {
+.notes-item.deleted {
   background: lighten($red, 35%);
   color: $red;
   text-decoration: line-through;

@@ -79,7 +79,6 @@ const initialState = {
   notesItemBeingEditedId: null,
   notesItemBeingEditedDocumentId: null,
   selectedNotesItems: [],
-  beforeEditSelectedNotesItems: [],
   notesItemInitialSelection: false,
   shiftKeyPressed: false,
   metaKeyPressed: false,
@@ -176,10 +175,6 @@ function handleDeleteNotesItem({ state, action }) {
     editState = getCancelEditNotesItemState();
   }
 
-  state.beforeEditSelectedNotesItems.forEach((noteIndex) => {
-    newNotes[noteIndex].selected = true;
-  });
-
   const newState = {
     ...state,
     documents: {
@@ -209,19 +204,12 @@ function handleStartEditNotesItem({ state, action }) {
   const documentId = action.data.documentId;
   const notesItemIndex = action.data.index;
   const newNotes = [...state.documents[documentId]];
-  state.selectedNotesItems.forEach((noteIndex) => {
-    newNotes[noteIndex].selected = false;
-  });
 
   return {
     ...state,
     notesItemBeingEdited: true,
     notesItemBeingEditedId: notesItemIndex,
     notesItemBeingEditedDocumentId: documentId,
-    // - temporarily save selected notes items so we can restore
-    //   the selected notes after edits are done
-    beforeEditSelectedNotesItems: [...state.selectedNotesItems],
-    selectedNotesItems: [],
     documents: {
       ...state.documents,
       [documentId]: newNotes,
@@ -241,9 +229,6 @@ function handleFinishEditNotesItem({ state, action }) {
 
   const newNotes = [...state.documents[documentId]];
   newNotes[notesItemIndex] = newNotesItem;
-  state.beforeEditSelectedNotesItems.forEach((noteIndex) => {
-    newNotes[noteIndex].selected = true;
-  });
 
   return {
     ...state,
@@ -252,8 +237,6 @@ function handleFinishEditNotesItem({ state, action }) {
       [documentId]: newNotes,
     },
     ...getCancelEditNotesItemState(),
-    selectedNotesItems: [...state.beforeEditSelectedNotesItems],
-    beforeEditSelectedNotesItems: [],
   };
 }
 
@@ -261,15 +244,10 @@ function handleCancelEditNotesItem({ state, action }) {
   const documentId = state.notesItemBeingEditedDocumentId;
   const notesItemIndex = state.notesItemBeingEditedId;
   const newNotes = [...state.documents[documentId]];
-  state.beforeEditSelectedNotesItems.forEach((noteIndex) => {
-    newNotes[noteIndex].selected = true;
-  });
 
   return {
     ...state,
     ...getCancelEditNotesItemState(),
-    selectedNotesItems: [...state.beforeEditSelectedNotesItems],
-    beforeEditSelectedNotesItems: [],
     documents: {
       ...state.documents,
       [documentId]: newNotes,

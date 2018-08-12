@@ -169,21 +169,20 @@ export default class NotesItem extends Component {
     );
   }
 
+  get notesItemClass() {
+    const { selected, deleted } = this.props;
+    if (this.notesItemBeingEdited) return 'notes-item notes-item__being-edited';
+    if (selected) return 'notes-item selected';
+    if (deleted) return 'notes-item deleted';
+    return 'notes-item';
+  }
+
   render() {
-    const { notesItem, index, selected, deleted } = this.props;
+    const { notesItem, index } = this.props;
     console.log('notes item: ', index);
 
-
-    let classname = 'notes-item';
-    if (this.notesItemBeingEdited) {
-      classname = 'notes-item notes-item__being-edited';
-    }
-
-    if (selected) classname = 'notes-item notes-item__selected';
-    if (deleted) classname = 'notes-item notes-item__deleted';
-
     return (
-      <div className={classname}>
+      <div className={this.notesItemClass}>
         <div className='notes-item__left-indicator' />
         { this.renderActions() }
         <div className='notes-item-inner-wrapper' onClick={this.markAsSelected}>
