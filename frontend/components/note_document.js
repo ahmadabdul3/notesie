@@ -352,12 +352,12 @@ export default class NoteDocument extends Component {
 
     return (
       <div className='note-document'>
-        <div className='note-document__middle'>
-          <nav className='note-document-page__left-action-bar'>
-            <button className='red-button' onClick={this.goBack}>
-              <i className='fas fa-arrow-alt-circle-left' /> back
-            </button>
-          </nav>
+        <nav className='note-document-page__left-action-bar'>
+          <button className='red-button' onClick={this.goBack}>
+            <i className='fas fa-arrow-alt-circle-left' /> back
+          </button>
+        </nav>
+        <div className='note-document__document-side'>
           <div className='note-document__notes'>
             <div className='document'>
               <div className='document__name'>
@@ -391,12 +391,7 @@ export default class NoteDocument extends Component {
               <div ref={(el) => { this.endOfDocument = el; } } />
             </div>
           </div>
-        </div>
-        <div className='note-document__interactions'>
-          <div className='note-document__input-left-actions'>
-
-          </div>
-          <div className='note-document-interactions'>
+          <div className='note-document__interactions'>
             {
               commandListVisible ? (
                 <CommandList

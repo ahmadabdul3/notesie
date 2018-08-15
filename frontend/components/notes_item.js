@@ -90,6 +90,7 @@ export default class NotesItem extends Component {
   }
 
   deleteItem = () => {
+    console.log('delete item');
     if (this.anotherNotesItemBeingEdited) {
       alert(`
         There is a block of notes being edited,
@@ -103,8 +104,6 @@ export default class NotesItem extends Component {
   }
 
   startEditItem = () => {
-    // - if we're already editing this notes item, no need to fire
-    //   another redux action
     if (this.notesItemBeingEdited) return;
     if (this.anotherNotesItemBeingEdited) {
       alert(`
@@ -125,8 +124,8 @@ export default class NotesItem extends Component {
   }
 
   insertBefore = () => {
-    console.log('props', this.props);
     const { documentId, insertBefore } = this.props;
+
     insertBefore({
       documentId,
       notesItem: this.notesItemData,
@@ -134,51 +133,23 @@ export default class NotesItem extends Component {
     });
   };
 
-  renderCancelEditAction() {
-    if (!this.notesItemBeingEdited) return;
-
-    const { cancelEditNotesItem } = this.props;
-
-    return (
-      <div className='notes-action__cancel-edit' onClick={cancelEditNotesItem}>
-        <i className='fas fa-ban' />
-        <span>
-          Cancel Edits
-        </span>
-      </div>
-    );
-  }
-
-  renderEditAction() {
-    if (this.notesItemBeingEdited) {
-      const editActionProps = {
-        text: 'Save Edits',
-        classname: 'notes-action__edit__highlighted',
-        icon: 'fas fa-save',
-        clickAction: this.props.saveEdits,
-      };
-
-      return <EditAction {...editActionProps} />;
-    }
-
-    return <EditAction clickAction={this.startEditItem} />;
-  }
-
-  renderActions() {
-    const { insertBefore, insertAfter } = this;
+  get Actions() {
+    const { startEditItem, cancelEditNotesItem, saveEdits } = this.props;
 
     return (
       <div className='notes-item__actions'>
-        <InsertBefore clickAction={insertBefore} />
-        <InsertAfter clickAction={insertAfter} />
-        { this.renderCancelEditAction() }
-        { this.renderEditAction() }
-        <div className='notes-action__delete' onClick={this.deleteItem}>
-          <i className='fas fa-times' />
-          <span>
-            Delete
-          </span>
-        </div>
+        <InsertBefore clickAction={this.insertBefore} />
+        <InsertAfter clickAction={this.insertAfter} />
+        {
+          this.notesItemBeingEdited ?
+            <CancelEdit clickAction={cancelEditNotesItem} /> : null
+        }
+        {
+          this.notesItemBeingEdited ?
+            <SaveEdits clickAction={saveEdits} /> :
+            <StartEdit clickAction={this.startEditItem} />
+        }
+        <Delete clickAction={this.deleteItem} />
       </div>
     );
   }
@@ -198,7 +169,7 @@ export default class NotesItem extends Component {
     return (
       <div className={this.notesItemClass}>
         <div className='notes-item__left-indicator' />
-        { this.renderActions() }
+        { this.Actions }
         <div className='notes-item-inner-wrapper' onClick={this.markAsSelected}>
           { notesItem }
         </div>
@@ -216,22 +187,49 @@ export function TransientNotesItem({ notesItem }) {
   );
 }
 
-export class EditAction extends PureComponent {
-  static defaultProps = {
-    text: 'Edit',
-    classname: 'notes-action__edit',
-    icon: 'fas fa-pencil-alt',
-  };
-
+class StartEdit extends PureComponent {
   render() {
-    const { text, classname, icon, clickAction } = this.props;
+    const { clickAction } = this.props;
 
     return (
-      <div className={classname} onClick={clickAction}>
-        <i className={`${icon}`} />
-        <span>
-          { text }
-        </span>
+      <div className='notes-action__edit' onClick={clickAction}>
+        <i className='fas fa-pencil-alt' />
+      </div>
+    );
+  }
+}
+
+class SaveEdits extends PureComponent {
+  render() {
+    const { clickAction } = this.props;
+
+    return (
+      <div className='notes-action__edit__highlighted' onClick={clickAction}>
+        <i className='fas fa-save' />
+      </div>
+    );
+  }
+}
+
+class CancelEdit extends PureComponent {
+  render() {
+    const { clickAction } = this.props;
+
+    return (
+      <div className='notes-action__cancel-edit' onClick={clickAction}>
+        <i className='fas fa-ban' />
+      </div>
+    );
+  }
+}
+
+class Delete extends PureComponent {
+  render() {
+    const { clickAction } = this.props;
+
+    return (
+      <div className='notes-action__delete' onClick={clickAction}>
+        <i className='fas fa-times' />
       </div>
     );
   }
@@ -244,9 +242,6 @@ class InsertBefore extends PureComponent {
     return (
       <div className='notes-action' onClick={clickAction}>
         <i className='fas fa-angle-up' />
-        <span>
-          Insert Before
-        </span>
       </div>
     );
   };
@@ -259,9 +254,6 @@ class InsertAfter extends PureComponent {
     return (
       <div className='notes-action' onClick={clickAction}>
         <i className='fas fa-angle-down' />
-        <span>
-          Insert After
-        </span>
       </div>
     );
   };

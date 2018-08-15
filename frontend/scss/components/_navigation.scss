@@ -1,7 +1,6 @@
 
 .navigation {
-  background: white;
-  border-bottom: 1px solid #ccc;
+  background: #363f46;
   font-size: 14px;
   display: flex;
 }
@@ -16,7 +15,7 @@
 }
 
 .nav-item {
-  margin: 10px 15px;
+  margin: 15px 20px;
   display: inline-block;
   transition: color 0.15s ease;
   color: $text-color;
@@ -36,6 +35,6 @@
 .nav-item__logo {
   @extend .nav-item;
   font-family: 'Pacifico', cursive;
-  color: $red;
+  color: white;
   font-size: 20px;
 }
