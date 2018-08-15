@@ -325,13 +325,13 @@ export default class NoteDocument extends Component {
     const { newNotesItemType, notesText } = this.state;
 
     const textAndType = {
-      text: notesText || <NewNoteLinePlaceholder />,
-      type: newNotesItemType,
+      notesText: notesText || <NewNoteLinePlaceholder />,
+      notesType: newNotesItemType,
     }
 
     if (this.props.notesItemBeingEdited) {
-      textAndType.text = this.notesTextBeforeEditStart || <NewNoteLinePlaceholder />;
-      textAndType.type = this.notesTypeBeforeEditStart;
+      textAndType.notesText = this.notesTextBeforeEditStart || <NewNoteLinePlaceholder />;
+      textAndType.notesType = this.notesTypeBeforeEditStart;
     }
 
     return getTransientNotesTypeComponent(textAndType);
@@ -375,8 +375,8 @@ export default class NoteDocument extends Component {
                     notesTypeToUse = newNotesItemType;
                   }
                   return getPermanentNotesTypeComponent({
-                    type: notesTypeToUse,
-                    text: notesTextToUse,
+                    notesType: notesTypeToUse,
+                    notesText: notesTextToUse,
                     selected: notesItem.selected,
                     deleted: notesItem.deleted,
                     key: key,
@@ -394,7 +394,7 @@ export default class NoteDocument extends Component {
         </div>
         <div className='note-document__interactions'>
           <div className='note-document__input-left-actions'>
-          
+
           </div>
           <div className='note-document-interactions'>
             {

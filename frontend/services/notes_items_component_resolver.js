@@ -3,10 +3,10 @@ import NotesItemContainer from 'src/frontend/containers/notes_item_container';
 import { TransientNotesItem } from 'src/frontend/components/notes_item';
 
 export function getPermanentNotesTypeComponent({
-  type, text, key, documentId, saveEdits, selected, deleted,
+  notesType, notesText, key, documentId, saveEdits, selected, deleted,
 }) {
   return getNotesTypeComponent({
-    type, text, key, documentId, saveEdits, selected, deleted,
+    notesType, notesText, key, documentId, saveEdits, selected, deleted,
     NotesItemWrapper: NotesItemContainer
   });
 }
@@ -15,53 +15,53 @@ export function getPermanentNotesTypeComponent({
 //   of what the user is typing, this version doesn't have a delete/edit
 //   and other interaction features/buttons
 export function getTransientNotesTypeComponent({
-  type, text, key, documentId, saveEdits
+  notesType, notesText, key, documentId, saveEdits
 }) {
   return getNotesTypeComponent({
-    type, text, key, documentId, saveEdits, NotesItemWrapper: TransientNotesItem
+    notesType, notesText, key, documentId, saveEdits, NotesItemWrapper: TransientNotesItem
   });
 }
 
 function getNotesTypeComponent({
-  type, text, key, documentId, saveEdits, NotesItemWrapper, selected, deleted,
+  notesType, notesText, key, documentId, saveEdits, NotesItemWrapper, selected, deleted,
 }) {
   const allProps = {
-    type, text, key, documentId, saveEdits, selected, deleted, index: key,
+    notesType, notesText, key, documentId, saveEdits, selected, deleted, index: key,
   };
 
-  switch (type) {
+  switch (notesType) {
     case 'regular':
       allProps.notesItem = (
         <div className='notes-item__regular'>
-          { text }
+          { notesText }
         </div>
       );
       break;
     case '-':
       allProps.notesItem = (
         <div className='notes-item__bullet-1'>
-          { text }
+          { notesText }
         </div>
       );
       break;
     case '-2':
       allProps.notesItem = (
         <div className='notes-item__bullet-2'>
-          { text }
+          { notesText }
         </div>
       );
       break;
     case '-3':
       allProps.notesItem = (
         <div className='notes-item__bullet-3'>
-          { text }
+          { notesText }
         </div>
       );
       break;
     case '"':
       allProps.notesItem = (
         <div className='notes-item__quote'>
-          { text }
+          { notesText }
         </div>
       );
       break;

@@ -68,6 +68,20 @@ actions.setMetaKeyDown = function() {
   };
 };
 
+actions.insertNotesBefore = function(data) {
+  return {
+    type: 'INSERT_NOTES_BEFORE',
+    data,
+  };
+};
+
+actions.insertNotesAfter = function(data) {
+  return {
+    type: 'INSERT_NOTES_AFTER',
+    data,
+  };
+};
+
 export { actions };
 
 const initialState = {
@@ -151,6 +165,9 @@ export default function notes(state = initialState, action) {
 
     case 'TOGGLE_NOTES_ITEM':
       return handleToggleNotesItem({ action, state });
+
+    case 'INSERT_NOTES_BEFORE':
+      return handleInsertNotesBefore({ action, state });
 
     default: return state;
   }
@@ -241,18 +258,38 @@ function handleFinishEditNotesItem({ state, action }) {
 }
 
 function handleCancelEditNotesItem({ state, action }) {
-  const documentId = state.notesItemBeingEditedDocumentId;
-  const notesItemIndex = state.notesItemBeingEditedId;
-  const newNotes = [...state.documents[documentId]];
-
   return {
     ...state,
     ...getCancelEditNotesItemState(),
+  };
+}
+
+function handleInsertNotesBefore({ action, state }) {
+  const { notesItem, documentId, newNote } = action.data;
+  const notes = state.documents[documentId];
+  const { index } = notesItem;
+  newNote.index = notes.length;
+  const newNotes = insertNotesBefore({ index, notes, newNote });
+  console.log('NEW NOTES INSERT BEFORE', newNotes);
+
+  return {
+    ...state,
     documents: {
       ...state.documents,
       [documentId]: newNotes,
     },
   };
+}
+
+function insertNotesBefore({ index, notes, newNote }) {
+  const newNotes = [];
+
+  notes.forEach((note, i) => {
+    if (index === i) newNotes.push(newNote);
+    newNotes.push(note);
+  });
+
+  return newNotes;
 }
 
 function handleToggleNotesItem({ action, state }) {

@@ -10,7 +10,8 @@
   user-select: none;
 }
 
-$hoveredBackgroundColor: lighten(#eee, 3%);
+$hoveredBackgroundColor: #eee;
+$selectedBackgroundColor: lighten(#eee, 3%);
 
 %notes-item-hovered {
   @extend %notes-item;
@@ -50,10 +51,10 @@ $hoveredBackgroundColor: lighten(#eee, 3%);
 
 .notes-item.selected {
   @extend %notes-item-hovered;
-  background: $hoveredBackgroundColor;
+  background: $selectedBackgroundColor;
 
   &:hover {
-    background: darken($hoveredBackgroundColor, 3%);
+    background: $hoveredBackgroundColor;
 
     .notes-item__left-indicator {
       background: $green;
@@ -166,6 +167,10 @@ $hoveredBackgroundColor: lighten(#eee, 3%);
     margin-right: 5px;
     margin-top: -2px;
   }
+}
+
+.notes-action {
+  @extend %notes-action;
 }
 
 .notes-action__delete {
