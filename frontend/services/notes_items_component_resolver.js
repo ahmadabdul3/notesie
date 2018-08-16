@@ -1,12 +1,31 @@
 import React from 'react';
 import NotesItemContainer from 'src/frontend/containers/notes_item_container';
 import { TransientNotesItem } from 'src/frontend/components/notes_item';
+import {
+  NotesItemRegular,
+  NotesItemBullet1,
+  NotesItemBullet2,
+  NotesItemBullet3,
+  NotesItemQuote,
+} from 'src/frontend/components/notes_item_types.js';
 
 export function getPermanentNotesTypeComponent({
-  notesType, notesText, key, documentId, saveEdits, selected, deleted,
+  notesType,
+  notesText,
+  key,
+  documentId,
+  saveEdits,
+  selected,
+  deleted,
 }) {
   return getNotesTypeComponent({
-    notesType, notesText, key, documentId, saveEdits, selected, deleted,
+    notesType,
+    notesText,
+    key,
+    documentId,
+    saveEdits,
+    selected,
+    deleted,
     NotesItemWrapper: NotesItemContainer
   });
 }
@@ -15,57 +34,60 @@ export function getPermanentNotesTypeComponent({
 //   of what the user is typing, this version doesn't have a delete/edit
 //   and other interaction features/buttons
 export function getTransientNotesTypeComponent({
-  notesType, notesText, key, documentId, saveEdits
+  notesType,
+  notesText,
+  key,
+  documentId,
+  saveEdits
 }) {
   return getNotesTypeComponent({
-    notesType, notesText, key, documentId, saveEdits, NotesItemWrapper: TransientNotesItem
+    notesType,
+    notesText,
+    key,
+    documentId,
+    saveEdits,
+    NotesItemWrapper: TransientNotesItem,
+    isTransient: true,
   });
 }
 
 function getNotesTypeComponent({
-  notesType, notesText, key, documentId, saveEdits, NotesItemWrapper, selected, deleted,
+  notesType,
+  notesText,
+  key,
+  documentId,
+  saveEdits,
+  NotesItemWrapper,
+  selected,
+  deleted,
+  isTransient,
 }) {
   const allProps = {
-    notesType, notesText, key, documentId, saveEdits, selected, deleted, index: key,
+    notesType,
+    notesText,
+    key,
+    documentId,
+    saveEdits,
+    selected,
+    deleted,
+    index: key,
+    notesItem: getNotesItem(notesType, { notesText, isTransient }),
   };
 
-  switch (notesType) {
-    case 'regular':
-      allProps.notesItem = (
-        <div className='notes-item__regular'>
-          { notesText }
-        </div>
-      );
-      break;
-    case '-':
-      allProps.notesItem = (
-        <div className='notes-item__bullet-1'>
-          { notesText }
-        </div>
-      );
-      break;
-    case '-2':
-      allProps.notesItem = (
-        <div className='notes-item__bullet-2'>
-          { notesText }
-        </div>
-      );
-      break;
-    case '-3':
-      allProps.notesItem = (
-        <div className='notes-item__bullet-3'>
-          { notesText }
-        </div>
-      );
-      break;
-    case '"':
-      allProps.notesItem = (
-        <div className='notes-item__quote'>
-          { notesText }
-        </div>
-      );
-      break;
-  }
-
   return <NotesItemWrapper { ...allProps } />;
+}
+
+function getNotesItem(type, props) {
+  switch (type) {
+    case 'regular':
+      return <NotesItemRegular {...props} />;
+    case '-':
+      return <NotesItemBullet1 {...props} />;
+    case '-2':
+      return <NotesItemBullet2 {...props} />;
+    case '-3':
+      return <NotesItemBullet3 {...props} />;
+    case '"':
+      return <NotesItemQuote {...props} />;
+  }
 }

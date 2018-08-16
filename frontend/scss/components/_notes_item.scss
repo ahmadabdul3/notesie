@@ -217,6 +217,25 @@ $selectedBackgroundColor: lighten(#eee, 3%);
   box-sizing: border-box;
 }
 
+.notes-item__cursor {
+  width: 2px;
+  margin-top: -3px;
+  height: 17px;
+  background: $text-color;
+  opacity: 1;
+  animation: blink 1s infinite;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+
+@keyframes blink {
+  0% { opacity: 1; }
+  33% { opacity: 0; }
+  66% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
 .notes-item__regular {
   @extend %notes-item;
   padding: 7px 40px;

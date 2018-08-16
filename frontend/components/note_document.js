@@ -325,12 +325,12 @@ export default class NoteDocument extends Component {
     const { newNotesItemType, notesText } = this.state;
 
     const textAndType = {
-      notesText: notesText || <NewNoteLinePlaceholder />,
+      notesText: notesText,
       notesType: newNotesItemType,
     }
 
     if (this.props.notesItemBeingEdited) {
-      textAndType.notesText = this.notesTextBeforeEditStart || <NewNoteLinePlaceholder />;
+      textAndType.notesText = this.notesTextBeforeEditStart;
       textAndType.notesType = this.notesTypeBeforeEditStart;
     }
 
@@ -468,13 +468,4 @@ function FormattingDescription({ newNotesItemType, showCommandList }) {
       </div>
     </div>
   );
-}
-
-function NewNoteLinePlaceholder() {
-  return (
-    <div className='new-note-line-placeholder'>
-      This is how your notes will appear, start typing
-      to add your own
-    </div>
-  )
 }
