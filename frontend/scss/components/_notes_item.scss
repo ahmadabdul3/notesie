@@ -20,6 +20,7 @@ $selectedBackgroundColor: lighten(#eee, 3%);
   transition: background 0.15s ease;
 
   .notes-item__actions {
+    z-index: 10;
     opacity: 1;
     transition: opacity 0.15s ease;
   }
@@ -42,6 +43,10 @@ $selectedBackgroundColor: lighten(#eee, 3%);
   @extend %notes-item;
   background: darken(white, 2%);
   color: lighten($text-color, 30%);
+
+  &:hover {
+    cursor: pointer;
+  }
 
   .notes-item__left-indicator {
     width: 2px;
@@ -130,12 +135,12 @@ $selectedBackgroundColor: lighten(#eee, 3%);
 .notes-item__actions {
   position: absolute;
   right: 10px;
-  top: -13px;
+  top: -19px;
   opacity: 0;
-  z-index: 10;
+  z-index: -10;
   display: flex;
   justify-content: flex-end;
-  transition: opacity 0.15s ease;
+  transition: opacity 0.15s ease, z-index 0.01s linear 0.15s;
 }
 
 %notes-action {

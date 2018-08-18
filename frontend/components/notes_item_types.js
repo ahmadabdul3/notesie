@@ -57,22 +57,30 @@ class NotesText extends PureComponent {
   }
 
   get transientText() {
-    let text = this.props.notesText;
-    if (!text) {
-      text = `This is how your notes will appear, \
-      start typing to add your own`;
-      return (
-        <div>
-          <span className='notes-item__cursor' />
-          { text }
-        </div>
-      )
-    }
-
+    // thinking about whether I should keep the blinking indicator or not
+    // let text = this.props.notesText;
+    // if (!text) {
+    //   text = `This is how your notes will appear, \
+    //   start typing to add your own`;
+    //   return (
+    //     <div>
+    //       <span className='notes-item__cursor' />
+    //       { text }
+    //     </div>
+    //   )
+    // }
+    //
+    // return (
+    //   <div>
+    //     { text }
+    //     <span className='notes-item__cursor' />
+    //   </div>
+    // );
+    const { notesText } = this.props;
+    if (notesText) return this.justText;
     return (
       <div>
-        { text }
-        <span className='notes-item__cursor' />
+        This is how your notes will appear, start typing to add your own
       </div>
     );
   }

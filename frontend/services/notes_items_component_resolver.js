@@ -38,7 +38,8 @@ export function getTransientNotesTypeComponent({
   notesText,
   key,
   documentId,
-  saveEdits
+  saveEdits,
+  focusNoteInput,
 }) {
   return getNotesTypeComponent({
     notesType,
@@ -46,6 +47,7 @@ export function getTransientNotesTypeComponent({
     key,
     documentId,
     saveEdits,
+    focusNoteInput,
     NotesItemWrapper: TransientNotesItem,
     isTransient: true,
   });
@@ -61,6 +63,7 @@ function getNotesTypeComponent({
   selected,
   deleted,
   isTransient,
+  focusNoteInput,
 }) {
   const allProps = {
     notesType,
@@ -70,6 +73,7 @@ function getNotesTypeComponent({
     saveEdits,
     selected,
     deleted,
+    focusNoteInput,
     index: key,
     notesItem: getNotesItem(notesType, { notesText, isTransient }),
   };

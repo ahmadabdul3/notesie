@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, PureComponent } from 'react';
 import ReactDOM from 'react-dom';
 import CommandList from 'src/frontend/components/command_list';
 import validCommands from 'src/constants/valid_commands';
@@ -21,7 +21,7 @@ import {
 //   THEN the textarea text is cleared, and the cursor stays at the top
 //
 // *
-export default class NoteDocument extends Component {
+export default class NoteDocument extends PureComponent {
   noteInputRef = null;
   noteInputFocused = false;
   endOfDocument = null;
@@ -88,6 +88,10 @@ export default class NoteDocument extends Component {
       });
       this.noteInputRef.focus();
     }
+  }
+
+  focusNoteInput = () => {
+    this.noteInputRef.focus();
   }
 
   scrollToBottom = () => {
@@ -287,30 +291,40 @@ export default class NoteDocument extends Component {
   addNewNotesItem(e) {
     e.preventDefault();
     const text = this.state.notesText.trim();
+
     if (!text) {
       setTimeout(() => {
         this.resetNewNotes();
       }, 50);
+
       return;
     }
 
-    const newNotes = {
+    setTimeout(this.finishAddNewNotesItem, 50);
+  }
+
+  finishAddNewNotesItem = () => {
+    this.props.addNotesItem(this.newNotes);
+    this.resetNewNotes();
+    this.scrollToBottom();
+  }
+
+  get newNotes() {
+    return {
       notesType: this.state.newNotesItemType,
       notesText: this.state.notesText,
       documentId: this.documentId,
       selected: false,
       deleted: false,
     };
-
-    setTimeout(() => {
-      this.props.addNotesItem(newNotes);
-      this.resetNewNotes();
-      this.scrollToBottom();
-    }, 50);
   }
 
   resetNewNotes(notesType, notesText) {
     const newState = { notesText: '', noteInputTypingStarted: false };
+
+    // - I think these if conditions pass when a note item is finished
+    //   editing, and before editing the transient note input had a
+    //   type and text typed into it
     if (notesType) newState.newNotesItemType = notesType;
     if (notesText) {
       newState.notesText = notesText;
@@ -324,21 +338,52 @@ export default class NoteDocument extends Component {
     //   before they're added
     const { newNotesItemType, notesText } = this.state;
 
-    const textAndType = {
+    const props = {
+      focusNoteInput: this.focusNoteInput,
       notesText: notesText,
       notesType: newNotesItemType,
     }
 
     if (this.props.notesItemBeingEdited) {
-      textAndType.notesText = this.notesTextBeforeEditStart;
-      textAndType.notesType = this.notesTypeBeforeEditStart;
+      props.notesText = this.notesTextBeforeEditStart;
+      props.notesType = this.notesTypeBeforeEditStart;
     }
 
-    return getTransientNotesTypeComponent(textAndType);
+    return getTransientNotesTypeComponent(props);
   }
 
   goBack = () => {
     this.props.routerProps.history.goBack();
+  }
+
+  get notesList() {
+    const { notesList } = this.props;
+    if (!notesList) return;
+
+    return notesList.map((notesItem, key) => {
+      const { text, type } = this.getNotesTextAndTypeToUse(notesItem, key);
+
+      return getPermanentNotesTypeComponent({
+        notesType: type,
+        notesText: text,
+        selected: notesItem.selected,
+        deleted: notesItem.deleted,
+        key: key,
+        documentId: this.documentId,
+        saveEdits: this.updateEditingNotesItem,
+      });
+    })
+  }
+
+  getNotesTextAndTypeToUse(notesItem, key) {
+    const { notesItemBeingEdited, notesItemBeingEditedId } = this.props;
+    const { notesText, newNotesItemType } = this.state;
+
+    if (notesItemBeingEdited && notesItemBeingEditedId === key) {
+      return { text: notesText, type: newNotesItemType };
+    }
+
+    return { text: notesItem.notesText, type: notesItem.notesType };
   }
 
   render() {
@@ -348,7 +393,7 @@ export default class NoteDocument extends Component {
       newNotesItemType,
     } = this.state;
 
-    const { notesList, noteDocument } = this.props;
+    const { noteDocument } = this.props;
 
     return (
       <div className='note-document'>
@@ -366,24 +411,7 @@ export default class NoteDocument extends Component {
                 </span>
               </div>
               {
-                notesList && notesList.map((notesItem, key) => {
-                  const { notesItemBeingEdited, notesItemBeingEditedId } = this.props;
-                  let notesTextToUse = notesItem.notesText;
-                  let notesTypeToUse = notesItem.notesType;
-                  if (notesItemBeingEdited && notesItemBeingEditedId === key) {
-                    notesTextToUse = notesText;
-                    notesTypeToUse = newNotesItemType;
-                  }
-                  return getPermanentNotesTypeComponent({
-                    notesType: notesTypeToUse,
-                    notesText: notesTextToUse,
-                    selected: notesItem.selected,
-                    deleted: notesItem.deleted,
-                    key: key,
-                    documentId: this.documentId,
-                    saveEdits: this.updateEditingNotesItem,
-                  });
-                })
+                this.notesList
               }
               {
                 this.renderNewNotesItem()
@@ -422,7 +450,7 @@ export default class NoteDocument extends Component {
 //   SELECT A FORMAT
 // </div>
 
-class NoteInput extends Component {
+class NoteInput extends PureComponent {
   constructor(props) {
     super(props);
   }
@@ -452,20 +480,24 @@ class NoteInput extends Component {
   }
 }
 
-function FormattingDescription({ newNotesItemType, showCommandList }) {
-  return (
-    <div className='interactions-formatting'>
-      <div className='interactions-formatting-text'>
-        CURRENT FORMATTING
+class FormattingDescription extends PureComponent {
+  render() {
+    const { newNotesItemType, showCommandList } = this.props;
+
+    return (
+      <div className='interactions-formatting'>
+        <div className='interactions-formatting-text'>
+          CURRENT FORMATTING
+        </div>
+        <div className='interactions-formatting-label' onClick={showCommandList}>
+          <span className='interactions-formatting-label__name'>
+            { newNotesItemType }
+          </span>
+          <span className='interactions-formatting-label__icon'>
+            <i className='fas fa-pencil-alt' /> Edit
+          </span>
+        </div>
       </div>
-      <div className='interactions-formatting-label' onClick={showCommandList}>
-        <span className='interactions-formatting-label__name'>
-          { newNotesItemType }
-        </span>
-        <span className='interactions-formatting-label__icon'>
-          <i className='fas fa-pencil-alt' /> Edit
-        </span>
-      </div>
-    </div>
-  );
+    );
+  }
 }

@@ -73,7 +73,7 @@ export default class NotesItem extends Component {
     if (this.props.notesItemBeingEdited) {
       alert(`
         There is a block of notes being edited,
-        please save or cancel that one before making
+        save or cancel that one before making
         other selections
       `);
       return;
@@ -94,7 +94,7 @@ export default class NotesItem extends Component {
     if (this.anotherNotesItemBeingEdited) {
       alert(`
         There is a block of notes being edited,
-        please save or cancel that one before deleting notes
+        save or cancel that one before deleting notes
       `);
       return;
     }
@@ -108,7 +108,7 @@ export default class NotesItem extends Component {
     if (this.anotherNotesItemBeingEdited) {
       alert(`
         There is already a block of notes being edited,
-        please save or cancel that one before editing
+        save or cancel that one before editing
         other notes
       `);
       return;
@@ -124,6 +124,14 @@ export default class NotesItem extends Component {
   }
 
   insertBefore = () => {
+    if (this.notesItemBeingEdited || this.anotherNotesItemBeingEdited) {
+      alert(`
+        There is already a block of notes being edited,
+        save or cancel that one before adding new notes
+      `);
+      return;
+    }
+
     const { documentId, insertBefore } = this.props;
 
     insertBefore({
@@ -138,8 +146,14 @@ export default class NotesItem extends Component {
 
     return (
       <div className='notes-item__actions'>
-        <InsertBefore clickAction={this.insertBefore} />
-        <InsertAfter clickAction={this.insertAfter} />
+        {
+          this.notesItemBeingEdited ?
+            null : <InsertBefore clickAction={this.insertBefore} />
+        }
+        {
+          this.notesItemBeingEdited ?
+            null : <InsertAfter clickAction={this.insertAfter} />
+        }
         {
           this.notesItemBeingEdited ?
             <CancelEdit clickAction={cancelEditNotesItem} /> : null
@@ -178,13 +192,17 @@ export default class NotesItem extends Component {
   }
 }
 
-export function TransientNotesItem({ notesItem }) {
-  return (
-    <div className='notes-item__transient'>
-      <div className='notes-item__left-indicator' />
-      { notesItem }
-    </div>
-  );
+export class TransientNotesItem extends PureComponent {
+  render() {
+    const { notesItem, focusNoteInput } = this.props;
+
+    return (
+      <div className='notes-item__transient' onClick={focusNoteInput}>
+        <div className='notes-item__left-indicator' />
+        { notesItem }
+      </div>
+    );
+  }
 }
 
 class StartEdit extends PureComponent {
@@ -194,6 +212,7 @@ class StartEdit extends PureComponent {
     return (
       <div className='notes-action__edit' onClick={clickAction}>
         <i className='fas fa-pencil-alt' />
+        <span>Edit</span>
       </div>
     );
   }
@@ -206,6 +225,7 @@ class SaveEdits extends PureComponent {
     return (
       <div className='notes-action__edit__highlighted' onClick={clickAction}>
         <i className='fas fa-save' />
+        <span>Save Edits</span>
       </div>
     );
   }
@@ -218,6 +238,7 @@ class CancelEdit extends PureComponent {
     return (
       <div className='notes-action__cancel-edit' onClick={clickAction}>
         <i className='fas fa-ban' />
+        <span>Cancel Edits</span>
       </div>
     );
   }
@@ -230,6 +251,7 @@ class Delete extends PureComponent {
     return (
       <div className='notes-action__delete' onClick={clickAction}>
         <i className='fas fa-times' />
+        <span>Delete</span>
       </div>
     );
   }
@@ -242,6 +264,7 @@ class InsertBefore extends PureComponent {
     return (
       <div className='notes-action' onClick={clickAction}>
         <i className='fas fa-angle-up' />
+        <span>Insert Before</span>
       </div>
     );
   };
@@ -254,6 +277,7 @@ class InsertAfter extends PureComponent {
     return (
       <div className='notes-action' onClick={clickAction}>
         <i className='fas fa-angle-down' />
+        <span>Insert After</span>
       </div>
     );
   };
