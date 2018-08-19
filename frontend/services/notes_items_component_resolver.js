@@ -18,7 +18,7 @@ export function getPermanentNotesTypeComponent({
   selected,
   deleted,
 }) {
-  return getNotesTypeComponent({
+  const allProps = {
     notesType,
     notesText,
     key,
@@ -26,8 +26,11 @@ export function getPermanentNotesTypeComponent({
     saveEdits,
     selected,
     deleted,
-    NotesItemWrapper: NotesItemContainer
-  });
+    index: key,
+    notesItem: getNotesItem(notesType, { notesText, isTransient: false }),
+  };
+
+  return <NotesItemContainer { ...allProps } />
 }
 
 // - this is currently used to render the notes item that is reflective
@@ -41,44 +44,18 @@ export function getTransientNotesTypeComponent({
   saveEdits,
   focusNoteInput,
 }) {
-  return getNotesTypeComponent({
-    notesType,
-    notesText,
-    key,
-    documentId,
-    saveEdits,
-    focusNoteInput,
-    NotesItemWrapper: TransientNotesItem,
-    isTransient: true,
-  });
-}
-
-function getNotesTypeComponent({
-  notesType,
-  notesText,
-  key,
-  documentId,
-  saveEdits,
-  NotesItemWrapper,
-  selected,
-  deleted,
-  isTransient,
-  focusNoteInput,
-}) {
   const allProps = {
     notesType,
     notesText,
     key,
     documentId,
     saveEdits,
-    selected,
-    deleted,
     focusNoteInput,
-    index: key,
-    notesItem: getNotesItem(notesType, { notesText, isTransient }),
+    isTransient: true,
+    notesItem: getNotesItem(notesType, { notesText, isTransient: true }),
   };
 
-  return <NotesItemWrapper { ...allProps } />;
+  return <TransientNotesItem { ... allProps } />;
 }
 
 function getNotesItem(type, props) {
