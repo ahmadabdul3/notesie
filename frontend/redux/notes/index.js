@@ -270,7 +270,6 @@ function handleInsertNotesBefore({ action, state }) {
   const { index } = notesItem;
   newNote.index = notes.length;
   const newNotes = insertNotesBefore({ index, notes, newNote });
-  console.log('NEW NOTES INSERT BEFORE', newNotes);
 
   return {
     ...state,
@@ -283,10 +282,15 @@ function handleInsertNotesBefore({ action, state }) {
 
 function insertNotesBefore({ index, notes, newNote }) {
   const newNotes = [];
+  let noteIndex = 0;
 
   notes.forEach((note, i) => {
-    if (index === i) newNotes.push(newNote);
-    newNotes.push(note);
+    if (index === i) {
+      newNotes.push({ ...newNote, index: noteIndex });
+      noteIndex++;
+    }
+    newNotes.push({ ...note, index: noteIndex });
+    noteIndex++;
   });
 
   return newNotes;
@@ -308,6 +312,10 @@ function handleToggleNotesItem({ action, state }) {
   }
 
   const currentNotes = state.documents[documentId];
+  // console.log(currentNotes);
+  // - the index being saved for each note item in the redux store
+  //   is not the same as the index being passed down as a prop
+  //   that's why multiSelect is not working
   const {
     newNotes,
     nowClickedNotesItemUpdated,
@@ -457,8 +465,8 @@ function multiSelect(notesItem, notes, lowEnd, highEnd) {
       return updatedNote;
     }
 
-    // - we need to add to the selectednotesitems here too, the if
-    //   condition above applies only to new multiselect blocks, but
+    // - we need to add to the selectednotesitems here too,
+    // - the if condition above applies only to new multiselect blocks, but
     //   we could have a previous multiselect block, and if we're
     //   building the selectedNotesItems array from scratch here, we need
     //   to add other, already selected notes here too

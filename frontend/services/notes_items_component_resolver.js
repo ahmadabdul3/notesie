@@ -13,6 +13,7 @@ export function getPermanentNotesTypeComponent({
   notesType,
   notesText,
   key,
+  index,
   documentId,
   saveEdits,
   selected,
@@ -22,11 +23,11 @@ export function getPermanentNotesTypeComponent({
     notesType,
     notesText,
     key,
+    index,
     documentId,
     saveEdits,
     selected,
     deleted,
-    index: key,
     notesItem: getNotesItem(notesType, { notesText, isTransient: false }),
   };
 

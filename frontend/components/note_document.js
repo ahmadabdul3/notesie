@@ -369,6 +369,7 @@ export default class NoteDocument extends PureComponent {
         selected: notesItem.selected,
         deleted: notesItem.deleted,
         key: key,
+        index: notesItem.index,
         documentId: this.documentId,
         saveEdits: this.updateEditingNotesItem,
       });

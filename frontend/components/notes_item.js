@@ -1,10 +1,6 @@
 import React, { Component, PureComponent } from 'react';
 
 export default class NotesItem extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   shouldComponentUpdate(nextProps, nextState) {
     // - this causes the component not to re-render if the text or type
     //   (type means formatting) of the notes item doesnt change, which is
@@ -90,7 +86,6 @@ export default class NotesItem extends Component {
   }
 
   deleteItem = () => {
-    console.log('delete item');
     if (this.anotherNotesItemBeingEdited) {
       alert(`
         There is a block of notes being edited,
@@ -178,7 +173,6 @@ export default class NotesItem extends Component {
 
   render() {
     const { notesItem, index } = this.props;
-    console.log('notes item: ', index);
 
     return (
       <div className={this.notesItemClass}>

@@ -45,7 +45,7 @@ function createFetchParams(method, bodyData, headers) {
     redirect: 'follow',
     headers: new Headers({
       'Content-Type': 'application/json',
-      'X-Key-Inflection': 'camel',
+      // 'X-Key-Inflection': 'camel',
       ...headers,
     }),
   }
