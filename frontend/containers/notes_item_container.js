@@ -16,7 +16,7 @@ export function mapDispatchToProps(dispatch) {
     startEditNotesItem: (item) => dispatch(notesActions.startEditNotesItem(item)),
     cancelEditNotesItem: () => dispatch(notesActions.cancelEditNotesItem()),
     toggleNotesItem: (data) => dispatch(notesActions.toggleNotesItem(data)),
-    insertBefore: (data) => dispatch(notesActions.insertNotesBefore(data)),
+    // insertBefore: (data) => dispatch(notesActions.insertNotesBefore(data)),
     insertAfter: (data) => dispatch(notesActions.insertNotesAfter(data)),
   };
 }

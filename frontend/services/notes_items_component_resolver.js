@@ -18,6 +18,7 @@ export function getPermanentNotesTypeComponent({
   saveEdits,
   selected,
   deleted,
+  insertBefore,
 }) {
   const allProps = {
     notesType,
@@ -28,6 +29,7 @@ export function getPermanentNotesTypeComponent({
     saveEdits,
     selected,
     deleted,
+    insertBefore,
     notesItem: getNotesItem(notesType, { notesText, isTransient: false }),
   };
 

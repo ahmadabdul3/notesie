@@ -117,6 +117,12 @@ export default class NoteDocument extends PureComponent {
     this.setState({ commandListVisible: true });
   }
 
+  insertBefore = (noteItemData) => {
+    const { insertBefore } = this.props;
+    this.focusNoteInput();
+    insertBefore(noteItemData);
+  }
+
   onChangeNotesInput = (value) => {
     const { noteInputTypingStarted } = this.state;
     const newState = { notesText: value };
@@ -152,9 +158,11 @@ export default class NoteDocument extends PureComponent {
   }
 
   updateEditingNotesItem = (e) => {
+    e.preventDefault();
     const { notesText, newNotesItemType } = this.state;
+    console.log(notesText);
 
-    if (!notesText) {
+    if (!notesText.trim()) {
       alert(`Note blocks can't be empty. If you no longer want this block of\
         notes you can delete it`);
       return;
@@ -196,7 +204,7 @@ export default class NoteDocument extends PureComponent {
           if (!noteInputTypingStarted) {
             this.handleEnterKey(e);
           } else if (notesItemBeingEdited) {
-            this.updateEditingNotesItem();
+            this.updateEditingNotesItem(e);
           } else {
             this.addNewNotesItem(e);
           }
@@ -372,6 +380,7 @@ export default class NoteDocument extends PureComponent {
         index: notesItem.index,
         documentId: this.documentId,
         saveEdits: this.updateEditingNotesItem,
+        insertBefore: this.insertBefore,
       });
     })
   }

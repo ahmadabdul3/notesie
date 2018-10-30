@@ -53,7 +53,7 @@ export class NotesItemQuote extends PureComponent {
 class NotesText extends PureComponent {
   get justText() {
     const { notesText } = this.props;
-    return <div> { notesText } </div>;
+    return <div> { notesText || 'Start typing your notes...' } </div>;
   }
 
   get transientText() {
@@ -87,7 +87,7 @@ class NotesText extends PureComponent {
 
   render() {
     const { isTransient } = this.props;
-    if (!isTransient) return this.justText;
-    return this.transientText;
+    if (isTransient) return this.transientText;
+    return this.justText;
   }
 }

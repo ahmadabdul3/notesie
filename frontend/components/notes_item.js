@@ -132,9 +132,17 @@ export default class NotesItem extends Component {
     insertBefore({
       documentId,
       notesItem: this.notesItemData,
-      newNote: { ...this.notesItemData, notesText: 'new note' },
+      newNote: { ...this.notesItemData, notesText: '', index: -1 },
     });
   };
+
+  cancelEditNotesItem = () => {
+    // - if the cancel is happening on notes that have a value from before
+    //   then we use the old value (this is already happening)
+    // - but if the cancel is happening on a new note block, like for
+    //   insert before/after, then we need some text - can't cancel on
+    //   empty new note block 
+  }
 
   get Actions() {
     const { startEditItem, cancelEditNotesItem, saveEdits } = this.props;

@@ -217,21 +217,30 @@ function handleDeleteNotesItem({ state, action }) {
   return newState;
 }
 
-function handleStartEditNotesItem({ state, action }) {
-  const documentId = action.data.documentId;
-  const notesItemIndex = action.data.index;
-  const newNotes = [...state.documents[documentId]];
-
+function getStartEditNotesItemState({ notesItemIndex, documentId }) {
   return {
-    ...state,
     notesItemBeingEdited: true,
     notesItemBeingEditedId: notesItemIndex,
     notesItemBeingEditedDocumentId: documentId,
-    documents: {
-      ...state.documents,
-      [documentId]: newNotes,
-    },
   };
+}
+
+function handleStartEditNotesItem({ state, action }) {
+  const documentId = action.data.documentId;
+  const notesItemIndex = action.data.index;
+  // const newNotes = [...state.documents[documentId]];
+
+  const editState = getStartEditNotesItemState({ notesItemIndex, documentId });
+  return {
+    ...state,
+    ...editState,
+  };
+    // - I dont think this is needed, 'newNotes' is not being updated, it's
+    //   just taken from documents and then put here without being edited
+    // documents: {
+    //   ...state.documents,
+    //   [documentId]: newNotes,
+    // },
 }
 
 function handleFinishEditNotesItem({ state, action }) {
@@ -268,8 +277,8 @@ function handleInsertNotesBefore({ action, state }) {
   const { notesItem, documentId, newNote } = action.data;
   const notes = state.documents[documentId];
   const { index } = notesItem;
-  newNote.index = notes.length;
-  const newNotes = insertNotesBefore({ index, notes, newNote });
+  const { newNotes, newNotesIndex } = insertNotesBefore({ index, notes, newNote });
+  const startEditState = getStartEditNotesItemState({ notesItemIndex: newNotesIndex, documentId });
 
   return {
     ...state,
@@ -277,23 +286,26 @@ function handleInsertNotesBefore({ action, state }) {
       ...state.documents,
       [documentId]: newNotes,
     },
+    ...startEditState,
   };
 }
 
 function insertNotesBefore({ index, notes, newNote }) {
   const newNotes = [];
+  let newNotesIndex = -1;
   let noteIndex = 0;
 
   notes.forEach((note, i) => {
     if (index === i) {
       newNotes.push({ ...newNote, index: noteIndex });
+      newNotesIndex = noteIndex;
       noteIndex++;
     }
     newNotes.push({ ...note, index: noteIndex });
     noteIndex++;
   });
 
-  return newNotes;
+  return { newNotes, newNotesIndex };
 }
 
 function handleToggleNotesItem({ action, state }) {
