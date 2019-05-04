@@ -1,31 +1,9 @@
-.command-list-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 1000;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-}
-
-.command-list__background-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.8);
-  z-index: -1;
-}
 
 .command-list {
   @extend .page-width;
   width: 100%;
   border-radius: 3px;
-  box-shadow: 0 3px 8px 0 rgba(0, 0, 0, 0.2);
-  margin: 20px auto;
+  margin: 0 auto;
   background: white;
   position: relative;
 
@@ -114,7 +92,7 @@
 
 .command-list-header__label {
   @extend .instructions;
-  padding: 20px 25px 0;
+  padding: 40px 25px 0;
   box-sizing: border-box;
 }
 

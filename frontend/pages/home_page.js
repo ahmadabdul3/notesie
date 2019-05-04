@@ -4,6 +4,7 @@ import { NavLink } from 'react-router-dom';
 import FormInput from 'src/frontend/components/form_input';
 import NoteDocumentSummaryContainer from 'src/frontend/containers/note_document_summary_container';
 import NoteDocumentSummary from 'src/frontend/components/note_document_summary';
+import Modal from 'src/frontend/components/modal';
 
 export default class HomePage extends Component {
   state = {
@@ -42,12 +43,10 @@ export default class HomePage extends Component {
 
     return (
       <div className='home-page'>
-        { newNoteDocumentModalVisible ?
-            <NewNoteDocumentModal
-              addNoteDoc={this.addNoteDoc}
-              cancelAction={this.hideNewNoteDocumentModal} />
-            : null
-        }
+        <NewNoteDocumentModal
+          visible={newNoteDocumentModalVisible}
+          addNoteDoc={this.addNoteDoc}
+          cancelAction={this.hideNewNoteDocumentModal} />
         <header className='home-page__header'>
           <div className='content'>
             <button className='green-button' onClick={this.showNewNoteDocumentModal}>
@@ -102,7 +101,7 @@ class NewNoteDocumentModal extends Component {
     nameMessage: '',
   };
 
-  onChange = (name, value) => {
+  onChange = ({ name, value }) => {
     this.setState({ [name]: value });
   }
 
@@ -115,15 +114,25 @@ class NewNoteDocumentModal extends Component {
     }
 
     const { docName } = this.state;
+    this.resetState();
     this.props.addNoteDoc({ docName });
+  }
+
+  close = () => {
+    this.resetState();
+    this.props.cancelAction();
+  }
+
+  resetState() {
+    this.setState({ docName: '', nameMessage: '' });
   }
 
   render() {
     const { docName, nameMessage } = this.state;
-    const { cancelAction } = this.props;
+    const { cancelAction, visible } = this.props;
 
     return (
-      <div className='black-overlay'>
+      <Modal onClose={this.close} open={visible}>
         <div className='new-note-document-modal'>
           <h2>
             Create a new document
@@ -139,7 +148,7 @@ class NewNoteDocumentModal extends Component {
               message={nameMessage} />
 
             <div className='form-buttons'>
-              <button type='button' className='button' onClick={cancelAction}>
+              <button type='button' className='button' onClick={this.close}>
                 Cancel
               </button>
               <button className='red-button'>
@@ -148,7 +157,7 @@ class NewNoteDocumentModal extends Component {
             </div>
           </form>
         </div>
-      </div>
+      </Modal>
     );
   }
 }

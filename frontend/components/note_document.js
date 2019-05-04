@@ -430,22 +430,21 @@ export default class NoteDocument extends PureComponent {
             </div>
           </div>
           <div className='note-document__interactions'>
-            {
-              commandListVisible ? (
-                <CommandList
-                  onSubmitCommand={this.updateCommand}
-                  hideCommandList={this.hideCommandList} />
-              ) : null
-            }
-            <FormattingDescription
-              newNotesItemType={newNotesItemType}
-              showCommandList={this.showCommandList} />
-            <NoteInput
-              value={notesText}
-              registerNoteInputRef={this.registerNoteInputRef}
-              onChange={this.onChangeNotesInput}
-              onFocus={this.onNotesInputFocus}
-              onBlur={this.onNotesInputBlur} />
+            <div className='note-document__interactions-inner'>
+              <CommandList
+                visible={commandListVisible}
+                onSubmitCommand={this.updateCommand}
+                hideCommandList={this.hideCommandList} />
+              <FormattingDescription
+                newNotesItemType={newNotesItemType}
+                showCommandList={this.showCommandList} />
+              <NoteInput
+                value={notesText}
+                registerNoteInputRef={this.registerNoteInputRef}
+                onChange={this.onChangeNotesInput}
+                onFocus={this.onNotesInputFocus}
+                onBlur={this.onNotesInputBlur} />
+            </div>
           </div>
         </div>
       </div>

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import validCommands from 'src/constants/valid_commands';
 import { getNotesTypeExample } from 'src/frontend/components/notes_type_example';
+import Modal from 'src/frontend/components/modal';
 
 export default class CommandList extends Component {
   commandInput = null;
@@ -10,12 +11,12 @@ export default class CommandList extends Component {
     commandText: '',
   };
 
-  constructor(props) {
-    super(props);
+  componentDidMount() {
+    if (this.commandInput) this.commandInput.focus();
   }
 
-  componentDidMount() {
-    this.commandInput.focus();
+  componentDidUpdate() {
+    if (this.props.visible) this.commandInput.focus();
   }
 
   // - this allows the input to not autofill, because it randomizes
@@ -63,14 +64,13 @@ export default class CommandList extends Component {
   }
 
   render() {
-    const { hideCommandList } = this.props;
+    const { hideCommandList, visible } = this.props;
     const { commandText } = this.state;
 
     const filteredCommands = this.filterCommands();
 
     return (
-      <div className='command-list-container'>
-        <div className='command-list__background-overlay' />
+      <Modal open={visible} onClose={hideCommandList}>
         <div className='command-list'>
           <div className='close-button' onClick={hideCommandList}>
             <i className='fas fa-times' />
@@ -111,7 +111,7 @@ export default class CommandList extends Component {
             }
           </div>
         </div>
-      </div>
+      </Modal>
     );
   }
 }

@@ -6,7 +6,7 @@
   background: transparent;
   transition: background 0.15s ease;
   min-height: 36px;
-  border-top: 1px solid white;
+  border-top: 1px solid transparent;
   user-select: none;
 }
 
@@ -36,6 +36,10 @@ $selectedBackgroundColor: lighten(#eee, 3%);
 
   &:hover {
     @extend %notes-item-hovered;
+  }
+
+  &+.notes-item {
+    margin-top: 1px;
   }
 }
 

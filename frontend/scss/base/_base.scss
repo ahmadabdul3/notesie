@@ -36,6 +36,25 @@ a {
   }
 }
 
+.black-modal-overlay {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 995;
+  box-sizing: border-box;
+  padding-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+
+  .modal {
+    box-shadow: 0 3px 8px 0 rgba(0, 0, 0, 0.2);
+  }
+}
+
 #entry-point {
   width: 100%;
   height: 100%;

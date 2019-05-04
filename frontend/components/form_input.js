@@ -1,33 +1,49 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 
-export default class FormInput extends Component {
+export default class FormInput extends PureComponent {
+  focused = false;
+  inputRef = null;
   state = {
     active: false,
   };
-
-  inputRef = null;
-
-  constructor(props) {
-    super(props);
-  }
 
   componentDidMount() {
     if (this.props.autoFocus) this.focusInput();
     else {
       setTimeout(() => {
-        if (this.inputRef.value) {
-          this.setState({ active: true });
-        }
+        if (this.inputRef.value) this.setState({ active: true });
       }, 200);
     }
   }
 
-  setToActive = () => {
-    this.setState({ active: true });
+  // - the reason this lifecycle hook and 'this.focused' exist is because
+  //   when the input value is controlled
+  //   (meaning the value for this input is stored in some component's state)
+  //   and is cleared from the outside,
+  //   (meaning the component whose state is storing the value
+  //   uses 'this.setState' to clear the value)
+  //   this input component needs to go back to the inactive state
+  //   (meaning, the underline for this component should not still have
+  //   a green color and the placeholder should shift back down and enlarge)
+  // - theoretically this only happens when the scenario above is encountered
+  //   (clearing out form input values programmatically using this.setState)
+  //   so the active value should always evaluate to 'false'
+  componentDidUpdate(prevProps) {
+    if (prevProps.value !== this.props.value) {
+      if (!this.focused) this.setState({ active: !!this.props.value });
+    }
   }
 
-  setToInactive = (e) => {
-    if (!e.target.value) this.setState({ active: false });
+  handleFocus = () => {
+    this.setState({ active: true });
+    this.focused = true;
+  }
+
+  handleBlur = (e) => {
+    this.focused = false;
+    if (!e.target.value) {
+      this.setState({ active: false });
+    }
   }
 
   focusInput = () => {
@@ -38,15 +54,16 @@ export default class FormInput extends Component {
     const { name, onChange } = this.props;
     const { value } = e.target;
 
-    onChange(name, value);
+    onChange({ name, value }, e);
   }
 
   render() {
-    const { labelText, type, name, value, message, isWhite } = this.props;
+    const { labelText, type, name, value, message, horizontalStacking } = this.props;
     const { active } = this.state;
-    const classBase = isWhite ? 'form-input-white' : 'form-input';
-    let klass = classBase;
-    if (active) klass = classBase + '-active';
+    let klass = 'form-input';
+    if (active) klass += ' active';
+    if (message) klass += ' error';
+    if (horizontalStacking) klass += ' horizontal-stacking';
 
     return (
       <div className={klass}>
@@ -60,10 +77,9 @@ export default class FormInput extends Component {
             value={value}
             type={type}
             className='form-input__input'
-            onFocus={this.setToActive}
-            onBlur={this.setToInactive}
+            onFocus={this.handleFocus}
+            onBlur={this.handleBlur}
             onChange={this.onChange} />
-          <div className='form-input__input-border' />
         </div>
         <footer className='form-input__message'>
            { message }

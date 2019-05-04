@@ -17,10 +17,11 @@
   height: 100%;
   width: 200px;
   padding: 20px;
-  margin-right: 20px;
   box-sizing: border-box;
   background: white;
   border-right: 1px solid #ddd;
+  background: #363f46;
+  border-top: 1px solid darken(#363f46, 5%);
 
   button {
     width: 100%;
@@ -74,16 +75,17 @@
 }
 
 .note-document__interactions {
-  @extend .page-width;
   flex-grow: 0;
   flex-shrink: 0;
   padding: 30px;
-  margin: 20px auto;
   box-sizing: border-box;
   background: white;
   height: 200px;
-  box-shadow: 0 3px 8px 0 rgba(0, 0, 0, 0.15);
-  border-radius: 3px;
+  border-top: 1px solid #ddd;
+}
+
+.note-document__interactions-inner {
+  @extend .page-width;
 }
 
 .instructions {

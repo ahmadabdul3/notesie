@@ -1,18 +1,14 @@
-import 'whatwg-fetch';
+// import fetch from 'node-fetch';
 const http = {};
 
 http.base = function(method, url, data, headers) {
-  return new Promise((resolve, reject) => {
-    fetch(
-      url,
-      createFetchParams(method, data, headers)
-    ).then((response) => {
-      return response.json();
-    }).then((response) => {
-      resolve(response);
-    }).catch((error) => {
-      reject(error);
-    });
+  return fetch(
+    url,
+    createFetchParams(method, data, headers)
+  ).then((response) => {
+    const json = response.json();
+    if (!response.ok) return json.then(err => { throw err; });
+    return json;
   });
 };
 
@@ -43,11 +39,10 @@ function createFetchParams(method, bodyData, headers) {
     method: method,
     mode: 'cors',
     redirect: 'follow',
-    headers: new Headers({
+    headers: {
       'Content-Type': 'application/json',
-      // 'X-Key-Inflection': 'camel',
       ...headers,
-    }),
+    },
   }
 
   if (bodyData) {
