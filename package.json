@@ -1,6 +1,6 @@
 {
-  "name": "react-redux-express-base",
-  "version": "0.0.0",
+  "name": "notesie",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "start": "node ./dist/server",
@@ -22,13 +22,15 @@
     "pg": "^7.4.3",
     "pg-hstore": "^2.3.2",
     "pug": "^2.0.3",
-    "react": "^16.4.0",
-    "react-dom": "^16.4.0",
-    "react-redux": "^5.0.7",
+    "react": "^16.8.2",
+    "react-dom": "^16.8.2",
+    "react-redux": "^6.0.0",
     "react-router-dom": "^4.3.1",
     "redux": "^4.0.0",
     "redux-thunk": "^2.3.0",
-    "sequelize": "^4.37.10",
+    "sequelize": "^5.7.6",
+    "sequelize-cli": "^5.4.0",
+    "source-map-support": "^0.5.9",
     "whatwg-fetch": "^2.0.4"
   },
   "devDependencies": {
