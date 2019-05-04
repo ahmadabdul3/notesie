@@ -11,7 +11,9 @@
     "test-watch": "mocha-webpack --watch \"./frontend/test/**/*.test.js\" --webpack-config webpack-test.config.js --require ./frontend/test/setup.js"
   },
   "dependencies": {
-    "connected-react-router": "^4.3.0",
+    "aws-sdk": "^2.441.0",
+    "bcrypt": "^3.0.6",
+    "connected-react-router": "^6.3.1",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
     "dotenv": "^6.0.0",
