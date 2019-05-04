@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./dist/server",
+    "c": "node ./repl",
     "watch": "webpack --watch",
     "heroku-postbuild": "webpack",
     "test": "mocha-webpack \"./frontend/test/**/*.test.js\" --webpack-config webpack-test.config.js --require ./frontend/test/setup.js",
@@ -16,6 +17,7 @@
     "dotenv": "^6.0.0",
     "express": "~4.16.0",
     "http-errors": "~1.6.2",
+    "jsonwebtoken": "^8.5.1",
     "morgan": "~1.9.0",
     "pg": "^7.4.3",
     "pg-hstore": "^2.3.2",
@@ -33,6 +35,7 @@
     "autoprefixer": "^8.6.2",
     "babel-core": "^6.26.3",
     "babel-loader": "^7.1.4",
+    "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.7.0",
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-2": "^6.24.1",
