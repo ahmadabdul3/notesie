@@ -1,16 +1,3 @@
-// import { combineReducers } from 'redux';
-// import placeholder from './placeholder';
-// import notes from './notes';
-// import notesDocuments from './notes_documents';
-//
-// const reducer = combineReducers({
-//   placeholder,
-//   notes,
-//   notesDocuments,
-// });
-//
-// export default reducer;
-
 import { combineReducers } from 'redux';
 import { connectRouter } from 'connected-react-router'
 import placeholder from './placeholder';
@@ -25,6 +12,7 @@ function createAppReducer(history) {
   //
   return combineReducers({
     router: connectRouter(history),
+    placeholder,
     notes,
     notesDocuments,
   });
