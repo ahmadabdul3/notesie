@@ -255,6 +255,7 @@ function handleFinishEditNotesItem({ state, action }) {
     ...state.documents[documentId][notesItemIndex],
     notesText: action.data.notesText,
     notesType: action.data.notesType,
+    status: '',
   };
 
   const newNotes = [...state.documents[documentId]];
