@@ -33,7 +33,7 @@ export default class NoteDocument extends PureComponent {
     notesText: '',
     newNotesItemType: 'regular',
     // - not sure if there was a reason I put this in state, seems to make
-    //   more sense if placed on 'this' instead
+    //   more sense if it's an instance variable instead
     noteInputTypingStarted: false,
   };
 
@@ -61,14 +61,20 @@ export default class NoteDocument extends PureComponent {
       const { notesList } = this.props;
       // - need to set noteInputTypingStarted to true here, otherwise
       //   when we set the noteText value to the value of the corresponding
-      //   note item, we can't backspace because this component will try to
+      //   note item that's being edited, we can't backspace because this component will try to
       //   enter a formatting command, see key event hanlders to understand more
+      // - another thing to note, the noteInputTypingStarted value is driven by
+      //   the presence or absence of text in the note item being edited. However,
+      //   there should never be existant note items without text. so the only
+      //   scenario where a note item is being 'edited' but has no text is when
+      //   we initially do an 'insertBefore' or 'insertAfter'. In that case
+      //   we need the formatting commands to be active
       this.notesTextBeforeEditStart = this.state.notesText;
       this.notesTypeBeforeEditStart = this.state.newNotesItemType;
       this.setState({
         notesText: notesList[notesItemBeingEditedId].notesText,
         newNotesItemType: notesList[notesItemBeingEditedId].notesType,
-        noteInputTypingStarted: true,
+        noteInputTypingStarted: !!notesList[notesItemBeingEditedId].notesText,
       });
       // - no need for a timout on the focus here because it's happening on
       //   mouse button click, not enter key click, so no side effects
@@ -90,32 +96,22 @@ export default class NoteDocument extends PureComponent {
     }
   }
 
+  // - this method was created because it needs to be passed down to some
+  //   child components. That's why most places still do 'this.noteInputRef.focus();'
+  //   instead of calling this method
   focusNoteInput = () => {
     this.noteInputRef.focus();
   }
 
   scrollToBottom = () => {
     const node = ReactDOM.findDOMNode(this.endOfDocument);
-    if (node) {
-      node.scrollIntoView({ behavior: "smooth" });
-    }
+    if (node) node.scrollIntoView({ behavior: "smooth" });
   }
 
-  registerNoteInputRef = (ref) => {
-    this.noteInputRef = ref;
-  }
-
-  onNotesInputFocus = () => {
-    this.noteInputFocused = true;
-  }
-
-  onNotesInputBlur = () => {
-    this.noteInputFocused = false;
-  }
-
-  showCommandList = () => {
-    this.setState({ commandListVisible: true });
-  }
+  registerNoteInputRef = ref => this.noteInputRef = ref;
+  onNotesInputFocus = () => this.noteInputFocused = true;
+  onNotesInputBlur = () => this.noteInputFocused = false;
+  showCommandList = () => this.setState({ commandListVisible: true });
 
   insertBefore = (noteItemData) => {
     const { insertBefore } = this.props;
@@ -123,25 +119,29 @@ export default class NoteDocument extends PureComponent {
     insertBefore(noteItemData);
   }
 
-  onChangeNotesInput = (value) => {
-    const { noteInputTypingStarted } = this.state;
-    const newState = { notesText: value };
+  insertAfter = (noteItemData) => {
+    const { insertAfter } = this.props;
+    this.focusNoteInput();
+    insertAfter(noteItemData);
+  }
 
-    if (!noteInputTypingStarted) {
+  onChangeNotesInput = (value) => {
+    this.setState(oldState => {
+      const { noteInputTypingStarted } = oldState;
+      const newState = { notesText: value };
+
       // - this is assuming characters are bing typed in/added,
       //   meaning there's a value - if letters are being removed
       //   then there's another condition below
-      newState.noteInputTypingStarted = true;
-    }
+      if (!noteInputTypingStarted) newState.noteInputTypingStarted = true;
 
-    if (value === '') {
       // - continuing from above, if the value is empty, then
       //   we set the noteInputTypingStarted value to false, so that
       //   tab/enter work for bullet point positioning
-      newState.noteInputTypingStarted = false;
-    }
+      if (value === '') newState.noteInputTypingStarted = false;
 
-    this.setState(newState);
+      return newState;
+    });
   }
 
   hideCommandList = () => {
@@ -160,11 +160,9 @@ export default class NoteDocument extends PureComponent {
   updateEditingNotesItem = (e) => {
     e.preventDefault();
     const { notesText, newNotesItemType } = this.state;
-    console.log(notesText);
 
     if (!notesText.trim()) {
-      alert(`Note blocks can't be empty. If you no longer want this block of\
-        notes you can delete it`);
+      alert(`Note blocks can't be empty. If you no longer want this block of notes you can delete it`);
       return;
     }
 
@@ -331,8 +329,8 @@ export default class NoteDocument extends PureComponent {
     const newState = { notesText: '', noteInputTypingStarted: false };
 
     // - I think these if conditions pass when a note item is finished
-    //   editing, and before editing the transient note input had a
-    //   type and text typed into it
+    //   editing, and before editing, the transient note input had a
+    //   type, and text typed into it
     if (notesType) newState.newNotesItemType = notesType;
     if (notesText) {
       newState.notesText = notesText;
@@ -341,20 +339,24 @@ export default class NoteDocument extends PureComponent {
     this.setState(newState);
   }
 
-  renderNewNotesItem() {
+  renderExampleNotesItem() {
     // - this method shows the placeholder notes current being typed
     //   before they're added
     const { newNotesItemType, notesText } = this.state;
 
     const props = {
       focusNoteInput: this.focusNoteInput,
-      notesText: notesText,
-      notesType: newNotesItemType,
+      noteBlock: {
+        notesText: notesText,
+        notesType: newNotesItemType,
+      },
     }
 
     if (this.props.notesItemBeingEdited) {
-      props.notesText = this.notesTextBeforeEditStart;
-      props.notesType = this.notesTypeBeforeEditStart;
+      props.noteBlock = {
+        notesText: this.notesTextBeforeEditStart,
+        notesType: this.notesTypeBeforeEditStart,
+      };
     }
 
     return getTransientNotesTypeComponent(props);
@@ -372,15 +374,21 @@ export default class NoteDocument extends PureComponent {
       const { text, type } = this.getNotesTextAndTypeToUse(notesItem, key);
 
       return getPermanentNotesTypeComponent({
-        notesType: type,
-        notesText: text,
+        noteBlock: {
+          notesType: type,
+          notesText: text,
+          deleted: notesItem.deleted,
+          documentId: this.documentId,
+          status: notesItem.status,
+          id: notesItem.index,
+        },
         selected: notesItem.selected,
-        deleted: notesItem.deleted,
         key: key,
         index: notesItem.index,
         documentId: this.documentId,
         saveEdits: this.updateEditingNotesItem,
         insertBefore: this.insertBefore,
+        insertAfter: this.insertAfter,
       });
     })
   }
@@ -407,43 +415,46 @@ export default class NoteDocument extends PureComponent {
 
     return (
       <div className='note-document'>
-        <nav className='note-document-page__left-action-bar'>
-          <button className='red-button' onClick={this.goBack}>
-            <i className='fas fa-arrow-alt-circle-left' /> back
-          </button>
-        </nav>
-        <div className='note-document__document-side'>
-          <div className='note-document__notes'>
-            <div className='document'>
-              <div className='document__name'>
-                Document name: <span className='note-worthy-text'>
-                  { noteDocument.name }
-                </span>
+        <div className='note-document-content'>
+          <nav className='note-document-page__left-action-bar'>
+            <button className='red-button' onClick={this.goBack}>
+              <i className='fas fa-arrow-alt-circle-left' /> back
+            </button>
+          </nav>
+          <div className='note-document-right-section-wrapper'>
+            <div className='note-document__document-interaction-wrapper'>
+              <div className='document-wrapper'>
+                <div className='document'>
+                  <div className='document__name'>
+                    Document name: <span className='note-worthy-text'>
+                      { noteDocument.name }
+                    </span>
+                  </div>
+                  { this.notesList }
+                  { this.renderExampleNotesItem() }
+                  <div
+                    ref={(el) => { this.endOfDocument = el; } }
+                    className='end-of-doc'
+                  />
+                </div>
               </div>
-              {
-                this.notesList
-              }
-              {
-                this.renderNewNotesItem()
-              }
-              <div ref={(el) => { this.endOfDocument = el; } } />
-            </div>
-          </div>
-          <div className='note-document__interactions'>
-            <div className='note-document__interactions-inner'>
-              <CommandList
-                visible={commandListVisible}
-                onSubmitCommand={this.updateCommand}
-                hideCommandList={this.hideCommandList} />
-              <FormattingDescription
-                newNotesItemType={newNotesItemType}
-                showCommandList={this.showCommandList} />
-              <NoteInput
-                value={notesText}
-                registerNoteInputRef={this.registerNoteInputRef}
-                onChange={this.onChangeNotesInput}
-                onFocus={this.onNotesInputFocus}
-                onBlur={this.onNotesInputBlur} />
+              <div className='note-document__interactions'>
+                <div className='note-document__interactions-inner'>
+                  <CommandList
+                    visible={commandListVisible}
+                    onSubmitCommand={this.updateCommand}
+                    hideCommandList={this.hideCommandList} />
+                  <FormattingDescription
+                    newNotesItemType={newNotesItemType}
+                    showCommandList={this.showCommandList} />
+                  <NoteInput
+                    value={notesText}
+                    registerNoteInputRef={this.registerNoteInputRef}
+                    onChange={this.onChangeNotesInput}
+                    onFocus={this.onNotesInputFocus}
+                    onBlur={this.onNotesInputBlur} />
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -460,10 +471,6 @@ export default class NoteDocument extends PureComponent {
 // </div>
 
 class NoteInput extends PureComponent {
-  constructor(props) {
-    super(props);
-  }
-
   componentDidMount() {
     this.props.registerNoteInputRef(this.textarea);
     this.textarea.focus();
@@ -484,7 +491,8 @@ class NoteInput extends PureComponent {
         onFocus={onFocus}
         onBlur={onBlur}
         value={value}
-        ref={(textarea) => { this.textarea = textarea; } } />
+        ref={(textarea) => { this.textarea = textarea; } }
+      />
     );
   }
 }

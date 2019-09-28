@@ -8,10 +8,6 @@ export default class NoteDocumentPage extends Component {
     loading: false,
   }
 
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     return (
       <div className='note-document-page'>

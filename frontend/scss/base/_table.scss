@@ -37,7 +37,7 @@ tbody {
 }
 
 tr {
-  border-top: 1px solid #ddd;
+  border-top: 1px solid $darkened-background-for-border-color;
 
   &:first-child {
     border-top: 0;

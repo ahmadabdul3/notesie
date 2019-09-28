@@ -1,3 +1,4 @@
+import { notesItemStatus } from 'src/constants/notes_items';
 
 const actions = {};
 
@@ -169,6 +170,9 @@ export default function notes(state = initialState, action) {
     case 'INSERT_NOTES_BEFORE':
       return handleInsertNotesBefore({ action, state });
 
+    case 'INSERT_NOTES_AFTER':
+      return handleInsertNotesAfter({ action, state });
+
     default: return state;
   }
 }
@@ -267,10 +271,34 @@ function handleFinishEditNotesItem({ state, action }) {
 }
 
 function handleCancelEditNotesItem({ state, action }) {
-  return {
+  const { notesItem } = action.data;
+  let newState = {
     ...state,
     ...getCancelEditNotesItemState(),
   };
+  if (notesItem.status === notesItemStatus.insertedUnsaved) {
+    newState = hardDeleteNotesItem({
+      currentState: state,
+      newState,
+      ...action.data,
+    });
+  }
+  return newState;
+}
+
+function hardDeleteNotesItem(options) {
+  const { currentState, newState, notesItem, documentId } = options;
+  const notes = currentState.documents[documentId];
+  const newNotes = [];
+  let noteIndex = 0;
+  notes.forEach(note => {
+    if (note.index === notesItem.index) return;
+    newNotes.push({ ...note, index: noteIndex });
+    noteIndex++;
+  });
+
+  newState.documents[documentId] = newNotes;
+  return newState;
 }
 
 function handleInsertNotesBefore({ action, state }) {
@@ -297,12 +325,56 @@ function insertNotesBefore({ index, notes, newNote }) {
 
   notes.forEach((note, i) => {
     if (index === i) {
-      newNotes.push({ ...newNote, index: noteIndex });
+      newNotes.push({
+        ...newNote,
+        index: noteIndex,
+        status: notesItemStatus.insertedUnsaved,
+      });
       newNotesIndex = noteIndex;
       noteIndex++;
     }
     newNotes.push({ ...note, index: noteIndex });
     noteIndex++;
+  });
+
+  return { newNotes, newNotesIndex };
+}
+
+function handleInsertNotesAfter({ action, state }) {
+  const { notesItem, documentId, newNote } = action.data;
+  const notes = state.documents[documentId];
+  const { index } = notesItem;
+  const { newNotes, newNotesIndex } = insertNotesAfter({ index, notes, newNote });
+  const startEditState = getStartEditNotesItemState({ notesItemIndex: newNotesIndex, documentId });
+
+  return {
+    ...state,
+    documents: {
+      ...state.documents,
+      [documentId]: newNotes,
+    },
+    ...startEditState,
+  };
+}
+
+function insertNotesAfter({ index, notes, newNote }) {
+  const newNotes = [];
+  let newNotesIndex = -1;
+  let noteIndex = 0;
+
+  notes.forEach((note, i) => {
+    newNotes.push({ ...note, index: noteIndex });
+    noteIndex++;
+
+    if (index === i) {
+      newNotes.push({
+        ...newNote,
+        index: noteIndex,
+        status: notesItemStatus.insertedUnsaved,
+      });
+      newNotesIndex = noteIndex;
+      noteIndex++;
+    }
   });
 
   return { newNotes, newNotesIndex };

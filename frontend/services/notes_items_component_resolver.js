@@ -9,27 +9,10 @@ import {
   NotesItemQuote,
 } from 'src/frontend/components/notes_item_types.js';
 
-export function getPermanentNotesTypeComponent({
-  notesType,
-  notesText,
-  key,
-  index,
-  documentId,
-  saveEdits,
-  selected,
-  deleted,
-  insertBefore,
-}) {
+export function getPermanentNotesTypeComponent(props) {
+  const { notesType, notesText } = props.noteBlock;
   const allProps = {
-    notesType,
-    notesText,
-    key,
-    index,
-    documentId,
-    saveEdits,
-    selected,
-    deleted,
-    insertBefore,
+    ...props,
     notesItem: getNotesItem(notesType, { notesText, isTransient: false }),
   };
 
@@ -39,21 +22,10 @@ export function getPermanentNotesTypeComponent({
 // - this is currently used to render the notes item that is reflective
 //   of what the user is typing, this version doesn't have a delete/edit
 //   and other interaction features/buttons
-export function getTransientNotesTypeComponent({
-  notesType,
-  notesText,
-  key,
-  documentId,
-  saveEdits,
-  focusNoteInput,
-}) {
+export function getTransientNotesTypeComponent(props) {
+  const { notesType, notesText } = props.noteBlock;
   const allProps = {
-    notesType,
-    notesText,
-    key,
-    documentId,
-    saveEdits,
-    focusNoteInput,
+    ...props,
     isTransient: true,
     notesItem: getNotesItem(notesType, { notesText, isTransient: true }),
   };

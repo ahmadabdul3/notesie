@@ -12,10 +12,10 @@ export default class NotesItem extends Component {
     // console.log(this.props);
     // console.log(nextProps);
     return (
-      this.props.notesText !== nextProps.notesText ||
-      this.props.notesType !== nextProps.notesType ||
+      this.props.noteBlock.notesText !== nextProps.noteBlock.notesText ||
+      this.props.noteBlock.notesType !== nextProps.noteBlock.notesType ||
       this.props.selected !== nextProps.selected ||
-      this.props.deleted !== nextProps.deleted ||
+      this.props.noteBlock.deleted !== nextProps.noteBlock.deleted ||
       // - this conditional applies to the case when we were editing this
       //   note item component and then we stop editing (either save or cancel)
       //   both cases require a re-render so the action buttons update
@@ -28,8 +28,9 @@ export default class NotesItem extends Component {
   }
 
   get notesItemData() {
-    const { notesText, notesType, selected, deleted, index } = this.props;
-    return { notesText, notesType, selected, deleted, index };
+    const { notesText, notesType, deleted, status } = this.props.noteBlock;
+    const { selected, index } = this.props;
+    return { notesText, notesType, selected, deleted, index, status };
   }
 
   notesItemWillBeEdited(nextProps) {
@@ -136,12 +137,35 @@ export default class NotesItem extends Component {
     });
   };
 
+  insertAfter = () => {
+    if (this.notesItemBeingEdited || this.anotherNotesItemBeingEdited) {
+      alert(`
+        There is already a block of notes being edited,
+        save or cancel that one before adding new notes
+      `);
+      return;
+    }
+
+    const { documentId, insertAfter } = this.props;
+
+    insertAfter({
+      documentId,
+      notesItem: this.notesItemData,
+      newNote: { ...this.notesItemData, notesText: '', index: -1 },
+    });
+  }
+
   cancelEditNotesItem = () => {
     // - if the cancel is happening on notes that have a value from before
     //   then we use the old value (this is already happening)
     // - but if the cancel is happening on a new note block, like for
     //   insert before/after, then we need some text - can't cancel on
-    //   empty new note block 
+    //   empty new note block.
+    // - Actually, we should just delete the new before/after note block if
+    //   someone cancels
+    // this.props.removeInsertedNotesBlock({ notesItemIndex: this.props.index });
+    const { documentId } = this.props;
+    this.props.cancelEditNotesItem({ notesItem: this.notesItemData, documentId });
   }
 
   get Actions() {
@@ -151,28 +175,36 @@ export default class NotesItem extends Component {
       <div className='notes-item__actions'>
         {
           this.notesItemBeingEdited ?
-            null : <InsertBefore clickAction={this.insertBefore} />
+            null
+            : (<InsertBefore clickAction={this.insertBefore} />)
         }
         {
           this.notesItemBeingEdited ?
-            null : <InsertAfter clickAction={this.insertAfter} />
+            null
+            : (<InsertAfter clickAction={this.insertAfter} />)
         }
         {
           this.notesItemBeingEdited ?
-            <CancelEdit clickAction={cancelEditNotesItem} /> : null
+            (<CancelEdit clickAction={this.cancelEditNotesItem} />)
+            : null
         }
         {
           this.notesItemBeingEdited ?
-            <SaveEdits clickAction={saveEdits} /> :
-            <StartEdit clickAction={this.startEditItem} />
+            (<SaveEdits clickAction={saveEdits} />)
+            : (<StartEdit clickAction={this.startEditItem} />)
         }
-        <Delete clickAction={this.deleteItem} />
+        {
+          this.notesItemBeingEdited ?
+            null
+            : (<Delete clickAction={this.deleteItem} />)
+        }
       </div>
     );
   }
 
   get notesItemClass() {
-    const { selected, deleted } = this.props;
+    const { deleted } = this.props.noteBlock;
+    const { selected } = this.props;
     if (this.notesItemBeingEdited) return 'notes-item notes-item__being-edited';
     if (selected) return 'notes-item selected';
     if (deleted) return 'notes-item deleted';

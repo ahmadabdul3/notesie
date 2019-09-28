@@ -1,3 +1,5 @@
+$left-action-bar-width: 300px;
+
 .note-document-page {
   height: 100%;
   width: 100%;
@@ -9,62 +11,96 @@
   display: flex;
   height: 100%;
   width: 100%;
+  flex-direction: column;
+  align-items: stretch;
+  overflow-y: auto;
+  // transform: scale(0.6);
+}
+
+.note-document-content {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: 100%;
+  max-height: 20000px;
+  height: auto;
+}
+
+.note-document-right-section-wrapper {
+  display: inline-block;
+  vertical-align: top;
+  width: 100%;
+  max-width: calc(100% - 308px);
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.note-document__document-interaction-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .note-document-page__left-action-bar {
+  display: inline-block;
+  vertical-align: top;
   flex-grow: 0;
   flex-shrink: 0;
-  height: 100%;
-  width: 200px;
+  width: $left-action-bar-width - 20px;
+  margin-right: 20px;
   padding: 20px;
   box-sizing: border-box;
+  position: sticky;
+  top: 0;
+  border: 1px solid $darkened-background-for-border-color;
   background: white;
-  border-right: 1px solid #ddd;
-  background: #363f46;
-  border-top: 1px solid darken(#363f46, 5%);
+  border-radius: 5px;
+  margin-top: 20px;
+  min-height: 200px;
 
   button {
     width: 100%;
   }
 }
 
-.note-document__document-side {
-  display: flex;
-  flex-direction: column;
+.document-wrapper {
+  width: calc(100% - 2px);
+  margin: 0;
   flex-grow: 1;
   flex-shrink: 1;
-  align-items: stretch;
-  height: 100%;
+  border-right: 1px solid $darkened-background-for-border-color;
+  border-left: 1px solid $darkened-background-for-border-color;
+  background: white;
 }
 
-.note-document__notes {
-  position: relative;
+.document {
+  text-align: left;
+  display: flex;
+  align-items: flex-start;
+  align-content: flex-start;
+  flex-direction: row;
   flex-grow: 1;
   flex-shrink: 1;
-  overflow-y: auto;
-  height: calc(100% - 40px);
+  flex-wrap: wrap;
+  // box-shadow: 0 3px 8px 0 rgba(0, 0, 0, 0.15);
+  background: white;
+  margin: 0;
+  // border-radius: 5px;
+  padding: 50px 0;
+  box-sizing: border-box;
+  position: relative;
+}
 
-  .document {
-    @extend .page-width;
-    display: flex;
-    align-items: flex-start;
-    align-content: flex-start;
-    flex-direction: row;
-    flex-wrap: wrap;
-    box-shadow: 0 3px 8px 0 rgba(0, 0, 0, 0.15);
-    background: white;
-    min-height: calc(100% - 130px);
-    margin: 25px auto;
-    border-radius: 3px;
-    padding: 40px 0;
-    position: relative;
-  }
+.end-of-doc {
+  // width: 100%;
+  // height: 10px;
+  // background: red;
 }
 
 .document__name {
   @extend .instructions;
   position: absolute;
-  top: 10px;
+  top: 20px;
   left: 20px;
   width: calc(100% - 20px);
 }
@@ -75,17 +111,26 @@
 }
 
 .note-document__interactions {
+  position: sticky;
+  bottom: 0;
   flex-grow: 0;
   flex-shrink: 0;
-  padding: 30px;
-  box-sizing: border-box;
-  background: white;
-  height: 200px;
-  border-top: 1px solid #ddd;
+}
+
+.note-document-interactions__empty-space {
+  width: $left-action-bar-width;
+  display: inline-block;
+  vertical-align: top;
 }
 
 .note-document__interactions-inner {
-  @extend .page-width;
+  width: calc(100% - 2px);
+  margin: 0;
+  text-align: left;
+  border: 1px solid $darkened-background-for-border-color;
+  background: white;
+  padding: 30px;
+  box-sizing: border-box;
 }
 
 .instructions {
@@ -110,11 +155,12 @@
 .interactions-formatting-label {
   display: flex;
   align-items: center;
-  border-radius: 3px;
+  border-radius: 5px;
   margin-top: -2px;
   background: white;
   color: $green;
-  box-shadow: 0 1px 4px 0 rgba(black, 0.3);
+  // box-shadow: 0 1px 4px 0 rgba(black, 0.3);
+  border: 1px solid $darkened-background-for-border-color;
   transition: background 0.1s ease, color 0.1s ease;
 
   &:hover {
@@ -130,7 +176,7 @@
   }
 
   .interactions-formatting-label__name {
-    border-right: 1px solid #ddd;
+    border-right: 1px solid $darkened-background-for-border-color;
     padding: 0 12px;
     transition: border-color 0.1s ease;
   }
@@ -174,8 +220,8 @@
   resize: none;
   width: 100%;
   height: 100px;
-  border: 1px solid #ddd;
-  border-radius: 3px;
+  border: 1px solid $darkened-background-for-border-color;
+  border-radius: 5px;
   box-sizing: border-box;
   padding: 10px;
   margin: 0 auto;

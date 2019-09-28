@@ -10,7 +10,7 @@
   flex-shrink: 0;
   padding: 30px 0;
   background: white;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid $darkened-background-for-border-color;
 
   .content {
     @extend .page-width;
