@@ -1,16 +1,16 @@
 import { connect } from 'react-redux';
 import HomePage from 'src/frontend/pages/home_page';
-import { actions as notesDocumentsActions } from 'src/frontend/redux/notes_documents';
+import { actions as notebookActions } from 'src/frontend/redux/notebooks';
 
-export function mapStateToProps({ notesDocuments }) {
+export function mapStateToProps({ notebooks }) {
   return {
-    notesDocuments: notesDocuments.items,
+    notebooks: notebooks.items,
   };
 }
 
 export function mapDispatchToProps(dispatch) {
   return {
-    addNotesDocument: (item) => dispatch(notesDocumentsActions.addNotesDocument(item)),
+    addNotebook: (item) => dispatch(notebookActions.addNotebook(item)),
   };
 }
 

@@ -1,18 +1,18 @@
 import { connect } from 'react-redux';
-import NoteDocument from 'src/frontend/components/note_document';
+import Notebook from 'src/frontend/components/notebook';
 import { actions as notesActions } from 'src/frontend/redux/notes';
 
-export function mapStateToProps({ notes, notesDocuments }, { routerProps }) {
+export function mapStateToProps({ notes, notebooks }, { routerProps }) {
   const documentId = routerProps.match.params.id;
   const empty = {
     name: "This document doesnt exist - this should only show up in development"
   };
-  const noteDocument = notesDocuments.items[documentId] || empty;
+  const notebook = notebooks.items[documentId] || empty;
 
   return {
     notesList: notes.documents[documentId],
     router: routerProps,
-    noteDocument,
+    notebook,
     notesItemBeingEdited: notes.notesItemBeingEdited,
     notesItemBeingEditedId: notes.notesItemBeingEditedId,
     notesItemBeingEditedDocumentId: notes.notesItemBeingEditedDocumentId,
@@ -32,9 +32,9 @@ export function mapDispatchToProps(dispatch) {
   };
 }
 
-const NoteDocumentContainer = connect(
+const NotebookContainer = connect(
   mapStateToProps,
   mapDispatchToProps
-)(NoteDocument);
+)(Notebook);
 
-export default NoteDocumentContainer;
+export default NotebookContainer;

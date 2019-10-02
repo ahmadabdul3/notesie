@@ -2,7 +2,7 @@ import { combineReducers } from 'redux';
 import { connectRouter } from 'connected-react-router'
 import placeholder from './placeholder';
 import notes from './notes';
-import notesDocuments from './notes_documents';
+import notebooks from './notebooks';
 
 function createAppReducer(history) {
   // - combineReducers returns a function that gets executed by redux
@@ -14,7 +14,7 @@ function createAppReducer(history) {
     router: connectRouter(history),
     placeholder,
     notes,
-    notesDocuments,
+    notebooks,
   });
 }
 

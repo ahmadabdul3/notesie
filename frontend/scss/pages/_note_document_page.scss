@@ -63,8 +63,10 @@ $left-action-bar-width: 300px;
   }
 }
 
+// - keep back
 .document-wrapper {
-  width: calc(100% - 2px);
+  box-sizing: border-box;
+  width: 100%;
   margin: 0;
   flex-grow: 1;
   flex-shrink: 1;
@@ -112,6 +114,7 @@ $left-action-bar-width: 300px;
 
 .note-document__interactions {
   position: sticky;
+  z-index: 15;
   bottom: 0;
   flex-grow: 0;
   flex-shrink: 0;
@@ -124,7 +127,7 @@ $left-action-bar-width: 300px;
 }
 
 .note-document__interactions-inner {
-  width: calc(100% - 2px);
+  width: 100%;
   margin: 0;
   text-align: left;
   border: 1px solid $darkened-background-for-border-color;

@@ -21,7 +21,7 @@ import {
 //   THEN the textarea text is cleared, and the cursor stays at the top
 //
 // *
-export default class NoteDocument extends PureComponent {
+export default class Notebook extends PureComponent {
   noteInputRef = null;
   noteInputFocused = false;
   endOfDocument = null;
@@ -411,7 +411,7 @@ export default class NoteDocument extends PureComponent {
       newNotesItemType,
     } = this.state;
 
-    const { noteDocument } = this.props;
+    const { notebook } = this.props;
 
     return (
       <div className='note-document'>
@@ -426,8 +426,8 @@ export default class NoteDocument extends PureComponent {
               <div className='document-wrapper'>
                 <div className='document'>
                   <div className='document__name'>
-                    Document name: <span className='note-worthy-text'>
-                      { noteDocument.name }
+                    Notebook Name: <span className='note-worthy-text'>
+                      { notebook.name }
                     </span>
                   </div>
                   { this.notesList }

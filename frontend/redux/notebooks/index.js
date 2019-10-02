@@ -1,7 +1,7 @@
 
 const actions = {};
 
-actions.addNotesDocument = function(data) {
+actions.addNotebook = function(data) {
   return {
     type: 'ADD_NOTES_DOCUMENT',
     data
@@ -22,7 +22,7 @@ const initialState = {
   items: [],
 };
 
-export default function notesDocuments(state = initialState, action) {
+export default function notebooks(state = initialState, action) {
   switch (action.type) {
     case 'ADD_NOTES_DOCUMENT':
       const newDocument = action.data;

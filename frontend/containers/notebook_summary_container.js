@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import NoteDocumentSummary from 'src/frontend/components/note_document_summary';
+import NotebookSummary from 'src/frontend/components/notebook_summary';
 
 export function mapStateToProps({ notes }, { data }) {
   const documents = notes.documents[data.id] || [];
@@ -13,9 +13,9 @@ export function mapDispatchToProps(dispatch) {
   };
 }
 
-const NoteDocumentSummaryContainer = connect(
+const NotebookSummaryContainer = connect(
   mapStateToProps,
   mapDispatchToProps
-)(NoteDocumentSummary);
+)(NotebookSummary);
 
-export default NoteDocumentSummaryContainer;
+export default NotebookSummaryContainer;

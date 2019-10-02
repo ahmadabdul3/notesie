@@ -1,8 +1,8 @@
 import React from 'react';
 
-export default function NoteDoc({ data, click, notesList }) {
+export default function NotebookSummary({ data, click, notesList }) {
   const { name } = data;
-  const noNotesYet = "This document doesn't have any notes yet";
+  const noNotesYet = "This notebook doesn't have any notes yet";
   let summary = '';
 
   if (notesList.length > 0) {

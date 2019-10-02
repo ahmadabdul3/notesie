@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import appRoutes from 'src/constants/routes';
 import { NavLink } from 'react-router-dom';
-import NoteDocumentContainer from 'src/frontend/containers/note_document_container';
+import NotebookContainer from 'src/frontend/containers/notebook_container';
 
-export default class NoteDocumentPage extends Component {
+export default class NotebookPage extends Component {
   state = {
     loading: false,
   }
@@ -11,7 +11,7 @@ export default class NoteDocumentPage extends Component {
   render() {
     return (
       <div className='note-document-page'>
-        <NoteDocumentContainer routerProps={this.props} />
+        <NotebookContainer routerProps={this.props} />
       </div>
     );
   }

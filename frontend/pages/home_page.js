@@ -2,73 +2,71 @@ import React, { Component } from 'react';
 import appRoutes from 'src/constants/routes';
 import { NavLink } from 'react-router-dom';
 import FormInput from 'src/frontend/components/form_input';
-import NoteDocumentSummaryContainer from 'src/frontend/containers/note_document_summary_container';
-import NoteDocumentSummary from 'src/frontend/components/note_document_summary';
+import NotebookSummaryContainer from 'src/frontend/containers/notebook_summary_container';
+import NotebookSummary from 'src/frontend/components/notebook_summary';
 import Modal from 'src/frontend/components/modal';
 
 export default class HomePage extends Component {
   state = {
     loading: false,
-    newNoteDocumentModalVisible: false,
-    // noteDocs: [],
+    newNotebookModalVisible: false,
   }
 
-  constructor(props) {
-    super(props);
+  addNotebook = ({ notebookName }) => {
+    this.hideNewNotebookModal();
+    this.props.addNotebook({ name: notebookName });
   }
 
-  addNoteDoc = ({ docName }) => {
-    this.hideNewNoteDocumentModal();
-    this.props.addNotesDocument({ name: docName });
+  showNewNotebookModal = () => {
+    this.setState({ newNotebookModalVisible: true });
   }
 
-  showNewNoteDocumentModal = () => {
-    this.setState({ newNoteDocumentModalVisible: true });
-  }
-
-  hideNewNoteDocumentModal = () => {
-    this.setState({ newNoteDocumentModalVisible: false });
+  hideNewNotebookModal = () => {
+    this.setState({ newNotebookModalVisible: false });
   }
 
   goToDocPage = (id) => {
     // - will need to fetch the document data using the id
     //   but no need for now
-    this.props.history.push(appRoutes.noteDoc(id));
+    this.props.history.push(appRoutes.notebook(id));
   }
 
   render() {
-    const { loading, newNoteDocumentModalVisible } = this.state;
-    const { notesDocuments } = this.props;
-    const notesDocumentsKeys = Object.keys(notesDocuments);
+    const { loading, newNotebookModalVisible } = this.state;
+    const { notebooks } = this.props;
+    const notebookKeys = Object.keys(notebooks);
 
     return (
       <div className='home-page'>
-        <NewNoteDocumentModal
-          visible={newNoteDocumentModalVisible}
-          addNoteDoc={this.addNoteDoc}
-          cancelAction={this.hideNewNoteDocumentModal} />
+        <NewNotebookModal
+          visible={newNotebookModalVisible}
+          addNotebook={this.addNotebook}
+          cancelAction={this.hideNewNotebookModal} />
         <header className='home-page__header'>
           <div className='content'>
-            <button className='green-button' onClick={this.showNewNoteDocumentModal}>
-              <i className='fas fa-plus' /> New Note Doc
+            <button
+              className='new-notebook-button green-button'
+              onClick={this.showNewNotebookModal}
+            >
+              <i className='fas fa-plus' /> New Notebook
             </button>
           </div>
         </header>
         <section className='home-page__docs'>
           {
-            notesDocumentsKeys.length > 0 ? (
-              notesDocumentsKeys.map(
-                (noteDocKey, key) => {
-                  const noteDoc = notesDocuments[noteDocKey];
+            notebookKeys.length > 0 ? (
+              notebookKeys.map(
+                (notebookKey, key) => {
+                  const notebook = notebooks[notebookKey];
                   return (
-                    <NoteDocumentSummaryContainer
+                    <NotebookSummaryContainer
                       key={key}
-                      data={noteDoc}
-                      click={ () => { this.goToDocPage(noteDoc.id); } } />
+                      data={notebook}
+                      click={ () => { this.goToDocPage(notebook.id); } } />
                   )
                 }
               )
-            ) : <NoNoteDocs />
+            ) : <NoNotebooks />
           }
         </section>
       </div>
@@ -76,28 +74,28 @@ export default class HomePage extends Component {
   }
 }
 
-function NoNoteDocs() {
+function NoNotebooks() {
   const data = {
     id: 0,
-    name: "No Docs",
+    name: "No Notebooks",
   };
   const notesList = [
     {
-      notesText: "You don't have any documents."
+      notesText: "You don't have any notebooks."
         + " Create one by clicking the add button"
     },
   ];
 
   return (
-    <NoteDocumentSummary data={data} notesList={notesList} />
+    <NotebookSummary data={data} notesList={notesList} />
   );
 }
 
 // - this is ok for now, might need to be connected to
 //   redux later
-class NewNoteDocumentModal extends Component {
+class NewNotebookModal extends Component {
   state = {
-    docName: '',
+    notebookName: '',
     nameMessage: '',
   };
 
@@ -105,17 +103,17 @@ class NewNoteDocumentModal extends Component {
     this.setState({ [name]: value });
   }
 
-  addNoteDoc = (e) => {
+  addNotebook = (e) => {
     e.preventDefault();
-    const trimmedDocName = this.state.docName.trim();
-    if (!trimmedDocName) {
+    const trimmedNotebookName = this.state.notebookName.trim();
+    if (!trimmedNotebookName) {
       this.setState({ nameMessage: 'Please provide a name for your document' });
       return;
     }
 
-    const { docName } = this.state;
+    const { notebookName } = this.state;
     this.resetState();
-    this.props.addNoteDoc({ docName });
+    this.props.addNotebook({ notebookName });
   }
 
   close = () => {
@@ -124,25 +122,25 @@ class NewNoteDocumentModal extends Component {
   }
 
   resetState() {
-    this.setState({ docName: '', nameMessage: '' });
+    this.setState({ notebookName: '', nameMessage: '' });
   }
 
   render() {
-    const { docName, nameMessage } = this.state;
+    const { notebookName, nameMessage } = this.state;
     const { cancelAction, visible } = this.props;
 
     return (
       <Modal onClose={this.close} open={visible}>
         <div className='new-note-document-modal'>
           <h2>
-            Create a new document
+            Create a new notebook
           </h2>
-          <form onSubmit={this.addNoteDoc}>
+          <form onSubmit={this.addNotebook}>
             <FormInput
               autoFocus
-              labelText='Document name'
-              name='docName'
-              value={docName}
+              labelText='Notebook Name'
+              name='notebookName'
+              value={notebookName}
               type='text'
               onChange={this.onChange}
               message={nameMessage} />
@@ -152,7 +150,7 @@ class NewNoteDocumentModal extends Component {
                 Cancel
               </button>
               <button className='red-button'>
-                Create Document
+                Create Notebook
               </button>
             </div>
           </form>
