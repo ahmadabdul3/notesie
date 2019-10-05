@@ -1,7 +1,7 @@
 // - this import is needed for the config to
 //   correctly see the env variables
 require('dotenv').config();
-
+//
 const shared = {
   database: process.env.DB_NAME,
   username: process.env.DB_USERNAME,
