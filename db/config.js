@@ -14,6 +14,8 @@ const shared = {
   },
 };
 
+function somethingHereToJustRebuild() {}
+
 module.exports = {
   development: shared,
   production: shared,
