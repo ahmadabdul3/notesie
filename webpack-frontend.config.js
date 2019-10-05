@@ -1,7 +1,10 @@
 var path = require('path');
 
 module.exports = {
-  entry: ['./frontend/app.js', './frontend/scss/index.scss'],
+  entry: [
+    './frontend/app.js',
+    './frontend/scss/index.scss'
+  ],
   output: {
     filename: 'javascripts/bundle.js',
     path: path.resolve(__dirname, 'public'),
@@ -16,7 +19,18 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['env', 'react', 'stage-2'],
+            presets: [
+              '@babel/preset-env',
+              '@babel/preset-react',
+            ],
+            plugins: [
+              ['@babel/plugin-proposal-decorators', { "legacy": true }],
+              '@babel/plugin-proposal-function-sent',
+              '@babel/plugin-proposal-export-namespace-from',
+              '@babel/plugin-proposal-numeric-separator',
+              '@babel/plugin-proposal-throw-expressions',
+              '@babel/plugin-proposal-class-properties',
+            ]
           }
         }
       },

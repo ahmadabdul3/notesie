@@ -1,3 +1,6 @@
+import "core-js/stable";
+import "regenerator-runtime/runtime";
+
 import React, { Component } from 'react';
 import ReactDom from 'react-dom';
 import { Provider } from 'react-redux';
@@ -62,7 +65,7 @@ if (typeof window !== 'undefined') {
 // - backend
 // - cloning documents
 // - cloning notes
-// - add before / after
+// - *** add before / after *** done
 // - clone notes from 1 doc to another
-// - * select note items *** done
-// - * multi-select note items by clicking 'shift' *** done
+// - *** select note items *** done
+// - *** multi-select note items by clicking 'shift' *** done

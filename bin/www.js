@@ -3,7 +3,9 @@
 /**
  * Module dependencies.
  */
-
+import "core-js/stable";
+import "regenerator-runtime/runtime";
+require('dotenv').config();
 import app from 'src/app';
 var debug = require('debug')('testapp:server');
 import http from 'http';

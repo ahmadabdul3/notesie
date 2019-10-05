@@ -4,7 +4,7 @@ var fs = require('fs');
 
 module.exports = {
   target: 'node',
-  entry: ['babel-polyfill', './repl.js'],
+  entry: ['./repl.js'],
   externals: getNodeModules(),
   output: {
     filename: 'repl',
@@ -18,7 +18,15 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['env', 'stage-2']
+            presets: ['@babel/preset-env'],
+            plugins: [
+              ['@babel/plugin-proposal-decorators', { "legacy": true }],
+              '@babel/plugin-proposal-function-sent',
+              '@babel/plugin-proposal-export-namespace-from',
+              '@babel/plugin-proposal-numeric-separator',
+              '@babel/plugin-proposal-throw-expressions',
+              '@babel/plugin-proposal-class-properties',
+            ],
           }
         }
       }

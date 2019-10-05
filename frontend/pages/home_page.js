@@ -5,6 +5,7 @@ import FormInput from 'src/frontend/components/form_input';
 import NotebookSummaryContainer from 'src/frontend/containers/notebook_summary_container';
 import NotebookSummary from 'src/frontend/components/notebook_summary';
 import Modal from 'src/frontend/components/modal';
+import http from 'src/frontend/services/http';
 
 export default class HomePage extends Component {
   state = {
@@ -30,6 +31,18 @@ export default class HomePage extends Component {
     //   but no need for now
     this.props.history.push(appRoutes.notebook(id));
   }
+
+  // createUser = async () => {
+  //   const user = { user: { email: 'abdul3@example.com', password: 'howdyho' }};
+  //   const res = await http.post('/users', user);
+  //   console.log(res);
+  // }
+  //
+  // logIn = async () => {
+  //   const session = { session: { email: 'abdul@example.com', password: 'howdy' }};
+  //   const res = await http.post('/sessions', session);
+  //   console.log(res);
+  // }
 
   render() {
     const { loading, newNotebookModalVisible } = this.state;

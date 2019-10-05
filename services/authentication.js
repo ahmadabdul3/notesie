@@ -3,53 +3,53 @@ import models from 'src/db/models';
 
 const ERROR_NO_AUTH_HEADER = 'NoAuthHeader';
 const ERROR_TOKEN_EXPIRED = 'TokenExpiredError';
+const ERROR__USER__MISSING = 'error--user--missing';
+
 
 export function authenticateLenient(allowedClaims) {
-  return function (req, res, next) {
-    authenticate(req, res).then((response) => {
-      req.userId = response.decoded.sub;
-      return fetchUser({ id: response.decoded.sub });
-    }).then(user => {
-      if (!user) {
-        res.status(404).json({ message: 'User not found' });
-        return;
-      }
-      validateUser({ user, allowedClaims });
-      req.user = user;
+  return async function (req, res, next) {
+    try {
+      const token = await authenticate(req, res);
+      await loadUser({ token });
       next();
-    }).catch((response) => {
-      console.log('response', response);
-      const { error } = response;
-      if (error.name === ERROR_NO_AUTH_HEADER) {
-        res.status(401).json({ message: 'Forbidden' });
-        return;
-      } else if (error.name === ERROR_TOKEN_EXPIRED) {
-        handleLenientTokenExpired({ req, res, next, allowedClaims });
+    } catch (response) {
+      console.log('ERROR', response);
+
+      if (response.error.name === ERROR_TOKEN_EXPIRED) {
+        await handleLenientTokenExpired({ req, res, next, allowedClaims });
         return;
       }
 
-      res.status(401).json({ error, message: 'Forbidden' });
+      res.status(401).json({ message: 'Forbidden' });
       return;
-    });
+    }
   };
 }
 
-function handleLenientTokenExpired({ req, res, next, allowedClaims }) {
-  const token = req.headers.authorization.split(' ')[1];
-  const decoded = jwt.decode(token);
-  fetchUser({ id: decoded.sub }).then(user => {
-    if (!user) {
-      res.status(404).json({ message: 'User not found' });
+async function handleLenientTokenExpired({ req, res, next, allowedClaims }) {
+  try {
+    const token = req.headers.authorization.split(' ')[1];
+    const decoded = jwt.decode(token);
+    await loadUser({ token: { decoded} });
+    next();
+  } catch (e) {
+    console.log('error handle lenient', e);
+    res.status(401).json({ message: 'Forbidden' });
+  }
+}
+
+export function authenticateStrict(allowedClaims) {
+  return async function(req, res, next) {
+    try {
+      const token = await authenticate(req, res);
+      await loadUser({ token });
+      next();
+    } catch (response) {
+      console.log('ERROR ', response);
+      res.status(401).json({ message: 'Forbidden' });
       return;
     }
-    validateUser({ user, allowedClaims });
-    req.userId = decoded.sub;
-    req.user = user;
-    next();
-  }).catch(e => {
-    console.log('error handle lenient', e);
-    res.status(401).json({ error: e, message: 'Forbidden' });
-  });
+  };
 }
 
 export function getUserFromAuthToken({ req }) {
@@ -58,34 +58,12 @@ export function getUserFromAuthToken({ req }) {
   return fetchUser({ id: decoded.sub });
 }
 
-export function authenticateStrict(allowedClaims) {
-  return function(req, res, next) {
-    authenticate(req, res).then((response) => {
-      req.userId = response.decoded.sub;
-      return fetchUser({ id: response.decoded.sub });
-    }).then(user => {
-      if (!user) {
-        res.status(404).json({ message: 'User not found' });
-        return;
-      }
-      validateUser({ user, allowedClaims });
-      req.user = user;
-      next();
-    }).catch((response) => {
-      console.log('ERROR ', response);
-      const { decoded, error } = response;
-      if (error.name === ERROR_NO_AUTH_HEADER) {
-        res.status(401).json({ message: 'Forbidden' });
-        return;
-      } else if (error.name === ERROR_TOKEN_EXPIRED) {
-        res.status(401).json({ error, message: 'Forbidden' });
-        return;
-      }
-
-      res.status(401).json({ error, message: 'Forbidden' });
-      return;
-    });
-  };
+async function loadUser({ token }) {
+  const user = await fetchUser({ id: token.decoded.sub });
+  if (!user) throw({ name: ERROR__USER__MISSING, message: 'User not found' });
+  validateUser({ user, allowedClaims });
+  req.userId = token.decoded.sub;
+  req.user = user;
 }
 
 function fetchUser({ id }) {

@@ -3,9 +3,17 @@ var path = require('path');
 var fs = require('fs');
 
 module.exports = {
+  mode: 'development',
+  devtool: '#eval-source-map',
   target: 'node',
   entry: './bin/www.js',
   externals: getNodeModules(),
+  resolve: {
+    extensions: ['.js'],
+    alias: {
+      src: path.resolve(__dirname),
+    },
+  },
   output: {
     filename: 'server',
     path: path.resolve(__dirname, 'dist')
@@ -18,7 +26,15 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['env', 'stage-2']
+            presets: ['@babel/preset-env'],
+            plugins: [
+              ['@babel/plugin-proposal-decorators', { "legacy": true }],
+              '@babel/plugin-proposal-function-sent',
+              '@babel/plugin-proposal-export-namespace-from',
+              '@babel/plugin-proposal-numeric-separator',
+              '@babel/plugin-proposal-throw-expressions',
+              '@babel/plugin-proposal-class-properties',
+            ],
           }
         }
       }

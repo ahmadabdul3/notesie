@@ -2,10 +2,12 @@ import fs from 'fs';
 import path from 'path';
 import Sequelize from 'sequelize';
 import config from 'src/db/config';
-import noteDocuments from './note_documents';
+import notebooks from './notebooks';
+import users from './users';
 
 const modelInitializers = [
-  noteDocuments,
+  notebooks,
+  users,
 ];
 
 const sequelize = initializeDatabase();
