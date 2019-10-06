@@ -13,7 +13,7 @@ import {routerMiddleware, ConnectedRouter } from 'connected-react-router';
 import thunk from 'redux-thunk';
 
 import Navigation from 'src/frontend/components/navigation';
-import AppBodyContainer from 'src/frontend/containers/app_body_container';
+import AppEntryContainer from 'src/frontend/containers/app_entry_container';
 import { Route } from 'react-router-dom';
 
 const history = createBrowserHistory();
@@ -33,20 +33,11 @@ export default class App extends Component {
     return (
       <Provider store={store}>
         <ConnectedRouter history={history}>
-          <AppComponent />
+          <AppEntryContainer />
         </ConnectedRouter>
       </Provider>
     );
   }
-}
-
-function AppComponent() {
-  return (
-    <div className='app-layout'>
-      <Navigation />
-      <Route component={AppBodyContainer} />
-    </div>
-  );
 }
 
 if (typeof window !== 'undefined') {
@@ -65,6 +56,8 @@ if (typeof window !== 'undefined') {
 // - backend
 // - cloning documents
 // - cloning notes
+// - collapse groups of notes
+// - group notes together with a title
 // - *** add before / after *** done
 // - clone notes from 1 doc to another
 // - *** select note items *** done

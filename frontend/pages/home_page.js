@@ -7,6 +7,7 @@ import NotebookSummary from 'src/frontend/components/notebook_summary';
 import Modal from 'src/frontend/components/modal';
 import http from 'src/frontend/services/http';
 
+
 export default class HomePage extends Component {
   state = {
     loading: false,
@@ -75,7 +76,8 @@ export default class HomePage extends Component {
                     <NotebookSummaryContainer
                       key={key}
                       data={notebook}
-                      click={ () => { this.goToDocPage(notebook.id); } } />
+                      click={() => this.goToDocPage(notebook.id)}
+                    />
                   )
                 }
               )

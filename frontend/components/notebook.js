@@ -363,7 +363,7 @@ export default class Notebook extends PureComponent {
   }
 
   goBack = () => {
-    this.props.routerProps.history.goBack();
+    this.props.routerProps.history.push('/');
   }
 
   get notesList() {

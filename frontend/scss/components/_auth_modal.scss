@@ -1,0 +1,212 @@
+.citi-modal {
+  position: relative;
+  padding: 60px 50px;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 400px;
+  background: $matteGreen;
+  color: black;
+  box-shadow: 0 10px 50px 0 rgba(black, 0.5);
+  border-radius: 3px;
+
+  .fa-times {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 20px;
+    color: darken($matteGreen, 15%);
+    transition: color 0.15s ease;
+
+    &:hover {
+      cursor: pointer;
+      color: darken($matteGreen, 60%);
+      transition: color 0.15s ease;
+    }
+  }
+
+  .input {
+    border-color: darken($matteGreen, 5%);
+
+    &:hover {
+      border-color: darken($matteGreen, 15%);
+    }
+
+    &:focus {
+      border-color: darken($matteGreen, 25%);
+    }
+
+    &+.input {
+      margin-top: 5px;
+    }
+  }
+}
+
+.citi-modal__title {
+  font-size: 25px;
+}
+
+.citi-modal__title-underline {
+  display: inline-block;
+  width: 40px;
+  height: 2px;
+  background: black;
+  margin: 25px 0 15px;
+}
+
+.citi-modal__title-message {
+  margin: 0;
+  margin-top: 25px;
+}
+
+.citi-modal__content {
+  margin-top: 25px;
+}
+
+.citi-modal__primary-button {
+  @extend .button;
+  color: white;
+  background: black;
+  border-radius: 3px;
+  padding: 10px;
+  width: 100%;
+  margin-top: 5px;
+  border: 1px solid $matteGreen;
+
+  &:hover {
+    background: darken($matteGreen, 50%);
+    color: white;
+  }
+
+  &:active {
+    background: darken($matteGreen, 60%);
+    color: white;
+  }
+}
+
+
+.auth-modal {
+  position: relative;
+  padding: 60px 50px;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 400px;
+  background: $matteGreen;
+  color: black;
+  box-shadow: 0 10px 50px 0 rgba(black, 0.5);
+  border-radius: 3px;
+
+  .fa-times {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 20px;
+    color: darken($matteGreen, 15%);
+    transition: color 0.15s ease;
+
+    &:hover {
+      cursor: pointer;
+      color: darken($matteGreen, 60%);
+      transition: color 0.15s ease;
+    }
+  }
+
+  .input {
+    border-color: darken($matteGreen, 5%);
+
+    &:hover {
+      border-color: darken($matteGreen, 15%);
+    }
+
+    &:focus {
+      border-color: darken($matteGreen, 25%);
+    }
+
+    &+.input {
+      margin-top: 5px;
+    }
+  }
+
+  .half-input-box {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+
+    .input {
+      width: 50%;
+
+      &+.input {
+        margin-top: 0;
+        margin-left: 5px;
+      }
+    }
+  }
+}
+
+.auth-modal__header {
+  text-align: center;
+}
+
+.auth-modal__title {
+  font-size: 25px;
+}
+
+.auth-modal__title-underline {
+  display: inline-block;
+  width: 40px;
+  height: 2px;
+  background: black;
+  margin: 25px 0 15px;
+}
+
+.auth-modal__title-message {
+  margin: 0;
+}
+
+.auth-modal__form {
+  margin-top: 20px;
+}
+
+.auth-modal__form-message {
+  margin-top: 5px;
+  box-sizing: border-box;
+  padding: 5px 2px;
+}
+
+.auth-modal__login-button {
+  @extend .button;
+  color: white;
+  background: black;
+  border-radius: 3px;
+  padding: 10px;
+  width: 100%;
+  margin-top: 5px;
+  border: 1px solid $matteGreen;
+
+  &:hover {
+    background: darken($matteGreen, 50%);
+    color: white;
+  }
+
+  &:active {
+    background: darken($matteGreen, 60%);
+    color: white;
+  }
+}
+
+.auth-modal__footer {
+  margin-top: 20px;
+  text-align: center;
+
+  a {
+    color: darken($matteGreen, 45%);
+    transition: color 0.15s ease;
+    text-decoration: underline;
+    margin-left: 3px;
+
+    &:hover {
+      cursor: pointer;
+      color: darken($matteGreen, 50%);
+      transition: color 0.15s ease;
+    }
+  }
+}

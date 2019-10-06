@@ -1,15 +1,17 @@
 import { connect } from 'react-redux';
 import Navigation from 'src/frontend/components/navigation';
-import { actions as userActions } from 'src/frontend/redux/user';
+import { actions } from 'src/frontend/redux/session';
 
-export function mapStateToProps({  }) {
+export function mapStateToProps({ session }) {
   return {
+    authenticated: session.authenticated,
+    user: session.user,
   };
 }
 
 export function mapDispatchToProps(dispatch) {
   return {
-    clearUser: () => dispatch(userActions.clearUser()),
+    logout: () => dispatch(actions.logoutSuccess()),
   };
 }
 

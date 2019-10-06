@@ -1,35 +1,49 @@
 import http from 'src/frontend/services/http';
-// import jwt from 'jsonwebtoken';
-// import convertCamelToSnake from 'src/frontend/services/camel_to_snake_converter';
 
-const dataApiClient = {
-  baseUrl: function() {
-    return 'process.env.dataApiBaseUrl';
-  },
-  getHeaders: function() {
-    return {
-      "AUTHORIZATION": "Bearer " + localStorage.getItem('jwt-token'),
-    };
-  },
-  get: function(url) {
-    return http.get(url, this.getHeaders());
-  },
-  post: function(url, data) {
-    // const convertedData = convertCamelToSnake(data);
-    return http.post(url, data, this.getHeaders());
-  },
-  patch: function(url, data) {
-    // const convertedData = convertCamelToSnake(data);
-    return http.patch(url, data, this.getHeaders());
-  },
-  put: function(url, data) {
-    // const convertedData = convertCamelToSnake(data);
-    return http.put(url, data, this.getHeaders());
-  },
-  delete: function(url, data) {
-    // const convertedData = convertCamelToSnake(data);
-    return http.delete(url, data, this.getHeaders());
-  },
-};
+const BASE_URL = '/';
+const ERROR_TOKEN_EXPIRED = 'TokenExpiredError';
 
-export default dataApiClient;
+function getHeaders() {
+  const accessToken = localStorage.getItem('notesie-access-token');
+  return { 'AUTHORIZATION': `Bearer ${accessToken}` };
+}
+
+function getUrl({ url }) {
+  // - url here is the resource name, base url is the server url address
+  // - so we're putting together:
+  //   base url: http://some-domain.com/ notice the trailing slash
+  //   resource name: /users/other-stuff
+  // - in this case, we want to remove the leading slash from the resource
+  //   name to keep the url clean
+  let cleanUrl = url;
+  while (cleanUrl.charAt(0) === '/') cleanUrl = cleanUrl.substr(1);
+  return BASE_URL + cleanUrl;
+}
+
+function handleError(e) {
+  if (e && e.error && e.error.name === ERROR_TOKEN_EXPIRED) {
+    localStorage.removeItem('notesie-access-token');
+    window.location.href = '/';
+  }
+  throw(e);
+}
+
+export function dataApiClientGet({ url }) {
+  return http.get(getUrl({ url }), getHeaders()).catch(handleError);
+}
+
+export function dataApiClientPost({ url, data }) {
+  return http.post(getUrl({ url }), data, getHeaders()).catch(handleError);
+}
+
+export function dataApiClientPut({ url, data }) {
+  return http.put(getUrl({ url }), data, getHeaders()).catch(handleError);
+}
+
+export function dataApiClientPatch({ url, data }) {
+  return http.patch(getUrl({ url }), data, getHeaders()).catch(handleError);
+}
+
+export function dataApiClientDelete({ url, data }) {
+  return http.delete(getUrl({ url }), data, getHeaders()).catch(handleError);
+}

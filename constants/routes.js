@@ -4,6 +4,7 @@ const appRoutes = {
   signup: '/signup',
   notebookWithId: '/notebook/:id',
   notebook: id => `/notebook/${id}`,
+  account: '/account',
 };
 
 export default appRoutes;

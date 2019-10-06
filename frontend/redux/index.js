@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux';
 import { connectRouter } from 'connected-react-router'
+import session from './session';
 import placeholder from './placeholder';
 import notes from './notes';
 import notebooks from './notebooks';
@@ -12,6 +13,7 @@ function createAppReducer(history) {
   //
   return combineReducers({
     router: connectRouter(history),
+    session,
     placeholder,
     notes,
     notebooks,

@@ -3,6 +3,13 @@ $green: #00bf8d;
 $blue: #2770ff;
 $yellowHighlight: #fff3db;
 
+$errorRed: darken($red, 20%);
+
+$matteGreen: #a6bfa0;
+$matteGreen: #b9c7b6;
+$matteGreen: #b6c7c1;
+// $matteGreen: #b6c7be;
+
 $background-color: #f1f4f7;
 $darkened-background-for-border-color: darken($background-color, 5%);
 $text-color: #42464A;

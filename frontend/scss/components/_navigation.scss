@@ -1,24 +1,13 @@
 
-.navigation {
-  background: #363f46;
-  font-size: 14px;
-  display: flex;
-}
 
-.nav-left {
-  flex-shrink: 0;
-}
-
-.nav-right {
-  flex-grow: 1;
-  text-align: right;
-}
-
-.nav-item {
+.nav-item__logo {
   margin: 15px 20px;
   display: inline-block;
   transition: color 0.15s ease;
   color: $text-color;
+  font-family: 'Pacifico', cursive;
+  // color: white;
+  font-size: 20px;
 
   &.selected {
     color: $red;
@@ -32,9 +21,224 @@
   }
 }
 
-.nav-item__logo {
+
+.navigation {
+  background: #363f46;
+  background: white;
+  font-size: 14px;
+  display: flex;
+  border-bottom: 1px solid #ddd;
+}
+
+.nav-left {
+  flex-shrink: 0;
+}
+
+.nav-right {
+  flex-grow: 1;
+  text-align: right;
+
+  .nav-item {
+    &:last-of-type {
+      margin-right: 20px;
+    }
+  }
+}
+
+.nav-item {
+  margin: 15px 10px;
+  display: inline-block;
+  vertical-align: middle;
+  transition: color 0.15s ease;
+  color: black;
+  position: relative;
+
+  &.selected {
+    color: saturate(darken($matteGreen, 20%), 20%);
+    transition: color 0.15s ease;
+  }
+
+  &:hover {
+    color: saturate(darken($matteGreen, 40%), 20%);
+    cursor: pointer;
+    transition: color 0.15s ease;
+  }
+}
+
+.nav-item__dropdown {
   @extend .nav-item;
-  font-family: 'Pacifico', cursive;
-  color: white;
-  font-size: 20px;
+  margin-right: 0;
+  margin-left: 0;
+
+  &:hover {
+    cursor: default;
+    color: black;
+  }
+
+  .filters-bar-dropdown-options {
+    top: calc(100% + 5px);
+  }
+
+  .filters-bar-dropdown__text-content {
+    color: black;
+  }
+}
+
+.nav-account-dropdown {
+  background: white;
+  max-width: 250px;
+  text-align: left;
+}
+
+.nav-account-dropdown-header {
+  padding: 20px 20px;
+  background: white;
+  border-bottom: 1px solid #eee;
+}
+
+.nav-account-dropdown-header__email {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nav-account-dropdown-option {
+  padding: 5px 20px;
+  font-size: 13px;
+  display: block;
+  box-sizing: border-box;
+  background: white;
+  transition: background 0.15s ease;
+  font-weight: normal;
+  color: black;
+
+  &:hover {
+    background: lighten($matteGreen, 15%);
+    color: black;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+
+  &:first-child {
+    margin-top: 10px;
+  }
+
+  &:last-child {
+    margin-bottom: 10px;
+  }
+
+  .fas {
+    margin-right: 10px;
+  }
+}
+
+.nav-item-seperator {
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0 10px;
+  height: 15px;
+  width: 1px;
+  background: #ccc;
+}
+
+
+.filters-bar-dropdown__text-content {
+  color: gray;
+  font-weight: 100;
+  margin: 0 20px;
+  transition: color 0.15s ease;
+
+  .text {
+    max-width: 100px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+
+  }
+
+  .text, .fa-chevron-down {
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  .fas {
+    margin-left: 10px;
+    margin-top: 4px;
+    font-size: 12px;
+  }
+
+  &:hover {
+    cursor: pointer;
+    color: black;
+    transition: color 0.15s ease;
+  }
+}
+
+.filters-bar-dropdown-options {
+  position: absolute;
+  top: calc(100% - 5px);
+  right: -5px;
+  background: white;
+  z-index: 100;
+  box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.1), 0 -1px 2px 0 rgba(0, 0, 0, 0.05);
+  border-radius: 3px;
+  display: none;
+  white-space: nowrap;
+
+  &.visible {
+    display: block;
+  }
+
+  .no-options {
+    padding: 20px 40px;
+  }
+}
+
+.dropdown-filter-checkbox-box {
+  margin-top: 5px;
+
+  &:first-of-type {
+    margin-top: 0;
+  }
+
+  label {
+    padding-left: 10px;
+  }
+}
+
+.dropdown-options-price {
+  padding: 30px 30px 20px;
+
+  >* {
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  .to {
+    margin: 0 30px;
+  }
+
+  .input-box {
+    >* {
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    .dollar-sign {
+      margin-right: 10px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+  }
+}
+
+.dropdown-options-beds {
+  padding: 20px 30px;
+}
+
+.dropdown-options-baths {
+  padding: 20px 30px;
+}
+
+.dropdown-options-property-type {
+  padding: 20px 30px;
 }

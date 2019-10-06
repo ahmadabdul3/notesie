@@ -10,7 +10,7 @@ export function authenticateLenient(allowedClaims) {
   return async function (req, res, next) {
     try {
       const token = await authenticate(req, res);
-      await loadUser({ token });
+      await loadUser({ req, token, allowedClaims });
       next();
     } catch (response) {
       console.log('ERROR', response);
@@ -30,7 +30,7 @@ async function handleLenientTokenExpired({ req, res, next, allowedClaims }) {
   try {
     const token = req.headers.authorization.split(' ')[1];
     const decoded = jwt.decode(token);
-    await loadUser({ token: { decoded} });
+    await loadUser({ req, token: { decoded}, allowedClaims });
     next();
   } catch (e) {
     console.log('error handle lenient', e);
@@ -42,7 +42,7 @@ export function authenticateStrict(allowedClaims) {
   return async function(req, res, next) {
     try {
       const token = await authenticate(req, res);
-      await loadUser({ token });
+      await loadUser({ req, token, allowedClaims });
       next();
     } catch (response) {
       console.log('ERROR ', response);
@@ -58,7 +58,7 @@ export function getUserFromAuthToken({ req }) {
   return fetchUser({ id: decoded.sub });
 }
 
-async function loadUser({ token }) {
+async function loadUser({ req, token, allowedClaims }) {
   const user = await fetchUser({ id: token.decoded.sub });
   if (!user) throw({ name: ERROR__USER__MISSING, message: 'User not found' });
   validateUser({ user, allowedClaims });
