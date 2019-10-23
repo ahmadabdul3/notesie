@@ -4,10 +4,12 @@ import Sequelize from 'sequelize';
 import config from 'src/db/config';
 import notebooks from './notebooks';
 import users from './users';
+import noteItems from './note_items';
 
 const modelInitializers = [
   notebooks,
   users,
+  noteItems,
 ];
 
 const sequelize = initializeDatabase();

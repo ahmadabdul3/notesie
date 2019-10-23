@@ -12,10 +12,10 @@ export default class NotesItem extends Component {
     // console.log(this.props);
     // console.log(nextProps);
     return (
-      this.props.noteBlock.notesText !== nextProps.noteBlock.notesText ||
-      this.props.noteBlock.notesType !== nextProps.noteBlock.notesType ||
+      this.props.noteItem.noteText !== nextProps.noteItem.noteText ||
+      this.props.noteItem.formatting !== nextProps.noteItem.formatting ||
       this.props.selected !== nextProps.selected ||
-      this.props.noteBlock.deleted !== nextProps.noteBlock.deleted ||
+      this.props.noteItem.deleted !== nextProps.noteItem.deleted ||
       // - this conditional applies to the case when we were editing this
       //   note item component and then we stop editing (either save or cancel)
       //   both cases require a re-render so the action buttons update
@@ -28,9 +28,9 @@ export default class NotesItem extends Component {
   }
 
   get notesItemData() {
-    const { notesText, notesType, deleted, status } = this.props.noteBlock;
+    const { noteText, formatting, deleted, status } = this.props.noteItem;
     const { selected, index } = this.props;
-    return { notesText, notesType, selected, deleted, index, status };
+    return { noteText, formatting, selected, deleted, index, status };
   }
 
   notesItemWillBeEdited(nextProps) {
@@ -76,10 +76,10 @@ export default class NotesItem extends Component {
       return;
     }
 
-    const { documentId, index, selected } = this.props;
+    const { notebookId, index, selected } = this.props;
     this.props.toggleNotesItem({
-      documentId,
-      notesItem: {
+      notebookId,
+      noteItem: {
         index,
         selected,
       },
@@ -95,8 +95,8 @@ export default class NotesItem extends Component {
       return;
     }
 
-    const { index, deleteNotesItem, documentId } = this.props;
-    deleteNotesItem({ index, documentId });
+    const { index, deleteNotesItem, notebookId } = this.props;
+    deleteNotesItem({ index, notebookId });
   }
 
   startEditItem = () => {
@@ -113,10 +113,10 @@ export default class NotesItem extends Component {
     const {
       index,
       startEditNotesItem,
-      documentId,
+      notebookId,
     } = this.props;
 
-    startEditNotesItem({ index, documentId });
+    startEditNotesItem({ index, notebookId });
   }
 
   insertBefore = () => {
@@ -128,12 +128,12 @@ export default class NotesItem extends Component {
       return;
     }
 
-    const { documentId, insertBefore } = this.props;
+    const { notebookId, insertBefore } = this.props;
 
     insertBefore({
-      documentId,
-      notesItem: this.notesItemData,
-      newNote: { ...this.notesItemData, notesText: '', index: -1 },
+      notebookId,
+      noteItem: this.notesItemData,
+      newNote: { ...this.notesItemData, noteText: '', index: -1 },
     });
   };
 
@@ -146,12 +146,12 @@ export default class NotesItem extends Component {
       return;
     }
 
-    const { documentId, insertAfter } = this.props;
+    const { notebookId, insertAfter } = this.props;
 
     insertAfter({
-      documentId,
-      notesItem: this.notesItemData,
-      newNote: { ...this.notesItemData, notesText: '', index: -1 },
+      notebookId,
+      noteItem: this.notesItemData,
+      newNote: { ...this.notesItemData, noteText: '', index: -1 },
     });
   }
 
@@ -164,8 +164,8 @@ export default class NotesItem extends Component {
     // - Actually, we should just delete the new before/after note block if
     //   someone cancels
     // this.props.removeInsertedNotesBlock({ notesItemIndex: this.props.index });
-    const { documentId } = this.props;
-    this.props.cancelEditNotesItem({ notesItem: this.notesItemData, documentId });
+    const { notebookId } = this.props;
+    this.props.cancelEditNotesItem({ noteItem: this.notesItemData, notebookId });
   }
 
   get Actions() {
@@ -203,7 +203,7 @@ export default class NotesItem extends Component {
   }
 
   get notesItemClass() {
-    const { deleted } = this.props.noteBlock;
+    const { deleted } = this.props.noteItem;
     const { selected } = this.props;
     if (this.notesItemBeingEdited) return 'notes-item notes-item__being-edited';
     if (selected) return 'notes-item selected';
@@ -212,14 +212,14 @@ export default class NotesItem extends Component {
   }
 
   render() {
-    const { notesItem, index } = this.props;
+    const { formattedNoteTextComponent } = this.props;
 
     return (
       <div className={this.notesItemClass}>
         <div className='notes-item__left-indicator' />
         { this.Actions }
         <div className='notes-item-inner-wrapper' onClick={this.markAsSelected}>
-          { notesItem }
+          { formattedNoteTextComponent }
         </div>
       </div>
     );
@@ -228,12 +228,12 @@ export default class NotesItem extends Component {
 
 export class TransientNotesItem extends PureComponent {
   render() {
-    const { notesItem, focusNoteInput } = this.props;
+    const { formattedNoteTextComponent, focusNoteInput } = this.props;
 
     return (
       <div className='notes-item__transient' onClick={focusNoteInput}>
         <div className='notes-item__left-indicator' />
-        { notesItem }
+        { formattedNoteTextComponent }
       </div>
     );
   }

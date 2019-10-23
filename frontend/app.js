@@ -54,7 +54,7 @@ if (typeof window !== 'undefined') {
 // - note comments
 // - batch update
 // - backend
-// - cloning documents
+// - cloning notebooks
 // - cloning notes
 // - collapse groups of notes
 // - group notes together with a title

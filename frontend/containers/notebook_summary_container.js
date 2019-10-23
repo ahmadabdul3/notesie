@@ -2,9 +2,9 @@ import { connect } from 'react-redux';
 import NotebookSummary from 'src/frontend/components/notebook_summary';
 
 export function mapStateToProps({ notes }, { data }) {
-  const documents = notes.documents[data.id] || [];
+  const notebooks = notes.notebooks[data.id] || [];
   return {
-    notesList: documents.slice(0, 3),
+    notesList: notebooks.slice(0, 3),
   };
 }
 

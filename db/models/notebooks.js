@@ -3,12 +3,15 @@ export default function (sequelize, DataTypes) {
   const NotebooksModel = sequelize.define('notebooks', {
     id: {
       allowNull: false,
-      autoIncrement: true,
       primaryKey: true,
-      type: DataTypes.INTEGER,
+      defaultValue: DataTypes.UUIDV4,
+      type: DataTypes.UUID,
     },
     name: {
       type: DataTypes.STRING,
+    },
+    userId: {
+      type: DataTypes.UUID,
     },
     createdAt: {
       allowNull: false,
@@ -22,6 +25,14 @@ export default function (sequelize, DataTypes) {
 
   NotebooksModel.associate = function(models) {
     // associations can be defined here
+  };
+
+  NotebooksModel.getAllForUser = async ({ userId }) => {
+    return NotebooksModel.findAll({ where: { userId } });
+  };
+
+  NotebooksModel.createStd = async ({ notebook }) => {
+    return NotebooksModel.create(notebook);
   };
 
   return NotebooksModel;

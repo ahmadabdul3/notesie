@@ -15,11 +15,11 @@ const BASE_CLAIMS = {
 };
 
 export default function (sequelize, DataTypes) {
-  const usersModel = sequelize.define('users', {
+  const UsersModel = sequelize.define('users', {
     id: {
       allowNull: false,
-      defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
+      defaultValue: DataTypes.UUIDV4,
       type: DataTypes.UUID,
     },
     firstName: DataTypes.TEXT,
@@ -38,14 +38,22 @@ export default function (sequelize, DataTypes) {
     },
     // - claims will be a js object stringified
     claims: DataTypes.TEXT,
+    createdAt: {
+      allowNull: false,
+      type: DataTypes.DATE,
+    },
+    updatedAt: {
+      allowNull: false,
+      type: DataTypes.DATE,
+    },
   }, {});
 
-  usersModel.associate = function(models) {
+  UsersModel.associate = function(models) {
     // associations can be defined here
   };
 
-  usersModel.createStd = ({ user, transaction }) => {
-    return usersModel.findOne({
+  UsersModel.createStd = ({ user, transaction }) => {
+    return UsersModel.findOne({
       where: { email: user.email },
     }).then(dupeUser => {
       if (!dupeUser) return bcrypt.hash(user.password, HASH_ROUNDS);
@@ -56,13 +64,13 @@ export default function (sequelize, DataTypes) {
     }).then(hash => {
       user.password = hash;
       user.claims = JSON.stringify(BASE_CLAIMS);
-      return usersModel.create(user, { transaction });
+      return UsersModel.create(user, { transaction });
     }).then(newUser => {
-      return usersModel.prepForUi({ user: newUser });
+      return UsersModel.prepForUi({ user: newUser });
     });
   };
 
-  usersModel.prepForUi = ({ user }) => {
+  UsersModel.prepForUi = ({ user }) => {
     return Object.keys(user.dataValues).reduce((acc, key) => {
       if (disallowedUiKeys[key]) return acc;
 
@@ -74,13 +82,13 @@ export default function (sequelize, DataTypes) {
     }, {});
   };
 
-  usersModel.fetchWithCredentials = ({ email, password }) => {
+  UsersModel.fetchWithCredentials = ({ email, password }) => {
     let user;
-    return usersModel.findOne({ where: { email } }).then(userRes => {
+    return UsersModel.findOne({ where: { email } }).then(userRes => {
       user = userRes;
       return bcrypt.compare(password, user.dataValues.password);
     }).then(passCompareResult => {
-      if (passCompareResult) return usersModel.prepForUi({ user });
+      if (passCompareResult) return UsersModel.prepForUi({ user });
       throw(createErrorLogin({
         message: 'Invalid email or password',
         friendlyMessage: 'Invalid email or password',
@@ -88,9 +96,9 @@ export default function (sequelize, DataTypes) {
     });
   };
 
-  usersModel.updatePassword = ({ passwords }) => {
+  UsersModel.updatePassword = ({ passwords }) => {
     // not implemented
   };
 
-  return usersModel;
+  return UsersModel;
 };

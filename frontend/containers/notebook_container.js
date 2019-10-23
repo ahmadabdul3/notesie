@@ -3,24 +3,25 @@ import Notebook from 'src/frontend/components/notebook';
 import { actions as notesActions } from 'src/frontend/redux/notes';
 
 export function mapStateToProps({ notes, notebooks }, { routerProps }) {
-  const documentId = routerProps.match.params.id;
+  const notebookId = routerProps.match.params.id;
   const empty = {
     name: "This document doesnt exist - this should only show up in development"
   };
-  const notebook = notebooks.items[documentId] || empty;
+  const notebook = notebooks.items[notebookId] || empty;
 
   return {
-    notesList: notes.documents[documentId],
+    notesList: notes.notebooks[notebookId],
     router: routerProps,
     notebook,
     notesItemBeingEdited: notes.notesItemBeingEdited,
     notesItemBeingEditedId: notes.notesItemBeingEditedId,
-    notesItemBeingEditedDocumentId: notes.notesItemBeingEditedDocumentId,
+    notesItemBeingEditedNotebookId: notes.notesItemBeingEditedDocumentId,
   };
 }
 
 export function mapDispatchToProps(dispatch) {
   return {
+    loadAllNotes: (data) => dispatch(notesActions.loadAllNotes(data)),
     addNotesItem: (item) => dispatch(notesActions.addNotesItem(item)),
     updateEditingNotesItem: (item) => dispatch(notesActions.finishEditNotesItem(item)),
     setShiftKeyUp: () => dispatch(notesActions.setShiftKeyUp()),

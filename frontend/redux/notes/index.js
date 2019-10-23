@@ -2,6 +2,13 @@ import { notesItemStatus } from 'src/constants/notes_items';
 
 const actions = {};
 
+actions.loadAllNotes = function(data) {
+  return {
+    type: 'NOTE_ITEM__LOAD_ALL_NOTES',
+    data,
+  };
+};
+
 actions.addNotesItem = function(data) {
   return {
     type: 'ADD_NOTES_ITEM',
@@ -86,9 +93,9 @@ actions.insertNotesAfter = function(data) {
 export { actions };
 
 const initialState = {
-  // - this documents object's keys are the document ids where the
+  // - this notebooks object's keys are the document ids where the
   //   notes belong
-  documents: {},
+  notebooks: {},
   notesItemBeingEdited: false,
   notesItemBeingEditedText: '',
   notesItemBeingEditedId: null,
@@ -101,7 +108,7 @@ const initialState = {
 };
 
 export default function notes(state = initialState, action) {
-  let documentId;
+  let notebookId;
   let notesItemIndex;
   let newNotes;
   let newNotesItem;
@@ -109,6 +116,8 @@ export default function notes(state = initialState, action) {
   let nowClickedNotesItem;
 
   switch (action.type) {
+    case 'NOTE_ITEM__LOAD_ALL_NOTES':
+      return handleLoadAllNotes({ state, action });
     case 'SET_META_KEY_UP':
       return {
         ...state,
@@ -134,22 +143,22 @@ export default function notes(state = initialState, action) {
       };
 
     case 'ADD_NOTES_ITEM':
-      const documents = { ...state.documents };
-      documentId = action.data.documentId;
-      currentNotes = documents[documentId];
+      const notebooks = { ...state.notebooks };
+      notebookId = action.data.notebookId;
+      currentNotes = notebooks[notebookId];
       newNotes = { ...action.data };
 
       if (currentNotes) {
         newNotes.index = currentNotes.length;
-        documents[documentId] = [...currentNotes, newNotes];
+        notebooks[notebookId] = [...currentNotes, newNotes];
       } else {
         newNotes.index = 0;
-        documents[documentId] = [newNotes];
+        notebooks[notebookId] = [newNotes];
       }
 
       return {
         ...state,
-        documents,
+        notebooks,
       };
 
     case 'DELETE_NOTES_ITEM':
@@ -177,11 +186,20 @@ export default function notes(state = initialState, action) {
   }
 }
 
+function handleLoadAllNotes({ state, action }) {
+  const { notebookId, noteItems } = action.data;
+  const newState = { ...state };
+  noteItems.forEach((n, i) => n.index = i);
+
+  newState.notebooks[notebookId] = noteItems;
+  return newState;
+}
+
 function handleDeleteNotesItem({ state, action }) {
-  const documentId = action.data.documentId;
+  const notebookId = action.data.notebookId;
   const notesItemIndex = action.data.index;
   let noteBlockWasSelected = false;
-  const newNotes = state.documents[documentId].map((item, index) => {
+  const newNotes = state.notebooks[notebookId].map((item, index) => {
     if (notesItemIndex !== index) return item;
     if (item.selected) noteBlockWasSelected = true;
     return { ...item, deleted: true, selected: false };
@@ -198,9 +216,9 @@ function handleDeleteNotesItem({ state, action }) {
 
   const newState = {
     ...state,
-    documents: {
-      ...state.documents,
-      [documentId]: newNotes,
+    notebooks: {
+      ...state.notebooks,
+      [notebookId]: newNotes,
     },
     ...editState,
   };
@@ -221,63 +239,63 @@ function handleDeleteNotesItem({ state, action }) {
   return newState;
 }
 
-function getStartEditNotesItemState({ notesItemIndex, documentId }) {
+function getStartEditNotesItemState({ notesItemIndex, notebookId }) {
   return {
     notesItemBeingEdited: true,
     notesItemBeingEditedId: notesItemIndex,
-    notesItemBeingEditedDocumentId: documentId,
+    notesItemBeingEditedDocumentId: notebookId,
   };
 }
 
 function handleStartEditNotesItem({ state, action }) {
-  const documentId = action.data.documentId;
+  const notebookId = action.data.notebookId;
   const notesItemIndex = action.data.index;
-  // const newNotes = [...state.documents[documentId]];
+  // const newNotes = [...state.notebooks[notebookId]];
 
-  const editState = getStartEditNotesItemState({ notesItemIndex, documentId });
+  const editState = getStartEditNotesItemState({ notesItemIndex, notebookId });
   return {
     ...state,
     ...editState,
   };
     // - I dont think this is needed, 'newNotes' is not being updated, it's
-    //   just taken from documents and then put here without being edited
-    // documents: {
-    //   ...state.documents,
-    //   [documentId]: newNotes,
+    //   just taken from notebooks and then put here without being edited
+    // notebooks: {
+    //   ...state.notebooks,
+    //   [notebookId]: newNotes,
     // },
 }
 
 function handleFinishEditNotesItem({ state, action }) {
-  const documentId = action.data.documentId;
+  const notebookId = action.data.notebookId;
   const notesItemIndex = action.data.index;
+  const { updatedNoteItem } = action.data;
 
   const newNotesItem = {
-    ...state.documents[documentId][notesItemIndex],
-    notesText: action.data.notesText,
-    notesType: action.data.notesType,
+    ...state.notebooks[notebookId][notesItemIndex],
+    ...updatedNoteItem,
     status: '',
   };
 
-  const newNotes = [...state.documents[documentId]];
+  const newNotes = [...state.notebooks[notebookId]];
   newNotes[notesItemIndex] = newNotesItem;
 
   return {
     ...state,
-    documents: {
-      ...state.documents,
-      [documentId]: newNotes,
+    notebooks: {
+      ...state.notebooks,
+      [notebookId]: newNotes,
     },
     ...getCancelEditNotesItemState(),
   };
 }
 
 function handleCancelEditNotesItem({ state, action }) {
-  const { notesItem } = action.data;
+  const { noteItem } = action.data;
   let newState = {
     ...state,
     ...getCancelEditNotesItemState(),
   };
-  if (notesItem.status === notesItemStatus.insertedUnsaved) {
+  if (noteItem.status === notesItemStatus.insertedUnsaved) {
     newState = hardDeleteNotesItem({
       currentState: state,
       newState,
@@ -288,32 +306,32 @@ function handleCancelEditNotesItem({ state, action }) {
 }
 
 function hardDeleteNotesItem(options) {
-  const { currentState, newState, notesItem, documentId } = options;
-  const notes = currentState.documents[documentId];
+  const { currentState, newState, noteItem, notebookId } = options;
+  const notes = currentState.notebooks[notebookId];
   const newNotes = [];
   let noteIndex = 0;
   notes.forEach(note => {
-    if (note.index === notesItem.index) return;
+    if (note.index === noteItem.index) return;
     newNotes.push({ ...note, index: noteIndex });
     noteIndex++;
   });
 
-  newState.documents[documentId] = newNotes;
+  newState.notebooks[notebookId] = newNotes;
   return newState;
 }
 
 function handleInsertNotesBefore({ action, state }) {
-  const { notesItem, documentId, newNote } = action.data;
-  const notes = state.documents[documentId];
-  const { index } = notesItem;
+  const { noteItem, notebookId, newNote } = action.data;
+  const notes = state.notebooks[notebookId];
+  const { index } = noteItem;
   const { newNotes, newNotesIndex } = insertNotesBefore({ index, notes, newNote });
-  const startEditState = getStartEditNotesItemState({ notesItemIndex: newNotesIndex, documentId });
+  const startEditState = getStartEditNotesItemState({ notesItemIndex: newNotesIndex, notebookId });
 
   return {
     ...state,
-    documents: {
-      ...state.documents,
-      [documentId]: newNotes,
+    notebooks: {
+      ...state.notebooks,
+      [notebookId]: newNotes,
     },
     ...startEditState,
   };
@@ -342,17 +360,17 @@ function insertNotesBefore({ index, notes, newNote }) {
 }
 
 function handleInsertNotesAfter({ action, state }) {
-  const { notesItem, documentId, newNote } = action.data;
-  const notes = state.documents[documentId];
-  const { index } = notesItem;
+  const { noteItem, notebookId, newNote } = action.data;
+  const notes = state.notebooks[notebookId];
+  const { index } = noteItem;
   const { newNotes, newNotesIndex } = insertNotesAfter({ index, notes, newNote });
-  const startEditState = getStartEditNotesItemState({ notesItemIndex: newNotesIndex, documentId });
+  const startEditState = getStartEditNotesItemState({ notesItemIndex: newNotesIndex, notebookId });
 
   return {
     ...state,
-    documents: {
-      ...state.documents,
-      [documentId]: newNotes,
+    notebooks: {
+      ...state.notebooks,
+      [notebookId]: newNotes,
     },
     ...startEditState,
   };
@@ -382,9 +400,9 @@ function insertNotesAfter({ index, notes, newNote }) {
 }
 
 function handleToggleNotesItem({ action, state }) {
-  const documentId = action.data.documentId;
-  const actionNotesItem = action.data.notesItem;
-  const nowClickedNotesItem = state.documents[documentId][actionNotesItem.index];
+  const notebookId = action.data.notebookId;
+  const actionNotesItem = action.data.noteItem;
+  const nowClickedNotesItem = state.notebooks[notebookId][actionNotesItem.index];
   let multSelHighEnd = null;
   let multSelLowEnd = null;
 
@@ -396,7 +414,7 @@ function handleToggleNotesItem({ action, state }) {
     multSelLowEnd = highLowEnds.low;
   }
 
-  const currentNotes = state.documents[documentId];
+  const currentNotes = state.notebooks[notebookId];
   // console.log(currentNotes);
   // - the index being saved for each note item in the redux store
   //   is not the same as the index being passed down as a prop
@@ -406,7 +424,7 @@ function handleToggleNotesItem({ action, state }) {
     nowClickedNotesItemUpdated,
     selectedNotesItems
   } = getToggledNewNotes({
-    notesItem: nowClickedNotesItem,
+    noteItem: nowClickedNotesItem,
     lastClickedNotesItem: state.lastClickedNotesItem,
     notes: currentNotes,
     metaKeyPressed: state.metaKeyPressed,
@@ -418,9 +436,9 @@ function handleToggleNotesItem({ action, state }) {
   return {
     ...state,
     selectedNotesItems,
-    documents: {
-      ...state.documents,
-      [documentId]: newNotes,
+    notebooks: {
+      ...state.notebooks,
+      [notebookId]: newNotes,
     },
     lastClickedNotesItem: { ...nowClickedNotesItemUpdated },
   };
@@ -446,7 +464,7 @@ function getHighLowEnds(number1, number2) {
 //   last clicked item, because I don't save that state, so I have to work off
 //   of the 'updated' state of the last clicked item - make sense?
 function getToggledNewNotes({
-  notesItem,
+  noteItem,
   lastClickedNotesItem,
   notes,
   multSelHighEnd,
@@ -455,9 +473,9 @@ function getToggledNewNotes({
   selectedNotesItems,
 }) {
   if (!multSelHighEnd && !metaKeyPressed) {
-    return singleItemToggle(notesItem, notes, selectedNotesItems);
+    return singleItemToggle(noteItem, notes, selectedNotesItems);
   }
-  if (!multSelHighEnd) return metaKeySelection(notesItem, notes);
+  if (!multSelHighEnd) return metaKeySelection(noteItem, notes);
 
   // - We're saving the last clicked notes item's UPDATED state (it means
   //   if we clicked on the last one and it was unselected, and it became selected
@@ -467,8 +485,8 @@ function getToggledNewNotes({
   //   in the same selection state - so we can't multi select - it doesnt make sense
   // - shift + click has to happen on the same selected state, meaning they
   //   both should have been in the unselected state before they got clicked on
-  if (notesItem.selected === lastClickedNotesItem.selected) {
-    return singleItemToggle(notesItem, notes, selectedNotesItems);
+  if (noteItem.selected === lastClickedNotesItem.selected) {
+    return singleItemToggle(noteItem, notes, selectedNotesItems);
   }
 
   // - finally - this is where the multiselect happens
@@ -477,16 +495,16 @@ function getToggledNewNotes({
   //   update the selected state of everything else between the high/low index
   //   notes items to the same selected state that we're changing the clicked
   //   one to, so they all match
-  return multiSelect(notesItem, notes, multSelLowEnd, multSelHighEnd);
+  return multiSelect(noteItem, notes, multSelLowEnd, multSelHighEnd);
 }
 
 // - these can become services soon
-function singleItemToggle(notesItem, notes, currentSelectedNotesItems) {
+function singleItemToggle(noteItem, notes, currentSelectedNotesItems) {
   let nowClickedNotesItemUpdated = null;
   const selectedNotesItems = [];
 
   const newNotes = notes.map((note, index) => {
-    if (index === notesItem.index) {
+    if (index === noteItem.index) {
       let newSelectedValue = true;
       // - when there are multiple selected notes items this function doen't
       //   actually do a 'toggle', it just unselects everything except the
@@ -498,10 +516,10 @@ function singleItemToggle(notesItem, notes, currentSelectedNotesItems) {
       if (
         currentSelectedNotesItems.length === 1 &&
         currentSelectedNotesItems[0] === index
-      ) newSelectedValue = !notesItem.selected;
-      nowClickedNotesItemUpdated = { ...notesItem, selected: newSelectedValue };
+      ) newSelectedValue = !noteItem.selected;
+      nowClickedNotesItemUpdated = { ...noteItem, selected: newSelectedValue };
 
-      if (nowClickedNotesItemUpdated.selected) selectedNotesItems.push(notesItem.index);
+      if (nowClickedNotesItemUpdated.selected) selectedNotesItems.push(noteItem.index);
       return nowClickedNotesItemUpdated;
     }
     return { ...note, selected: false};
@@ -512,7 +530,7 @@ function singleItemToggle(notesItem, notes, currentSelectedNotesItems) {
 
 // - this is actually a toggle now, notice how we change the selected state
 //   for the 'nowClickedNotesItem' to a toggle, not hard coded 'true'
-function metaKeySelection(notesItem, notes) {
+function metaKeySelection(noteItem, notes) {
   let nowClickedNotesItemUpdated = null;
   const selectedNotesItems = [];
 
@@ -524,9 +542,9 @@ function metaKeySelection(notesItem, notes) {
   //   new index to it
   // - this way is simpler for now
   const newNotes = notes.map((note, index) => {
-    if (index === notesItem.index) {
-      nowClickedNotesItemUpdated = { ...notesItem, selected: !notesItem.selected };
-      if (nowClickedNotesItemUpdated.selected) selectedNotesItems.push(notesItem.index);
+    if (index === noteItem.index) {
+      nowClickedNotesItemUpdated = { ...noteItem, selected: !noteItem.selected };
+      if (nowClickedNotesItemUpdated.selected) selectedNotesItems.push(noteItem.index);
       return nowClickedNotesItemUpdated;
     }
 
@@ -537,15 +555,15 @@ function metaKeySelection(notesItem, notes) {
   return { newNotes, nowClickedNotesItemUpdated, selectedNotesItems };
 }
 
-function multiSelect(notesItem, notes, lowEnd, highEnd) {
-  const desiredSelectedState = !notesItem.selected;
+function multiSelect(noteItem, notes, lowEnd, highEnd) {
+  const desiredSelectedState = !noteItem.selected;
   const selectedNotesItems = [];
   let nowClickedNotesItemUpdated = null;
 
   const newNotes = notes.map((note, index) => {
     if (index >= lowEnd && index <= highEnd && !note.deleted) {
       const updatedNote = { ...note, selected: desiredSelectedState};
-      if (index === notesItem.index) nowClickedNotesItemUpdated = updatedNote;
+      if (index === noteItem.index) nowClickedNotesItemUpdated = updatedNote;
       if (updatedNote.selected) selectedNotesItems.push(note.index);
       return updatedNote;
     }

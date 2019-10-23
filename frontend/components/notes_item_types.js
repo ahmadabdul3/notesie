@@ -4,7 +4,7 @@ export class NotesItemRegular extends PureComponent {
   render() {
     return (
       <div className='notes-item__regular'>
-        <NotesText {...this.props} />
+        <NoteText {...this.props} />
       </div>
     );
   }
@@ -14,7 +14,7 @@ export class NotesItemBullet1 extends PureComponent {
   render() {
     return (
       <div className='notes-item__bullet-1'>
-        <NotesText {...this.props} />
+        <NoteText {...this.props} />
       </div>
     );
   }
@@ -24,7 +24,7 @@ export class NotesItemBullet2 extends PureComponent {
   render() {
     return (
       <div className='notes-item__bullet-2'>
-        <NotesText {...this.props} />
+        <NoteText {...this.props} />
       </div>
     );
   }
@@ -34,7 +34,7 @@ export class NotesItemBullet3 extends PureComponent {
   render() {
     return (
       <div className='notes-item__bullet-3'>
-        <NotesText {...this.props} />
+        <NoteText {...this.props} />
       </div>
     );
   }
@@ -44,21 +44,21 @@ export class NotesItemQuote extends PureComponent {
   render() {
     return (
       <div className='notes-item__quote'>
-        <NotesText {...this.props} />
+        <NoteText {...this.props} />
       </div>
     );
   }
 }
 
-class NotesText extends PureComponent {
+class NoteText extends PureComponent {
   get justText() {
-    const { notesText } = this.props;
-    return <div> { notesText || 'Start typing your notes...' } </div>;
+    const { noteText } = this.props;
+    return <div> { noteText || 'Start typing your notes...' } </div>;
   }
 
   get transientText() {
     // thinking about whether I should keep the blinking indicator or not
-    // let text = this.props.notesText;
+    // let text = this.props.noteText;
     // if (!text) {
     //   text = `This is how your notes will appear, \
     //   start typing to add your own`;
@@ -76,8 +76,8 @@ class NotesText extends PureComponent {
     //     <span className='notes-item__cursor' />
     //   </div>
     // );
-    const { notesText } = this.props;
-    if (notesText) return this.justText;
+    const { noteText } = this.props;
+    if (noteText) return this.justText;
     return (
       <div>
         This is how your notes will appear, start typing to add your own

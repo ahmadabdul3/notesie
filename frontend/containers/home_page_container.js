@@ -1,16 +1,20 @@
 import { connect } from 'react-redux';
 import HomePage from 'src/frontend/pages/home_page';
-import { actions as notebookActions } from 'src/frontend/redux/notebooks';
+import {
+  addNotebook,
+  loadNotebooks,
+} from 'src/frontend/redux/notebooks';
 
 export function mapStateToProps({ notebooks }) {
   return {
-    notebooks: notebooks.items,
+    notebooks: Object.keys(notebooks.items).map(nk => notebooks.items[nk]),
   };
 }
 
 export function mapDispatchToProps(dispatch) {
   return {
-    addNotebook: (item) => dispatch(notebookActions.addNotebook(item)),
+    addNotebook: (item) => dispatch(addNotebook(item)),
+    loadNotebooks: (notebooks) => dispatch(loadNotebooks(notebooks)),
   };
 }
 

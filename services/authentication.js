@@ -62,6 +62,8 @@ async function loadUser({ req, token, allowedClaims }) {
   const user = await fetchUser({ id: token.decoded.sub });
   if (!user) throw({ name: ERROR__USER__MISSING, message: 'User not found' });
   validateUser({ user, allowedClaims });
+  console.log('loading user');
+  console.log('token', token.decoded);
   req.userId = token.decoded.sub;
   req.user = user;
 }
@@ -90,7 +92,6 @@ function authenticate(req, res) {
     const token = authorization.split(' ')[1];
     const cert = process.env.JWT_PUBLIC_KEY.replace(/\\n/g, '\n');
     jwt.verify(token, cert, { algorithms: ['RS256'] }, (error, decoded) => {
-      console.log('decoded', decoded);
       if (error) reject({ error, decoded });
       else resolve({ error, decoded });
     });

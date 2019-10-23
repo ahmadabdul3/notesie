@@ -6,8 +6,8 @@ export default function NotebookSummary({ data, click, notesList }) {
   let summary = '';
 
   if (notesList.length > 0) {
-    summary = notesList.map((notesItem, key) => {
-      return <div key={key}> { notesItem.notesText } </div>;
+    summary = notesList.map((noteItem, key) => {
+      return <div key={key}> { noteItem.noteText } </div>;
     });
   }
 

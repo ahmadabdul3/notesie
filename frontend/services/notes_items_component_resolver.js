@@ -10,10 +10,10 @@ import {
 } from 'src/frontend/components/notes_item_types.js';
 
 export function getPermanentNotesTypeComponent(props) {
-  const { notesType, notesText } = props.noteBlock;
+  const { formatting, noteText } = props.noteItem;
   const allProps = {
     ...props,
-    notesItem: getNotesItem(notesType, { notesText, isTransient: false }),
+    formattedNoteTextComponent: getNotesItem(formatting, { noteText, isTransient: false }),
   };
 
   return <NotesItemContainer { ...allProps } />
@@ -23,18 +23,18 @@ export function getPermanentNotesTypeComponent(props) {
 //   of what the user is typing, this version doesn't have a delete/edit
 //   and other interaction features/buttons
 export function getTransientNotesTypeComponent(props) {
-  const { notesType, notesText } = props.noteBlock;
+  const { formatting, noteText } = props.noteItem;
   const allProps = {
     ...props,
     isTransient: true,
-    notesItem: getNotesItem(notesType, { notesText, isTransient: true }),
+    formattedNoteTextComponent: getNotesItem(formatting, { noteText, isTransient: true }),
   };
 
-  return <TransientNotesItem { ... allProps } />;
+  return <TransientNotesItem { ...allProps } />;
 }
 
-function getNotesItem(type, props) {
-  switch (type) {
+function getNotesItem(formatting, props) {
+  switch (formatting) {
     case 'regular':
       return <NotesItemRegular {...props} />;
     case '-':

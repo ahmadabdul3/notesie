@@ -6,17 +6,37 @@ import NotebookSummaryContainer from 'src/frontend/containers/notebook_summary_c
 import NotebookSummary from 'src/frontend/components/notebook_summary';
 import Modal from 'src/frontend/components/modal';
 import http from 'src/frontend/services/http';
+import {
+  getNotebooks,
+  createNotebook,
+} from 'src/frontend/clients/data_api/notebooks_client';
 
 
 export default class HomePage extends Component {
   state = {
     loading: false,
     newNotebookModalVisible: false,
+    notebooks: [],
   }
 
-  addNotebook = ({ notebookName }) => {
+  componentDidMount() {
+    this.fetchNotebooks();
+  }
+
+  async fetchNotebooks() {
+    try {
+      const { loadNotebooks } = this.props;
+      const notebooksResult = await getNotebooks();
+      loadNotebooks(notebooksResult.notebooks);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  addNotebook = async ({ notebookName }) => {
     this.hideNewNotebookModal();
-    this.props.addNotebook({ name: notebookName });
+    const newNotebookResponse = await createNotebook({ data: { name: notebookName } });
+    this.props.addNotebook(newNotebookResponse.notebook);
   }
 
   showNewNotebookModal = () => {
@@ -33,22 +53,9 @@ export default class HomePage extends Component {
     this.props.history.push(appRoutes.notebook(id));
   }
 
-  // createUser = async () => {
-  //   const user = { user: { email: 'abdul3@example.com', password: 'howdyho' }};
-  //   const res = await http.post('/users', user);
-  //   console.log(res);
-  // }
-  //
-  // logIn = async () => {
-  //   const session = { session: { email: 'abdul@example.com', password: 'howdy' }};
-  //   const res = await http.post('/sessions', session);
-  //   console.log(res);
-  // }
-
   render() {
     const { loading, newNotebookModalVisible } = this.state;
     const { notebooks } = this.props;
-    const notebookKeys = Object.keys(notebooks);
 
     return (
       <div className='home-page'>
@@ -68,10 +75,9 @@ export default class HomePage extends Component {
         </header>
         <section className='home-page__docs'>
           {
-            notebookKeys.length > 0 ? (
-              notebookKeys.map(
-                (notebookKey, key) => {
-                  const notebook = notebooks[notebookKey];
+            notebooks.length > 0 ? (
+              notebooks.map(
+                (notebook, key) => {
                   return (
                     <NotebookSummaryContainer
                       key={key}
@@ -96,7 +102,7 @@ function NoNotebooks() {
   };
   const notesList = [
     {
-      notesText: "You don't have any notebooks."
+      noteText: "You don't have any notebooks."
         + " Create one by clicking the add button"
     },
   ];

@@ -6,6 +6,12 @@ import {
   getPermanentNotesTypeComponent,
   getTransientNotesTypeComponent,
 } from 'src/frontend/services/notes_items_component_resolver';
+import {
+  getNoteItemsForNotebbook,
+  createNoteItem,
+  updateNoteItem,
+} from 'src/frontend/clients/data_api/note_items_client';
+
 
 
 // * docs
@@ -30,7 +36,7 @@ export default class Notebook extends PureComponent {
 
   state = {
     commandListVisible: false,
-    notesText: '',
+    noteText: '',
     newNotesItemType: 'regular',
     // - not sure if there was a reason I put this in state, seems to make
     //   more sense if it's an instance variable instead
@@ -39,12 +45,18 @@ export default class Notebook extends PureComponent {
 
   constructor(props) {
     super(props);
-    this.documentId = props.routerProps.match.params.id;
+    this.notebookId = props.routerProps.match.params.id;
   }
 
   componentDidMount() {
     document.addEventListener('keydown', this.handleKeyDown);
     document.addEventListener('keyup', this.handleKeyUp);
+    getNoteItemsForNotebbook({ data: { notebookId: this.notebookId } }).then(r => {
+      const { noteItems } = r;
+      this.props.loadAllNotes({ notebookId: this.notebookId, noteItems });
+    }).catch(e => {
+      console.log('e', e);
+    });
   }
 
   componentWillUnmount() {
@@ -69,12 +81,13 @@ export default class Notebook extends PureComponent {
       //   scenario where a note item is being 'edited' but has no text is when
       //   we initially do an 'insertBefore' or 'insertAfter'. In that case
       //   we need the formatting commands to be active
-      this.notesTextBeforeEditStart = this.state.notesText;
+      this.notesTextBeforeEditStart = this.state.noteText;
       this.notesTypeBeforeEditStart = this.state.newNotesItemType;
+
       this.setState({
-        notesText: notesList[notesItemBeingEditedId].notesText,
-        newNotesItemType: notesList[notesItemBeingEditedId].notesType,
-        noteInputTypingStarted: !!notesList[notesItemBeingEditedId].notesText,
+        noteText: notesList[notesItemBeingEditedId].noteText,
+        newNotesItemType: notesList[notesItemBeingEditedId].formatting,
+        noteInputTypingStarted: !!notesList[notesItemBeingEditedId].noteText,
       });
       // - no need for a timout on the focus here because it's happening on
       //   mouse button click, not enter key click, so no side effects
@@ -88,7 +101,7 @@ export default class Notebook extends PureComponent {
       let typingStarted = false;
       if (this.notesTextBeforeEditStart) typingStarted = true;
       this.setState({
-        notesText: this.notesTextBeforeEditStart,
+        noteText: this.notesTextBeforeEditStart,
         newNotesItemType: this.notesTypeBeforeEditStart,
         noteInputTypingStarted: typingStarted,
       });
@@ -114,21 +127,19 @@ export default class Notebook extends PureComponent {
   showCommandList = () => this.setState({ commandListVisible: true });
 
   insertBefore = (noteItemData) => {
-    const { insertBefore } = this.props;
     this.focusNoteInput();
-    insertBefore(noteItemData);
+    this.props.insertBefore(noteItemData);
   }
 
   insertAfter = (noteItemData) => {
-    const { insertAfter } = this.props;
     this.focusNoteInput();
-    insertAfter(noteItemData);
+    this.props.insertAfter(noteItemData);
   }
 
   onChangeNotesInput = (value) => {
     this.setState(oldState => {
       const { noteInputTypingStarted } = oldState;
-      const newState = { notesText: value };
+      const newState = { noteText: value };
 
       // - this is assuming characters are bing typed in/added,
       //   meaning there's a value - if letters are being removed
@@ -159,19 +170,26 @@ export default class Notebook extends PureComponent {
 
   updateEditingNotesItem = (e) => {
     e.preventDefault();
-    const { notesText, newNotesItemType } = this.state;
+    const { noteText, newNotesItemType } = this.state;
 
-    if (!notesText.trim()) {
+    if (!noteText.trim()) {
       alert(`Note blocks can't be empty. If you no longer want this block of notes you can delete it`);
       return;
     }
 
-    const { documentId } = this;
+    const { notebookId } = this;
     const index = this.props.notesItemBeingEditedId;
+    const formatting = newNotesItemType;
+    const noteItem = this.props.notesList[index];
+    const { id } = noteItem;
 
-    setTimeout(() => {
+    setTimeout(async () => {
+      const updateResponse = await updateNoteItem({
+        data: { noteText, formatting, id }
+      });
       this.props.updateEditingNotesItem({
-        documentId, index, notesText, notesType: newNotesItemType
+        updatedNoteItem: updateResponse.noteItem,
+        notebookId, index, noteText, formatting
       });
       this.resetNewNotes(
         this.notesTypeBeforeEditStart,
@@ -296,7 +314,7 @@ export default class Notebook extends PureComponent {
 
   addNewNotesItem(e) {
     e.preventDefault();
-    const text = this.state.notesText.trim();
+    const text = this.state.noteText.trim();
 
     if (!text) {
       setTimeout(() => {
@@ -309,31 +327,38 @@ export default class Notebook extends PureComponent {
     setTimeout(this.finishAddNewNotesItem, 50);
   }
 
-  finishAddNewNotesItem = () => {
-    this.props.addNotesItem(this.newNotes);
-    this.resetNewNotes();
-    this.scrollToBottom();
+  finishAddNewNotesItem = async () => {
+    try {
+      const newNotesItem = this.newNotes;
+      const createResponse = await createNoteItem({ data: newNotesItem });
+      this.props.addNotesItem(createResponse.noteItem);
+      this.resetNewNotes();
+      this.scrollToBottom();
+    } catch (e) {
+      console.log('e', e);
+    }
   }
 
   get newNotes() {
     return {
-      notesType: this.state.newNotesItemType,
-      notesText: this.state.notesText,
-      documentId: this.documentId,
+      formatting: this.state.newNotesItemType,
+      noteText: this.state.noteText,
+      notebookId: this.notebookId,
       selected: false,
       deleted: false,
     };
   }
 
-  resetNewNotes(notesType, notesText) {
-    const newState = { notesText: '', noteInputTypingStarted: false };
+  resetNewNotes(formatting, noteText) {
+    const newState = { noteText: '', noteInputTypingStarted: false };
 
-    // - I think these if conditions pass when a note item is finished
-    //   editing, and before editing, the transient note input had a
-    //   type, and text typed into it
-    if (notesType) newState.newNotesItemType = notesType;
-    if (notesText) {
-      newState.notesText = notesText;
+    // - The following 'if' conditions pass when:
+    //  1. a note item has just finished editing
+    //  AND
+    //  2. before editing, the transient note input had a type/text
+    if (formatting) newState.newNotesItemType = formatting;
+    if (noteText) {
+      newState.noteText = noteText;
       newState.noteInputTypingStarted = true;
     }
     this.setState(newState);
@@ -342,20 +367,20 @@ export default class Notebook extends PureComponent {
   renderExampleNotesItem() {
     // - this method shows the placeholder notes current being typed
     //   before they're added
-    const { newNotesItemType, notesText } = this.state;
+    const { newNotesItemType, noteText } = this.state;
 
     const props = {
       focusNoteInput: this.focusNoteInput,
-      noteBlock: {
-        notesText: notesText,
-        notesType: newNotesItemType,
+      noteItem: {
+        noteText: noteText,
+        formatting: newNotesItemType,
       },
     }
 
     if (this.props.notesItemBeingEdited) {
-      props.noteBlock = {
-        notesText: this.notesTextBeforeEditStart,
-        notesType: this.notesTypeBeforeEditStart,
+      props.noteItem = {
+        noteText: this.notesTextBeforeEditStart,
+        formatting: this.notesTypeBeforeEditStart,
       };
     }
 
@@ -370,22 +395,19 @@ export default class Notebook extends PureComponent {
     const { notesList } = this.props;
     if (!notesList) return;
 
-    return notesList.map((notesItem, key) => {
-      const { text, type } = this.getNotesTextAndTypeToUse(notesItem, key);
+    return notesList.map((noteItem, key) => {
+      const { text, type } = this.getNotesTextAndTypeToUse(noteItem, key);
 
       return getPermanentNotesTypeComponent({
-        noteBlock: {
-          notesType: type,
-          notesText: text,
-          deleted: notesItem.deleted,
-          documentId: this.documentId,
-          status: notesItem.status,
-          id: notesItem.index,
+        noteItem: {
+          ...noteItem,
+          noteText: text,
+          formatting: type,
         },
-        selected: notesItem.selected,
+        selected: noteItem.selected,
         key: key,
-        index: notesItem.index,
-        documentId: this.documentId,
+        index: noteItem.index,
+        notebookId: this.notebookId,
         saveEdits: this.updateEditingNotesItem,
         insertBefore: this.insertBefore,
         insertAfter: this.insertAfter,
@@ -393,21 +415,21 @@ export default class Notebook extends PureComponent {
     })
   }
 
-  getNotesTextAndTypeToUse(notesItem, key) {
+  getNotesTextAndTypeToUse(noteItem, key) {
     const { notesItemBeingEdited, notesItemBeingEditedId } = this.props;
-    const { notesText, newNotesItemType } = this.state;
+    const { noteText, newNotesItemType } = this.state;
 
     if (notesItemBeingEdited && notesItemBeingEditedId === key) {
-      return { text: notesText, type: newNotesItemType };
+      return { text: noteText, type: newNotesItemType };
     }
 
-    return { text: notesItem.notesText, type: notesItem.notesType };
+    return { text: noteItem.noteText, type: noteItem.formatting };
   }
 
   render() {
     const {
       commandListVisible,
-      notesText,
+      noteText,
       newNotesItemType,
     } = this.state;
 
@@ -448,7 +470,7 @@ export default class Notebook extends PureComponent {
                     newNotesItemType={newNotesItemType}
                     showCommandList={this.showCommandList} />
                   <NoteInput
-                    value={notesText}
+                    value={noteText}
                     registerNoteInputRef={this.registerNoteInputRef}
                     onChange={this.onChangeNotesInput}
                     onFocus={this.onNotesInputFocus}
