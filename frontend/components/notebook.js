@@ -10,7 +10,13 @@ import {
   getNoteItemsForNotebbook,
   createNoteItem,
   updateNoteItem,
+  insertNoteItemBefore,
+  insertNoteItemAfter
 } from 'src/frontend/clients/data_api/note_items_client';
+// import {
+//   isItemInsertedBefore,
+//   isItemInsertedAfter,
+// } from 'src/constants/notes_items';
 
 
 
@@ -184,9 +190,7 @@ export default class Notebook extends PureComponent {
     const { id } = noteItem;
 
     setTimeout(async () => {
-      const updateResponse = await updateNoteItem({
-        data: { noteText, formatting, id }
-      });
+      const updateResponse = await this.updateEditingNotesItemAsync();
       this.props.updateEditingNotesItem({
         updatedNoteItem: updateResponse.noteItem,
         notebookId, index, noteText, formatting
@@ -197,6 +201,50 @@ export default class Notebook extends PureComponent {
       );
     }, 50);
   }
+
+  updateEditingNotesItemAsync = async () => {
+    const {
+      notesList,
+      noteItemInsertIndex,
+      notesItemBeingEditedId,
+      noteItemInsertType
+    } = this.props;
+    const { noteText, newNotesItemType } = this.state;
+    const formatting = newNotesItemType;
+
+    if (!noteItemInsertType) {
+      const id = notesList[notesItemBeingEditedId].id;
+      return updateNoteItem({
+        data: { noteText, formatting, id }
+      });
+    } else {
+      const noteItem = notesList[noteItemInsertIndex];
+      noteItem.noteText = noteText;
+      noteItem.formatting = formatting;
+      // - clearing status for now,
+      //   will need to distinguish between front-end status
+      //   vs back-end status
+      noteItem.status = undefined;
+
+      if (noteItemInsertType === 'before') {
+        const originalNoteItem = notesList[notesItemBeingEditedId + 1];
+        noteItem.notebookId = originalNoteItem.notebookId;
+
+        return insertNoteItemBefore({
+          data: noteItem,
+          orderOfOriginalNoteItem: originalNoteItem.order,
+        });
+      } else if (noteItemInsertType === 'after') {
+        const originalNoteItem = notesList[notesItemBeingEditedId - 1];
+        noteItem.notebookId = originalNoteItem.notebookId;
+
+        return insertNoteItemAfter({
+          data: noteItem,
+          orderOfOriginalNoteItem: originalNoteItem.order,
+        });
+      }
+    }
+  };
 
   handleKeyUp = (e) => {
     const { key } = e;

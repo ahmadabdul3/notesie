@@ -34,3 +34,21 @@ export function updateNoteItem({ data }) {
     data: { [RESOURCE_NAME]: data },
   });
 }
+
+export function insertNoteItemBefore({ data, orderOfOriginalNoteItem }) {
+  const url = getResourceUrl() + 'insert-before';
+
+  return dataApiClientPost({
+    url,
+    data: { [RESOURCE_NAME]: data, orderOfOriginalNoteItem },
+  });
+}
+
+export function insertNoteItemAfter({ data, orderOfOriginalNoteItem }) {
+  const url = getResourceUrl() + 'insert-after';
+
+  return dataApiClientPost({
+    url,
+    data: { [RESOURCE_NAME]: data, orderOfOriginalNoteItem },
+  });
+}

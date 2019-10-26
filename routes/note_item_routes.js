@@ -52,12 +52,25 @@ async function updateNoteItem(req, res) {
 }
 
 async function insertBefore(req, res) {
-  const { orderOfItemBefore, noteItem } = req.body;
+  const { orderOfOriginalNoteItem, noteItem } = req.body;
 
   try {
-    const newNoteItem = await models.noteItems.insertBefore({ noteItem, orderOfItemBefore });
+    const newNoteItem = await models.noteItems.insertBefore({ noteItem, orderOfOriginalNoteItem });
+    res.json({ noteItem: newNoteItem, status: 'success', message: 'success' });
   } catch (e) {
     console.log(e);
     res.status(422).json({ status: 'fail', message: 'Cant insert note item before', error: e });
+  }
+}
+
+async function insertAfter(req, res) {
+  const { orderOfOriginalNoteItem, noteItem } = req.body;
+
+  try {
+    const newNoteItem = await models.noteItems.insertAfter({ noteItem, orderOfOriginalNoteItem });
+    res.json({ noteItem: newNoteItem, status: 'success', message: 'success' });
+  } catch (e) {
+    console.log(e);
+    res.status(422).json({ status: 'fail', message: 'Cant insert note item after', error: e });
   }
 }

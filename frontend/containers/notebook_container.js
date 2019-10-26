@@ -16,6 +16,8 @@ export function mapStateToProps({ notes, notebooks }, { routerProps }) {
     notesItemBeingEdited: notes.notesItemBeingEdited,
     notesItemBeingEditedId: notes.notesItemBeingEditedId,
     notesItemBeingEditedNotebookId: notes.notesItemBeingEditedDocumentId,
+    noteItemInsertType: notes.noteItemInsertType,
+    noteItemInsertIndex: notes.noteItemInsertIndex,
   };
 }
 

@@ -1,4 +1,7 @@
-import { notesItemStatus } from 'src/constants/notes_items';
+import {
+  notesItemStatus,
+  addStatuses,
+} from 'src/constants/notes_items';
 
 const actions = {};
 
@@ -105,6 +108,8 @@ const initialState = {
   shiftKeyPressed: false,
   metaKeyPressed: false,
   lastClickedNotesItem: null,
+  noteItemInsertType: null,
+  noteItemInsertIndex: null,
 };
 
 export default function notes(state = initialState, action) {
@@ -334,6 +339,8 @@ function handleInsertNotesBefore({ action, state }) {
       [notebookId]: newNotes,
     },
     ...startEditState,
+    noteItemInsertType: 'before',
+    noteItemInsertIndex: newNotesIndex,
   };
 }
 
@@ -347,7 +354,13 @@ function insertNotesBefore({ index, notes, newNote }) {
       newNotes.push({
         ...newNote,
         index: noteIndex,
-        status: notesItemStatus.insertedUnsaved,
+        status: addStatuses({
+          itemStatus: newNote.status,
+          newStatuses: [
+            notesItemStatus.insertedUnsaved,
+            notesItemStatus.insertedBefore
+          ]
+        }),
       });
       newNotesIndex = noteIndex;
       noteIndex++;
@@ -373,6 +386,8 @@ function handleInsertNotesAfter({ action, state }) {
       [notebookId]: newNotes,
     },
     ...startEditState,
+    noteItemInsertType: 'after',
+    noteItemInsertIndex: newNotesIndex,
   };
 }
 
@@ -389,7 +404,13 @@ function insertNotesAfter({ index, notes, newNote }) {
       newNotes.push({
         ...newNote,
         index: noteIndex,
-        status: notesItemStatus.insertedUnsaved,
+        status: addStatuses({
+          itemStatus: newNote.status,
+          newStatuses: [
+            notesItemStatus.insertedUnsaved,
+            notesItemStatus.insertedAfter
+          ]
+        }),
       });
       newNotesIndex = noteIndex;
       noteIndex++;
@@ -585,5 +606,7 @@ function getCancelEditNotesItemState() {
     notesItemBeingEdited: false,
     notesItemBeingEditedId: null,
     notesItemBeingEditedDocumentId: null,
+    noteItemInsertType: null,
+    noteItemInsertIndex: null,
   };
 }

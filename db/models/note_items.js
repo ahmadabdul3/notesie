@@ -1,4 +1,5 @@
-'use strict';
+import models from 'src/db/models';
+
 export default function(sequelize, DataTypes) {
   const NoteItemModel = sequelize.define('noteItems', {
     id: {
@@ -35,10 +36,22 @@ export default function(sequelize, DataTypes) {
     // associations can be defined here
   };
 
-  NoteItemModel.getAllForNotebook = ({ userId, notebookId }) => {
+  NoteItemModel.getAllForNotebook = async ({ userId, notebookId }) => {
     // - first ensure the notebookId belongs to the right user
     // - skipping this step for now ^^^
-    return NoteItemModel.findAll({ where: { notebookId }, limit: 50 });
+    const noteList = await NoteItemModel.findAll({
+      where: { notebookId },
+      order: [
+        ['order', 'DESC']
+      ],
+      limit: 50,
+    });
+
+    const returnList = [];
+    for (let i = noteList.length - 1; i > -1; i--) {
+      returnList.push(noteList[i]);
+    };
+    return returnList;
   };
 
   NoteItemModel.createStd = async ({ noteItem }) => {
@@ -60,6 +73,35 @@ export default function(sequelize, DataTypes) {
       returning: true,
     });
     return updateResponse[1][0];
+  };
+
+  NoteItemModel.insertBefore = async ({ noteItem, orderOfOriginalNoteItem }) => {
+    noteItem.order = orderOfOriginalNoteItem;
+    return NoteItemModel.insertItem({ noteItem });
+  };
+
+  NoteItemModel.insertAfter = async ({ noteItem, orderOfOriginalNoteItem }) => {
+    noteItem.order = orderOfOriginalNoteItem + 1;
+    return NoteItemModel.insertItem({ noteItem });
+  };
+
+  NoteItemModel.insertItem = async ({ noteItem }) => {
+    const { Op } = models.Sequelize;
+    let transaction;
+
+    try {
+      transaction = await models.sequelize.transaction();
+      await NoteItemModel.increment('order', { where: {
+        order: { [Op.gte]: noteItem.order },
+        notebookId: noteItem.notebookId,
+      }});
+      const newNoteItem = await NoteItemModel.create(noteItem);
+      await transaction.commit();
+      return newNoteItem;
+    } catch (e) {
+      if (transaction) await transaction.rollback();
+      throw(e);
+    }
   };
 
   return NoteItemModel;
