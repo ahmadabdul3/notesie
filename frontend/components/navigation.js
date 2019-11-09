@@ -1,39 +1,28 @@
 import React, { Component, PureComponent } from 'react';
 import { NavLink } from 'react-router-dom';
 import appRoutes from 'src/constants/routes';
-import SignupModalContainer from 'src/frontend/containers/signup_modal_container';
-import LoginModalContainer from 'src/frontend/containers/login_modal_container';
+import { clearAccessToken } from 'src/frontend/services/authentication';
+import {
+  MODAL_NAME__LOGIN,
+  MODAL_NAME__SIGNUP
+} from 'src/frontend/constants/modal_names_constants';
 
 export default class Navigation extends PureComponent {
-  state = {
-    loginModalOpen: false,
-    signupModalOpen: false,
-  };
-
-  closeLoginModal = () => {
-    this.setState({ loginModalOpen: false });
-  }
-
   openLoginModal = () => {
-    this.setState({ loginModalOpen: true });
-  }
-
-  closeSignupModal = () => {
-    this.setState({ signupModalOpen: false });
+    this.props.openModal({ modalName: MODAL_NAME__LOGIN });
   }
 
   openSignupModal = () => {
-    this.setState({ signupModalOpen: true });
+    this.props.openModal({ modalName: MODAL_NAME__SIGNUP });
   }
 
   logout = () => {
-    localStorage.removeItem('notesie-access-token');
+    clearAccessToken();
     this.props.logout();
     window.location.href = '/';
   }
 
   render() {
-    const { loginModalOpen, signupModalOpen } = this.state;
     const {
       authenticated,
       user,
@@ -41,14 +30,6 @@ export default class Navigation extends PureComponent {
 
     return (
       <nav className='navigation'>
-        <LoginModalContainer
-          onClose={this.closeLoginModal}
-          open={loginModalOpen}
-          openSignupModal={this.openSignupModal} />
-        <SignupModalContainer
-          onClose={this.closeSignupModal}
-          open={signupModalOpen}
-          openLoginModal={this.openLoginModal} />
         <div className='nav-left'>
           <NavLink to={appRoutes.home} activeClassName='' className='nav-item__logo'>
             Notesie

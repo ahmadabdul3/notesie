@@ -5,6 +5,10 @@ import {
   createErrorFormValidation,
   errorHasFriendlyMessage
 } from 'src/services/error_manager';
+import {
+  saveAccessToken,
+  userIsAuthenticated
+} from 'src/frontend/services/authentication';
 
 const initialState = {
   firstName: '',
@@ -12,6 +16,7 @@ const initialState = {
   email: '',
   password: '',
   formError: '',
+  showUserAuthError: false,
 };
 
 export default class SignupModal extends PureComponent {
@@ -20,13 +25,13 @@ export default class SignupModal extends PureComponent {
   signup = (e) => {
     e.preventDefault();
     const { firstName, lastName, email, password, formError } = this.state;
-    if (formError) this.setState({ formError: '' });
+    this.setState({ formError: '', showUserAuthError: false });
     try {
       this.validateFormFields();
       const user = { firstName, lastName, email, password };
       createUser({ data: user }).then(createUserRes => {
+        saveAccessToken({ accessToken: createUserRes.token });
         this.props.signupSuccess({ user: createUserRes.user });
-        localStorage.setItem('notesie-access-token', createUserRes.token);
         this.props.onClose();
       }).catch(er => {
         this.setFormError({ error: er });
@@ -74,13 +79,18 @@ export default class SignupModal extends PureComponent {
     this.props.openLoginModal();
   }
 
+  close = () => {
+    if (userIsAuthenticated()) this.props.onClose();
+    else this.setState({ showUserAuthError: true });
+  }
+
   render() {
-    const { open, onClose } = this.props;
-    const { formError } = this.state;
+    const { formError, showUserAuthError } = this.state;
+    const { open } = this.props;
     return (
-      <Modal onClose={onClose} open={open}>
+      <Modal onClose={this.close} open={open}>
         <div className='auth-modal'>
-          <i className='fas fa-times' onClick={onClose} />
+          <i className='fas fa-times' onClick={this.close} />
           <header className='auth-modal__header'>
             <h3 className='auth-modal__title'>
               Welcome To Notesie
@@ -118,6 +128,14 @@ export default class SignupModal extends PureComponent {
               formError && (
                 <div className='auth-modal__form-message'>
                   { formError }
+                </div>
+              )
+            }
+            {
+              showUserAuthError && (
+                <div className='auth-modal__form-message'>
+                  You need an account to use Notesie. Log in if you have
+                  an account, or sign up to create one
                 </div>
               )
             }

@@ -5,11 +5,16 @@ import {
   createErrorFormValidation,
   errorHasFriendlyMessage
 } from 'src/services/error_manager';
+import {
+  saveAccessToken,
+  userIsAuthenticated
+} from 'src/frontend/services/authentication';
 
 const initialState = {
   email: '',
   password: '',
   formError: '',
+  showUserAuthError: false,
 };
 
 export default class LoginModal extends PureComponent {
@@ -18,12 +23,15 @@ export default class LoginModal extends PureComponent {
   login = (e) => {
     e.preventDefault();
     const { email, password, formError } = this.state;
-    if (formError) this.setState({ formError: '' });
+    this.setState({ formError: '', showUserAuthError: false });
     try {
       this.validateFormFields();
       createSession({ data: { email, password } }).then(createSessionRes => {
+        // - storing access token in local storage has to happen before
+        //   updating the user in loginSuccess, some components depend on
+        //   the access token being present to fetch data
+        saveAccessToken({ accessToken: createSessionRes.token });
         this.props.loginSuccess({ user: createSessionRes.user });
-        localStorage.setItem('notesie-access-token', createSessionRes.token);
         this.props.onClose();
       }).catch(e => {
         this.setState({ formError: e.friendlyMessage || 'There was an error' });
@@ -67,13 +75,18 @@ export default class LoginModal extends PureComponent {
     this.props.openSignupModal();
   }
 
+  close = () => {
+    if (userIsAuthenticated()) this.props.onClose();
+    else this.setState({ showUserAuthError: true });
+  }
+
   render() {
-    const { formError } = this.state;
-    const { open, onClose } = this.props;
+    const { formError, showUserAuthError } = this.state;
+    const { open } = this.props;
     return (
-      <Modal onClose={onClose} open={open}>
+      <Modal onClose={this.close} open={open}>
         <div className='auth-modal'>
-          <i className='fas fa-times' onClick={onClose} />
+          <i className='fas fa-times' onClick={this.close} />
           <header className='auth-modal__header'>
             <h3 className='auth-modal__title'>
               Welcome Back
@@ -99,6 +112,14 @@ export default class LoginModal extends PureComponent {
               formError && (
                 <div className='auth-modal__form-message'>
                   { formError }
+                </div>
+              )
+            }
+            {
+              showUserAuthError && (
+                <div className='auth-modal__form-message'>
+                  You need an account to use Notesie. Log in if you have
+                  an account, or sign up to create one
                 </div>
               )
             }

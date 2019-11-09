@@ -47,18 +47,23 @@ if (typeof window !== 'undefined') {
 }
 
 
-// features
+// FEATURES
+// - tagging notes (global and local tags)
+// - table of contents
+// - vocab/marking selections
 // - unit tests
-// - authentication
 // - more formatting - title, subtitle, columns
 // - note comments
 // - batch update
-// - backend
 // - cloning notebooks
 // - cloning notes
 // - collapse groups of notes
+// - searchability
 // - group notes together with a title
-// - *** add before / after *** done
 // - clone notes from 1 doc to another
+
+// COMPLETE
+// - *** authentication *** done
+// - *** add before / after *** done
 // - *** select note items *** done
 // - *** multi-select note items by clicking 'shift' *** done

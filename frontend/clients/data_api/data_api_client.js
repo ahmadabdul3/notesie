@@ -1,10 +1,14 @@
 import http from 'src/frontend/services/http';
+import {
+  getAccessToken,
+  clearAccessToken
+} from 'src/frontend/services/authentication';
 
 const BASE_URL = '/';
 const ERROR_TOKEN_EXPIRED = 'TokenExpiredError';
 
 function getHeaders() {
-  const accessToken = localStorage.getItem('notesie-access-token');
+  const accessToken = getAccessToken();
   return { 'AUTHORIZATION': `Bearer ${accessToken}` };
 }
 
@@ -22,7 +26,7 @@ function getUrl({ url }) {
 
 function handleError(e) {
   if (e && e.error && e.error.name === ERROR_TOKEN_EXPIRED) {
-    localStorage.removeItem('notesie-access-token');
+    clearAccessToken();
     window.location.href = '/';
   }
   throw(e);

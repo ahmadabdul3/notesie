@@ -1,18 +1,16 @@
 import React from 'react';
-import { Route } from 'react-router-dom';
 import { connect } from 'react-redux';
-import AppEntry from 'src/frontend/components/app_entry';
-import { actions } from 'src/frontend/redux/session';
+import Modals from 'src/frontend/components/modals';
 import { actions as modalActions } from 'src/frontend/redux/modals';
 
-export function mapStateToProps() {
+export function mapStateToProps({ modals }) {
   return {
+    modalName: modals.openModalName,
   };
 }
 
 export function mapDispatchToProps(dispatch) {
   return {
-    fetchUserOnInitSuccess: (data) => dispatch(actions.fetchUserOnInitSuccess(data)),
     openModal: (data) => dispatch(modalActions.openModal(data)),
     closeModal: () => dispatch(modalActions.closeModal()),
   };
@@ -21,6 +19,6 @@ export function mapDispatchToProps(dispatch) {
 const Container = connect(
   mapStateToProps,
   mapDispatchToProps
-)(AppEntry);
+)(Modals);
 
-export default () => (<Route render={(props) => (<Container {...props} />)} />);
+export default Container;

@@ -1,7 +1,8 @@
 import {
   notesItemStatus,
   addStatuses,
-} from 'src/constants/notes_items';
+  isItemInsertedUnsaved
+} from 'src/constants/constants_note_items';
 
 const actions = {};
 
@@ -300,7 +301,7 @@ function handleCancelEditNotesItem({ state, action }) {
     ...state,
     ...getCancelEditNotesItemState(),
   };
-  if (noteItem.status === notesItemStatus.insertedUnsaved) {
+  if (isItemInsertedUnsaved({ item: noteItem })) {
     newState = hardDeleteNotesItem({
       currentState: state,
       newState,

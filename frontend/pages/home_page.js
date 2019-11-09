@@ -20,7 +20,14 @@ export default class HomePage extends Component {
   }
 
   componentDidMount() {
-    this.fetchNotebooks();
+    if (this.props.userAuthenticated) this.fetchNotebooks();
+  }
+
+  componentDidUpdate(prevProps) {
+    const { userAuthenticated } = this.props;
+    if (userAuthenticated && userAuthenticated !== prevProps.userAuthenticated) {
+      this.fetchNotebooks();
+    }
   }
 
   async fetchNotebooks() {

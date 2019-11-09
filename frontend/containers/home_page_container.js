@@ -5,9 +5,10 @@ import {
   loadNotebooks,
 } from 'src/frontend/redux/notebooks';
 
-export function mapStateToProps({ notebooks }) {
+export function mapStateToProps({ notebooks, session }) {
   return {
     notebooks: Object.keys(notebooks.items).map(nk => notebooks.items[nk]),
+    userAuthenticated: session.authenticated,
   };
 }
 

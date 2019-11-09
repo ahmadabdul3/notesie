@@ -47,11 +47,7 @@ export default function(sequelize, DataTypes) {
       limit: 50,
     });
 
-    const returnList = [];
-    for (let i = noteList.length - 1; i > -1; i--) {
-      returnList.push(noteList[i]);
-    };
-    return returnList;
+    return noteList.reverse();
   };
 
   NoteItemModel.createStd = async ({ noteItem }) => {

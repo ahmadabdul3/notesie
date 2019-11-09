@@ -24,9 +24,14 @@ export function isItemInsertedAfter({ item }) {
   return itemHasStatus({ item, status: notesItemStatus.insertedAfter });
 }
 
+export function isItemInsertedUnsaved({ item }) {
+  return itemHasStatus({ item, status: notesItemStatus.insertedUnsaved });
+}
+
 function itemHasStatus({ item, status }) {
-  const statuses = item.statuses.split(SEPARATOR__STATUS);
+  if (!item.status) return;
+  const statuses = item.status.split(SEPARATOR__STATUS);
   // - we shouldn't ever have more than a few statuses
   //   so this .find isnt a performance issue right now
-  return statuses.find(status);
+  return statuses.find(s => s === status);
 }

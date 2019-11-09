@@ -16,7 +16,7 @@ import {
 // import {
 //   isItemInsertedBefore,
 //   isItemInsertedAfter,
-// } from 'src/constants/notes_items';
+// } from 'src/constants/constants_note_items';
 
 
 
@@ -60,6 +60,7 @@ export default class Notebook extends PureComponent {
     getNoteItemsForNotebbook({ data: { notebookId: this.notebookId } }).then(r => {
       const { noteItems } = r;
       this.props.loadAllNotes({ notebookId: this.notebookId, noteItems });
+      this.scrollToBottom();
     }).catch(e => {
       console.log('e', e);
     });
@@ -111,7 +112,7 @@ export default class Notebook extends PureComponent {
         newNotesItemType: this.notesTypeBeforeEditStart,
         noteInputTypingStarted: typingStarted,
       });
-      this.noteInputRef.focus();
+      this.focusNoteInput();
     }
   }
 

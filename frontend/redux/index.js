@@ -4,6 +4,7 @@ import session from './session';
 import placeholder from './placeholder';
 import notes from './notes';
 import notebooks from './notebooks';
+import modals from './modals';
 
 function createAppReducer(history) {
   // - combineReducers returns a function that gets executed by redux
@@ -17,6 +18,7 @@ function createAppReducer(history) {
     placeholder,
     notes,
     notebooks,
+    modals,
   });
 }
 
