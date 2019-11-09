@@ -10,12 +10,12 @@ import {
 } from 'src/frontend/services/authentication';
 import ModalsContainer from 'src/frontend/containers/modals_container';
 import {
-  MODAL_NAME__LOGIN,
+  MODAL_NAME__SIGNUP,
 } from 'src/frontend/constants/modal_names_constants';
 
 export default class AppEntry extends Component {
   componentDidMount() {
-    if (!userIsAuthenticated()) this.props.openModal({ modalName: MODAL_NAME__LOGIN });
+    if (!userIsAuthenticated()) this.props.openModal({ modalName: MODAL_NAME__SIGNUP });
     this.fetchUser();
   }
 
@@ -26,7 +26,7 @@ export default class AppEntry extends Component {
       if (e.message === 'Forbidden') {
         clearAccessToken();
         this.props.clearUserSession();
-        this.props.openModal({ modalName: MODAL_NAME__LOGIN });
+        this.props.openModal({ modalName: MODAL_NAME__SIGNUP });
       }
       console.log('error', e);
     });
