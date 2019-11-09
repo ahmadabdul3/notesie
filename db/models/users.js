@@ -53,6 +53,7 @@ export default function (sequelize, DataTypes) {
   };
 
   UsersModel.createStd = ({ user, transaction }) => {
+    user.email = user.email.toLowerCase();
     return UsersModel.findOne({
       where: { email: user.email },
     }).then(dupeUser => {
@@ -84,7 +85,7 @@ export default function (sequelize, DataTypes) {
 
   UsersModel.fetchWithCredentials = ({ email, password }) => {
     let user;
-    return UsersModel.findOne({ where: { email } }).then(userRes => {
+    return UsersModel.findOne({ where: { email: email.toLowerCase() } }).then(userRes => {
       user = userRes;
       return bcrypt.compare(password, user.dataValues.password);
     }).then(passCompareResult => {
