@@ -4,7 +4,10 @@ import NavigationContainer from 'src/frontend/containers/navigation_container';
 import AppBodyContainer from 'src/frontend/containers/app_body_container';
 import { Route } from 'react-router-dom';
 import { getUser } from 'src/frontend/clients/data_api/users_client';
-import { userIsAuthenticated } from 'src/frontend/services/authentication';
+import {
+  userIsAuthenticated,
+  clearAccessToken,
+} from 'src/frontend/services/authentication';
 import ModalsContainer from 'src/frontend/containers/modals_container';
 import {
   MODAL_NAME__LOGIN,
@@ -20,6 +23,11 @@ export default class AppEntry extends Component {
     getUser().then(getUserRes => {
       this.props.fetchUserOnInitSuccess({ user: getUserRes.user });
     }).catch(e => {
+      if (e.message === 'Forbidden') {
+        clearAccessToken();
+        this.props.clearUserSession();
+        this.props.openModal({ modalName: MODAL_NAME__LOGIN });
+      }
       console.log('error', e);
     });
   };

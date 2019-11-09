@@ -13,6 +13,7 @@ export function mapStateToProps() {
 export function mapDispatchToProps(dispatch) {
   return {
     fetchUserOnInitSuccess: (data) => dispatch(actions.fetchUserOnInitSuccess(data)),
+    clearUserSession: () => dispatch(actions.logoutSuccess()),
     openModal: (data) => dispatch(modalActions.openModal(data)),
     closeModal: () => dispatch(modalActions.closeModal()),
   };
