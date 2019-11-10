@@ -22,7 +22,6 @@ async function getNotebooks(req, res) {
 }
 
 async function createNotebook(req, res) {
-  console.log('create notebook', req.userId);
   const { userId } = req;
   const { notebook } = req.body;
   notebook.userId = userId;

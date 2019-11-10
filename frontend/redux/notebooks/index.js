@@ -23,34 +23,36 @@ export function deleteNotebook(data) {
 }
 
 const initialState = {
-  id: 1,
-  items: {},
+  itemsAsObject: {},
+  items: [],
 };
 
 export default function notebooks(state = initialState, action) {
+  let notebooks;
+
   switch (action.type) {
     case 'LOAD_NOTEBOOKS':
-      const notebooks = action.data.reduce((acc, notebook) => {
+      notebooks = action.data.reduce((acc, notebook) => {
         acc[notebook.id] = notebook;
         return acc;
       }, {});
 
       return {
         ...state,
-        items: notebooks,
+        itemsAsObject: notebooks,
+        items: action.data,
       };
     case 'ADD_NOTEBOOK':
-      const newDocument = action.data;
-      newDocument.id = state.id;
-      const id = state.id + 1;
+      const newNotebook = action.data;
+      notebooks = [ ...state.items, newNotebook ];
 
       return {
         ...state,
-        id,
-        items: {
+        itemsAsObject: {
           ...state.items,
-          [newDocument.id]: newDocument,
+          [newNotebook.id]: newNotebook,
         },
+        items: notebooks,
       };
 
     case 'DELETE_NOTEBOOK':
