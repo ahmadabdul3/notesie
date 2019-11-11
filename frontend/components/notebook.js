@@ -226,24 +226,23 @@ export default class Notebook extends PureComponent {
       //   will need to distinguish between front-end status
       //   vs back-end status
       noteItem.status = undefined;
+      let originalNoteItem;
+      let insertOperation;
 
       if (noteItemInsertType === 'before') {
-        const originalNoteItem = notesList[notesItemBeingEditedId + 1];
-        noteItem.notebookId = originalNoteItem.notebookId;
-
-        return insertNoteItemBefore({
-          data: noteItem,
-          orderOfOriginalNoteItem: originalNoteItem.order,
-        });
+        originalNoteItem = notesList[notesItemBeingEditedId + 1];
+        insertOperation = insertNoteItemBefore;
       } else if (noteItemInsertType === 'after') {
-        const originalNoteItem = notesList[notesItemBeingEditedId - 1];
-        noteItem.notebookId = originalNoteItem.notebookId;
-
-        return insertNoteItemAfter({
-          data: noteItem,
-          orderOfOriginalNoteItem: originalNoteItem.order,
-        });
+        originalNoteItem = notesList[notesItemBeingEditedId - 1];
+        insertOperation = insertNoteItemAfter;
       }
+
+      noteItem.notebookId = originalNoteItem.notebookId;
+
+      return insertOperation({
+        data: noteItem,
+        originalNoteItemId: originalNoteItem.id,
+      });
     }
   };
 

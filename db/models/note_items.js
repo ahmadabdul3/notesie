@@ -71,13 +71,18 @@ export default function(sequelize, DataTypes) {
     return updateResponse[1][0];
   };
 
-  NoteItemModel.insertBefore = async ({ noteItem, orderOfOriginalNoteItem }) => {
-    noteItem.order = orderOfOriginalNoteItem;
+
+  // - this needs to be updated, need to send the note id instead of node order
+  //   then determine the order on the server side
+  NoteItemModel.insertBefore = async ({ noteItem, originalNoteItemId }) => {
+    const originalNoteItem = await NoteItemModel.findByPk(originalNoteItemId);
+    noteItem.order = originalNoteItem.dataValues.order;
     return NoteItemModel.insertItem({ noteItem });
   };
 
-  NoteItemModel.insertAfter = async ({ noteItem, orderOfOriginalNoteItem }) => {
-    noteItem.order = orderOfOriginalNoteItem + 1;
+  NoteItemModel.insertAfter = async ({ noteItem, originalNoteItemId }) => {
+    const originalNoteItem = await NoteItemModel.findByPk(originalNoteItemId);
+    noteItem.order = originalNoteItem.dataValues.order + 1;
     return NoteItemModel.insertItem({ noteItem });
   };
 

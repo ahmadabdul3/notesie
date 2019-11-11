@@ -35,20 +35,20 @@ export function updateNoteItem({ data }) {
   });
 }
 
-export function insertNoteItemBefore({ data, orderOfOriginalNoteItem }) {
+export function insertNoteItemBefore({ data, originalNoteItemId }) {
   const url = getResourceUrl() + 'insert-before';
 
   return dataApiClientPost({
     url,
-    data: { [RESOURCE_NAME]: data, orderOfOriginalNoteItem },
+    data: { [RESOURCE_NAME]: data, originalNoteItemId },
   });
 }
 
-export function insertNoteItemAfter({ data, orderOfOriginalNoteItem }) {
+export function insertNoteItemAfter({ data, originalNoteItemId }) {
   const url = getResourceUrl() + 'insert-after';
 
   return dataApiClientPost({
     url,
-    data: { [RESOURCE_NAME]: data, orderOfOriginalNoteItem },
+    data: { [RESOURCE_NAME]: data, originalNoteItemId },
   });
 }

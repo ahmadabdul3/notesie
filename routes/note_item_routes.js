@@ -52,10 +52,10 @@ async function updateNoteItem(req, res) {
 }
 
 async function insertBefore(req, res) {
-  const { orderOfOriginalNoteItem, noteItem } = req.body;
+  const { originalNoteItemId, noteItem } = req.body;
 
   try {
-    const newNoteItem = await models.noteItems.insertBefore({ noteItem, orderOfOriginalNoteItem });
+    const newNoteItem = await models.noteItems.insertBefore({ noteItem, originalNoteItemId });
     res.json({ noteItem: newNoteItem, status: 'success', message: 'success' });
   } catch (e) {
     console.log(e);
@@ -64,10 +64,10 @@ async function insertBefore(req, res) {
 }
 
 async function insertAfter(req, res) {
-  const { orderOfOriginalNoteItem, noteItem } = req.body;
+  const { originalNoteItemId, noteItem } = req.body;
 
   try {
-    const newNoteItem = await models.noteItems.insertAfter({ noteItem, orderOfOriginalNoteItem });
+    const newNoteItem = await models.noteItems.insertAfter({ noteItem, originalNoteItemId });
     res.json({ noteItem: newNoteItem, status: 'success', message: 'success' });
   } catch (e) {
     console.log(e);
