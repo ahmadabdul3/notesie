@@ -20,6 +20,12 @@ bundle.js
 index.css
 .env
 server
+server.gz
+repl.gz
+bundle.js.gz
+index.css.gz
+bundle.js.map
+bundle.js.map.gz
 
 npm-debug.log*
 yarn-debug.log*

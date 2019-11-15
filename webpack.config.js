@@ -1,4 +1,4 @@
-
+require('dotenv').config();
 var frontendConfig = require('./webpack-frontend.config.js');
 var backendConfig = require('./webpack-backend.config.js');
 var replConfig = require('./webpack-repl.config.js');

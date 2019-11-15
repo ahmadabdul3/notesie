@@ -3,7 +3,6 @@ var path = require('path');
 var fs = require('fs');
 
 module.exports = {
-  mode: 'development',
   devtool: '#eval-source-map',
   target: 'node',
   entry: './bin/www.js',
