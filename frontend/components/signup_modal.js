@@ -88,67 +88,65 @@ export default class SignupModal extends PureComponent {
     const { formError, showUserAuthError } = this.state;
     const { open } = this.props;
     return (
-      <Modal onClose={this.close} open={open}>
-        <div className='auth-modal'>
-          <i className='fas fa-times' onClick={this.close} />
-          <header className='auth-modal__header'>
-            <h3 className='auth-modal__title'>
-              Welcome To Notesie
-            </h3>
-            <div className='auth-modal__title-underline' />
-            <p className='auth-modal__title-message'>
-              Sign Up for an account
-            </p>
-          </header>
-          <form onSubmit={this.signup} className='auth-modal__form'>
-            <div className='half-input-box'>
-              <input
-                className='input'
-                name='firstName'
-                placeholder='First Name'
-                onChange={this.change} />
-              <input
-                className='input'
-                name='lastName'
-                placeholder='Last Name'
-                onChange={this.change} />
-            </div>
+      <Modal onClose={this.close} open={open} customClass='auth-modal'>
+        <i className='fas fa-times' onClick={this.close} />
+        <header className='auth-modal__header'>
+          <h3 className='auth-modal__title'>
+            Welcome To Notesie
+          </h3>
+          <div className='auth-modal__title-underline' />
+          <p className='auth-modal__title-message'>
+            Sign Up for an account
+          </p>
+        </header>
+        <form onSubmit={this.signup} className='auth-modal__form'>
+          <div className='half-input-box'>
             <input
               className='input'
-              name='email'
-              placeholder='Email'
+              name='firstName'
+              placeholder='First Name'
               onChange={this.change} />
             <input
               className='input'
-              name='password'
-              placeholder='Password'
-              type='password'
+              name='lastName'
+              placeholder='Last Name'
               onChange={this.change} />
-            {
-              formError && (
-                <div className='auth-modal__form-message'>
-                  { formError }
-                </div>
-              )
-            }
-            {
-              showUserAuthError && (
-                <div className='auth-modal__form-message'>
-                  You need an account to use Notesie. Log in if you have
-                  an account, or sign up to create one
-                </div>
-              )
-            }
-            <button className='auth-modal__login-button'>
-              Sign Up
-            </button>
-          </form>
-          <footer className='auth-modal__footer'>
-            Already have an account? <a onClick={this.switchToLoginModal}>
-              Log In
-            </a>
-          </footer>
-        </div>
+          </div>
+          <input
+            className='input'
+            name='email'
+            placeholder='Email'
+            onChange={this.change} />
+          <input
+            className='input'
+            name='password'
+            placeholder='Password'
+            type='password'
+            onChange={this.change} />
+          {
+            formError && (
+              <div className='auth-modal__form-message'>
+                { formError }
+              </div>
+            )
+          }
+          {
+            showUserAuthError && (
+              <div className='auth-modal__form-message'>
+                You need an account to use Notesie. Log in if you have
+                an account, or sign up to create one
+              </div>
+            )
+          }
+          <button className='auth-modal__login-button'>
+            Sign Up
+          </button>
+        </form>
+        <footer className='auth-modal__footer'>
+          Already have an account? <a onClick={this.switchToLoginModal}>
+            Log In
+          </a>
+        </footer>
       </Modal>
     )
   }

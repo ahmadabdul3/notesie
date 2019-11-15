@@ -24,21 +24,40 @@
   }
 }
 
-.home-page__docs {
+.notebook-list__header {
+  @extend .page-width;
+  margin-top: 40px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.home-page__notebooks {
+  @extend .page-width;
   flex-grow: 1;
   flex-shrink: 0;
   overflow-y: auto;
-  text-align: center;
+  padding: 0 10px;
 }
 
-.note-doc {
+.home-page__notebooks__margin-normalizer {
+  width: calc(100% + 32px);
+  margin-left: -16px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.notebook {
   text-align: left;
   @extend .clickable-card;
-  width: 300px;
+  max-width: 350px;
+  min-width: 250px;
   height: 150px;
-  margin: 20px;
+  margin: 16px;
   overflow: hidden;
   position: relative;
+  flex: 1 1 0px;
 
   .overflow-fade {
     position: absolute;
@@ -52,12 +71,12 @@
   }
 }
 
-.note-doc__header {
+.notebook__header {
   font-weight: bold;
   color: $red;
 }
 
-.note-doc__summary {
+.notebook__summary {
   font-size: 14px;
   line-height: 18px;
   margin-top: 10px;

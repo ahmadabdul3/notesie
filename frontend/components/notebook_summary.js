@@ -12,12 +12,12 @@ export default function NotebookSummary({ data, click, notesList }) {
   }
 
   return (
-    <div className='note-doc' onClick={click}>
+    <div className='notebook' onClick={click}>
       <div className='overflow-fade' />
-      <header className='note-doc__header'>
+      <header className='notebook__header'>
         { name }
       </header>
-      <article className='note-doc__summary'>
+      <article className='notebook__summary'>
         { summary || noNotesYet }
       </article>
     </div>

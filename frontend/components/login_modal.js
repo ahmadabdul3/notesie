@@ -84,55 +84,53 @@ export default class LoginModal extends PureComponent {
     const { formError, showUserAuthError } = this.state;
     const { open } = this.props;
     return (
-      <Modal onClose={this.close} open={open}>
-        <div className='auth-modal'>
-          <i className='fas fa-times' onClick={this.close} />
-          <header className='auth-modal__header'>
-            <h3 className='auth-modal__title'>
-              Welcome Back
-            </h3>
-            <div className='auth-modal__title-underline' />
-            <p className='auth-modal__title-message'>
-              Log in to your Notesie account
-            </p>
-          </header>
-          <form onSubmit={this.login} className='auth-modal__form'>
-            <input
-              className='input'
-              name='email'
-              placeholder='Email'
-              onChange={this.change} />
-            <input
-              className='input'
-              name='password'
-              placeholder='Password'
-              type='password'
-              onChange={this.change} />
-            {
-              formError && (
-                <div className='auth-modal__form-message'>
-                  { formError }
-                </div>
-              )
-            }
-            {
-              showUserAuthError && (
-                <div className='auth-modal__form-message'>
-                  You need an account to use Notesie. Log in if you have
-                  an account, or sign up to create one
-                </div>
-              )
-            }
-            <button className='auth-modal__login-button'>
-              Log In
-            </button>
-          </form>
-          <footer className='auth-modal__footer'>
-            New to Notesie? <a onClick={this.switchToSignupModal}>
-              Create an Account
-            </a>
-          </footer>
-        </div>
+      <Modal onClose={this.close} open={open} customClass='auth-modal'>
+        <i className='fas fa-times' onClick={this.close} />
+        <header className='auth-modal__header'>
+          <h3 className='auth-modal__title'>
+            Welcome Back
+          </h3>
+          <div className='auth-modal__title-underline' />
+          <p className='auth-modal__title-message'>
+            Log in to your Notesie account
+          </p>
+        </header>
+        <form onSubmit={this.login} className='auth-modal__form'>
+          <input
+            className='input'
+            name='email'
+            placeholder='Email'
+            onChange={this.change} />
+          <input
+            className='input'
+            name='password'
+            placeholder='Password'
+            type='password'
+            onChange={this.change} />
+          {
+            formError && (
+              <div className='auth-modal__form-message'>
+                { formError }
+              </div>
+            )
+          }
+          {
+            showUserAuthError && (
+              <div className='auth-modal__form-message'>
+                You need an account to use Notesie. Log in if you have
+                an account, or sign up to create one
+              </div>
+            )
+          }
+          <button className='auth-modal__login-button'>
+            Log In
+          </button>
+        </form>
+        <footer className='auth-modal__footer'>
+          New to Notesie? <a onClick={this.switchToSignupModal}>
+            Create an Account
+          </a>
+        </footer>
       </Modal>
     )
   }

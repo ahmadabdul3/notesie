@@ -2,6 +2,11 @@
 .page-title {
   font-size: 20px;
   font-weight: bold;
-  color: $red;
+  // color: $red;
   margin-bottom: 20px;
+}
+
+.page-section__title {
+  @extend .page-title;
+  margin: 0;
 }

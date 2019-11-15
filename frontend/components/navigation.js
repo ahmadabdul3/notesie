@@ -32,7 +32,7 @@ export default class Navigation extends PureComponent {
       <nav className='navigation'>
         <div className='nav-left'>
           <NavLink to={appRoutes.home} activeClassName='' className='nav-item__logo'>
-            Notesie
+            notesie
           </NavLink>
         </div>
         <div className='nav-right'>

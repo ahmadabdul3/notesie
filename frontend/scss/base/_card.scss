@@ -1,6 +1,6 @@
 .card {
   background: white;
-  box-shadow: 0 3px 8px 0 rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 6px 0 rgba(23, 66, 86, 0.1);
   border-radius: 5px;
   padding: 20px 30px;
   box-sizing: border-box;
@@ -14,7 +14,7 @@
 
   &:hover {
     cursor: pointer;
-    box-shadow: 0 8px 10px 0 rgba(0, 0, 0, 0.15);
+    box-shadow: 0 8px 10px 0 rgba(23, 66, 86, 0.1);
     transition: box-shadow 0.15s ease;
   }
 

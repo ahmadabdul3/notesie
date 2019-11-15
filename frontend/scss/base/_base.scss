@@ -47,6 +47,16 @@ a {
   outline: none;
 }
 
+.input__label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.input__message {
+  display: block;
+  margin-top: 5px;
+}
+
 .black-overlay {
   position: fixed;
   width: 100%;

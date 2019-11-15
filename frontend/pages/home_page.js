@@ -1,10 +1,14 @@
 import React, { Component } from 'react';
 import appRoutes from 'src/constants/routes';
 import { NavLink } from 'react-router-dom';
-import FormInput from 'src/frontend/components/form_input';
+import FormInputStd from 'src/frontend/components/form_input_std';
 import NotebookSummaryContainer from 'src/frontend/containers/notebook_summary_container';
 import NotebookSummary from 'src/frontend/components/notebook_summary';
-import Modal from 'src/frontend/components/modal';
+import Modal, {
+  ModalTitle,
+  ModalButton,
+  ModalContent
+} from 'src/frontend/components/modal';
 import http from 'src/frontend/services/http';
 import {
   getNotebooks,
@@ -69,33 +73,37 @@ export default class HomePage extends Component {
         <NewNotebookModal
           visible={newNotebookModalVisible}
           addNotebook={this.addNotebook}
-          cancelAction={this.hideNewNotebookModal} />
-        <header className='home-page__header'>
-          <div className='content'>
-            <button
-              className='new-notebook-button green-button'
-              onClick={this.showNewNotebookModal}
-            >
-              <i className='fas fa-plus' /> New Notebook
-            </button>
+          cancelAction={this.hideNewNotebookModal}
+        />
+        <div className='notebook-list__header'>
+          <h2 className='page-section__title'>
+            Your Notebooks
+          </h2>
+          <button
+            className='new-notebook-button green-button'
+            onClick={this.showNewNotebookModal}
+          >
+              <i className='fas fa-plus' /> Add Notebook
+          </button>
+        </div>
+        <section className='home-page__notebooks'>
+          <div className='home-page__notebooks__margin-normalizer'>
+            {
+              notebooks.length > 0 ? (
+                notebooks.map(
+                  (notebook, key) => {
+                    return (
+                      <NotebookSummaryContainer
+                        key={key}
+                        data={notebook}
+                        click={() => this.goToDocPage(notebook.id)}
+                      />
+                    )
+                  }
+                )
+              ) : <NoNotebooks />
+            }
           </div>
-        </header>
-        <section className='home-page__docs'>
-          {
-            notebooks.length > 0 ? (
-              notebooks.map(
-                (notebook, key) => {
-                  return (
-                    <NotebookSummaryContainer
-                      key={key}
-                      data={notebook}
-                      click={() => this.goToDocPage(notebook.id)}
-                    />
-                  )
-                }
-              )
-            ) : <NoNotebooks />
-          }
         </section>
       </div>
     );
@@ -159,30 +167,21 @@ class NewNotebookModal extends Component {
 
     return (
       <Modal onClose={this.close} open={visible}>
-        <div className='new-note-document-modal'>
-          <h2>
-            Create a new notebook
-          </h2>
+        <ModalTitle text='Create a new notebook' />
+        <ModalContent>
           <form onSubmit={this.addNotebook}>
-            <FormInput
+            <FormInputStd
               autoFocus
               labelText='Notebook Name'
               name='notebookName'
               value={notebookName}
               type='text'
               onChange={this.onChange}
-              message={nameMessage} />
-
-            <div className='form-buttons'>
-              <button type='button' className='button' onClick={this.close}>
-                Cancel
-              </button>
-              <button className='red-button'>
-                Create Notebook
-              </button>
-            </div>
+              message={nameMessage}
+            />
+            <ModalButton text='Create Notebook' />
           </form>
-        </div>
+        </ModalContent>
       </Modal>
     );
   }
