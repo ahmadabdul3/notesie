@@ -13,7 +13,7 @@ export default class Modal extends PureComponent {
     if (!open) return null;
     return (
       <div className='black-overlay' onClick={this.closeModal}>
-        <div className={customClass || 'modal'} ref={r => this.modalRef = r}>
+        <div className={`modal ${customClass}`} ref={r => this.modalRef = r}>
           <i className='fas fa-times' onClick={onClose} />
           { children }
         </div>

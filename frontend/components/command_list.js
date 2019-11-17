@@ -70,11 +70,8 @@ export default class CommandList extends Component {
     const filteredCommands = this.filterCommands();
 
     return (
-      <Modal open={visible} onClose={hideCommandList}>
+      <Modal open={visible} onClose={hideCommandList} customClass='command-list-modal'>
         <div className='command-list'>
-          <div className='close-button' onClick={hideCommandList}>
-            <i className='fas fa-times' />
-          </div>
           <header className='command-list__header'>
             <div className='command-list-header__label'>
               AVAILABLE FORMATS - PRESS <span className='note-worthy-text'>'ENTER'</span> WHEN
